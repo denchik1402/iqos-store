@@ -1,0 +1,29 @@
+name: Deploy to Production
+
+on:
+  push:
+    branches: [main]
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Deploy via SSH
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.SSH_HOST }}
+          username: ${{ secrets.SSH_USER }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          script: |
+            cd /home/lilstore/my_shop
+            git pull origin main
+            source venv/bin/activate
+            pip install -r requirements.txt --quiet
+            python3 -c "
+            from app import app
+            from alembic_runner import run_alembic
+            with app.app_context():
+                run_alembic()
+            " || python3 init_db.py
+            sudo systemctl restart lilstore lilstore-bot
+            echo "Deploy completed successfully"
