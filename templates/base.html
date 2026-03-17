@@ -1213,9 +1213,15 @@
                 <img src="{{ url_for('static', filename='LOGO4.png') }}" alt="LIL STORE" class="navbar-logo logo-dark" height="40">
             </a>
             
+            <div class="d-flex align-items-center gap-2">
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarMain">
                 <span class="navbar-toggler-icon"></span>
             </button>
+            <button type="button" class="nav-icon-btn theme-toggle d-lg-none" id="themeToggleMobile" title="Тёмная тема" aria-label="Переключить тему">
+                <i class="fas fa-moon"></i>
+                <i class="fas fa-sun"></i>
+            </button>
+            </div>
             
             <div class="collapse navbar-collapse" id="navbarMain">
                 <ul class="navbar-nav me-auto mb-2 mb-lg-0">
@@ -1254,7 +1260,7 @@
                     <input class="form-control me-2" type="search" name="q" placeholder="IQOS, TEREA, ILUMA..." title="Введите название: IQOS, TEREA, стики, устройство" style="width: 200px;">
                     <button class="btn btn-outline-success" type="submit"><i class="fas fa-search"></i></button>
                 </form>
-                    <button type="button" class="nav-icon-btn theme-toggle" id="themeToggle" title="Тёмная тема" aria-label="Переключить тему">
+                    <button type="button" class="nav-icon-btn theme-toggle d-none d-lg-flex" id="themeToggle" title="Тёмная тема" aria-label="Переключить тему">
                         <i class="fas fa-moon"></i>
                         <i class="fas fa-sun"></i>
                     </button>
@@ -1557,14 +1563,14 @@
                 $('.catalog-categories-toggle').on('keydown', function(e) {
                     if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); this.click(); }
                 });
-                $('#themeToggle').on('click', function() {
+                $('#themeToggle, #themeToggleMobile').on('click', function() {
                     var html = document.documentElement;
                     var theme = html.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
                     html.setAttribute('data-theme', theme);
                     localStorage.setItem('theme', theme);
-                    $(this).attr('title', theme === 'dark' ? 'Светлая тема' : 'Тёмная тема');
+                    $('#themeToggle, #themeToggleMobile').attr('title', theme === 'dark' ? 'Светлая тема' : 'Тёмная тема');
                 });
-                $('#themeToggle').attr('title', document.documentElement.getAttribute('data-theme') === 'dark' ? 'Светлая тема' : 'Тёмная тема');
+                $('#themeToggle, #themeToggleMobile').attr('title', document.documentElement.getAttribute('data-theme') === 'dark' ? 'Светлая тема' : 'Тёмная тема');
                 updateCartCounter();
                 var $backToTop = $('#backToTopBtn');
                 function toggleBackToTop() {
