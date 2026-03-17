@@ -487,6 +487,19 @@ sudo systemctl restart lilstore lilstore-bot
 | Работа сайта (Nginx читает статику) | `www-data` | `sudo chown -R www-data:www-data /home/lilstore/my_shop/static` |
 | После git pull | → `www-data` | Всегда менять права на static обратно |
 
+**Перенос баннеров из локальной БД на прод:**
+
+1. Локально: `py export_banners.py` — создаёт `banners_export.json`
+2. Закоммитьте и запушьте (включая `banners_export.json`)
+3. На проде после `git pull`:
+   ```bash
+   cd /home/lilstore/my_shop
+   source venv/bin/activate
+   python3 import_banners.py --replace
+   sudo systemctl restart lilstore lilstore-bot
+   ```
+   Флаг `--replace` удаляет старые баннеры и импортирует новые. Без флага — добавит к существующим.
+
 ---
 
 ## Частые проблемы
