@@ -197,16 +197,20 @@
     .carousel-nav-wrapper { padding: 0 2.5rem; }
 }
 @media (max-width: 576px) {
-    .carousel-nav-wrapper { padding: 0 2rem; overflow: hidden; }
-    .psc-wrap { overflow: hidden; }
+    .carousel-nav-wrapper { padding: 0 2.5rem; }
     .psc-viewport { overflow: hidden; }
-    .psc-prev { left: 4px; width: 40px; height: 40px; }
-    .psc-next { right: 4px; width: 40px; height: 40px; }
+    .psc-prev { left: 0; width: 44px; height: 44px; min-width: 44px; }
+    .psc-next { right: 0; width: 44px; height: 44px; min-width: 44px; }
     .psc-prev .carousel-control-prev-icon, .psc-next .carousel-control-next-icon { background-size: 1.2rem; }
     .psc-track { gap: 0.5rem; }
     h2.mb-4 { font-size: 1.35rem; margin-bottom: 1rem !important; }
-    .psc-item .product-card { padding: 10px; }
-    .psc-item .product-card-img-wrap { margin-bottom: 0.5rem; }
+    /* Фикс для мобильных: компактные карточки, 2 в ряд */
+    .psc-item { flex: 0 0 155px !important; min-width: 155px; width: 155px; }
+    .psc-item .product-card { padding: 8px; }
+    .psc-item .product-card-img-wrap { margin-bottom: 0.4rem; aspect-ratio: 1; min-height: 0 !important; }
+    .psc-item .product-card .product-title { font-size: 0.85rem; min-height: 2.2em; }
+    .psc-item .product-card .product-price { font-size: 1rem; }
+    .psc-item .product-card .btn-sm { padding: 0.25rem 0.4rem; font-size: 0.75rem; }
 }
 </style>
 {% endblock %}
@@ -639,6 +643,7 @@
     function init() {
         ['hitCarousel', 'newCarousel', 'reviewsCarousel'].forEach(initScrollCarousel);
         document.addEventListener('mousedown', handleCarouselClick, true);
+        document.addEventListener('touchstart', handleCarouselClick, { passive: false, capture: true });
     }
     if (document.readyState === 'loading') {
         document.addEventListener('DOMContentLoaded', init);

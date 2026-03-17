@@ -133,7 +133,7 @@
             box-shadow: 0 2px 12px rgba(0,136,204,0.4);
         }
         .navbar-telegram-icon i { font-size: 1.2rem; }
-        .catalog-categories-toggle { border: none; background: transparent; padding: 0.5rem 0.25rem; margin-left: -2px; cursor: pointer; }
+        .catalog-categories-toggle { border: none; background: transparent; padding: 0.5rem 0.25rem; margin-left: 6px; cursor: pointer; }
         .catalog-categories-toggle::after { margin-left: 0; }
         /* Подсказки при поиске (автодополнение) */
         .search-suggestions-wrap { display: inline-flex; }
@@ -463,10 +463,13 @@
         @media (max-width: 768px) {
             .promo-slide-inner { flex-direction: column; min-height: auto; }
             .promo-slide-badge { top: 12px; left: 16px; padding: 5px 10px; font-size: 0.7rem; }
-            .promo-slide-img-wrap { flex: none; justify-content: center; min-height: 180px; overflow: hidden; }
-            .promo-slide-img-wrap img { max-height: 180px; width: 100%; object-fit: contain; object-position: center; transform: none !important; }
-            .promo-slide-caption-wrap { align-items: center; text-align: center; padding: 20px 16px; }
+            .promo-slide-img-wrap { flex: none; justify-content: center; min-height: 160px; overflow: hidden; }
+            .promo-slide-img-wrap img { max-height: 160px; width: 100%; object-fit: contain; object-position: center; transform: none !important; }
+            .promo-slide-caption-wrap { align-items: center; text-align: center; padding: 20px 16px 75px; }
             .promo-slide-caption-wrap h2 { font-size: 1.25rem; }
+            .promo-slide-btn { padding: 10px 20px; font-size: 0.9rem; }
+            .promo-carousel-nav { bottom: 12px; left: 50%; right: auto; transform: translateX(-50%); gap: 8px; }
+            .promo-nav-btn { width: 38px; height: 38px; }
         }
         /* Мобильная адаптация: карточки товаров компактнее */
         @media (max-width: 576px) {
