@@ -41,7 +41,7 @@
 /* Карусель: видно 4 товара / 3 отзыва, скролл по 1, бесконечный цикл, только целые карточки */
 .psc-wrap { position: relative; overflow: visible; }
 .psc-viewport {
-    width: 100%; overflow: hidden;
+    width: 100%; min-width: 0; overflow: hidden;
     container-type: inline-size;
     container-name: psc;
 }
@@ -87,6 +87,12 @@
     display: flex; justify-content: center; gap: 8px; margin-top: 1rem; padding-bottom: 0.5rem;
 }
 .psc-reviews .psc-indicators { margin-top: 0.35rem; padding-bottom: 0.25rem; }
+.reviews-telegram-link { text-align: left; }
+.reviews-telegram-link a { color: inherit; text-decoration: underline; }
+.reviews-telegram-link a:hover { opacity: 0.9; }
+[data-theme="dark"] .reviews-telegram-link { color: var(--text-muted); }
+[data-theme="dark"] .reviews-telegram-link a { color: var(--text-muted); }
+[data-theme="dark"] .reviews-telegram-link a:hover { color: var(--text); }
 .psc-indicators button {
     width: 8px; height: 8px; border-radius: 50%; border: none; padding: 0;
     background-color: rgba(0,0,0,0.25); cursor: pointer; transition: background 0.2s;
@@ -96,12 +102,11 @@
 [data-theme="dark"] .psc-indicators button { background-color: rgba(255,255,255,0.35); }
 [data-theme="dark"] .psc-indicators button.active { background-color: #6ea8fe; }
 [data-theme="dark"] .psc-indicators button:hover:not(.active) { background-color: rgba(255,255,255,0.5); }
-/* Reviews: видно 3 отзыва, целые карточки */
+/* Reviews: видно 3 отзыва, целые карточки между стрелками */
 .rsc-track { padding: 1rem 0; }
 .psc-reviews-viewport { container-name: rsc; }
-.rsc-item { flex: 0 0 calc((100cqw - 2 * 1rem) / 3); min-width: 0; flex-shrink: 0; }
-@container rsc (max-width: 700px) { .rsc-item { flex: 0 0 calc((100cqw - 1 * 1rem) / 2); } }
-@container rsc (max-width: 400px) { .rsc-item { flex: 0 0 100%; } }
+.rsc-item { flex: 0 0 calc((100cqw - 2 * 1rem) / 3); min-width: 0; flex-shrink: 0; max-width: 100%; }
+@container rsc (max-width: 768px) { .rsc-item { flex: 0 0 100cqw; width: 100cqw; min-width: 100cqw; max-width: 100cqw; } }
 .product-carousel .carousel-control-prev,
 .product-carousel .carousel-control-next,
 .reviews-carousel .carousel-control-prev,
@@ -197,10 +202,17 @@
     .carousel-nav-wrapper { padding: 0 2.5rem; }
 }
 @media (max-width: 576px) {
-    .carousel-nav-wrapper { padding: 0 2.5rem; }
+    /* Стрелки в padding-зоне: обёртка выходит за контейнер, стрелки не перекрывают карточки */
+    .carousel-nav-wrapper { margin-left: -0.75rem; margin-right: -0.75rem; padding: 0 3.5rem; overflow: visible; }
+    /* Отзывы: карточка = 100% viewport, полностью между стрелками */
+    .carousel-nav-wrapper-reviews { padding: 0 4rem !important; }
+    .psc-reviews .rsc-item { flex: 0 0 100cqw !important; width: 100cqw !important; min-width: 100cqw !important; max-width: 100cqw !important; box-sizing: border-box; }
+    .psc-reviews .review-card { box-sizing: border-box; width: 100%; max-width: 100%; overflow: hidden; }
+    .psc-reviews .review-card { min-height: 180px; padding: 1rem 1.25rem; }
+    .psc-reviews .review-card p { -webkit-line-clamp: 3; }
     .psc-viewport { overflow: hidden; }
-    .psc-prev { left: 0; width: 44px; height: 44px; min-width: 44px; }
-    .psc-next { right: 0; width: 44px; height: 44px; min-width: 44px; }
+    .psc-prev { left: -44px; width: 44px; height: 44px; min-width: 44px; }
+    .psc-next { right: -44px; width: 44px; height: 44px; min-width: 44px; }
     .psc-prev .carousel-control-prev-icon, .psc-next .carousel-control-next-icon { background-size: 1.2rem; }
     .psc-track { gap: 0.5rem; }
     h2.mb-4 { font-size: 1.35rem; margin-bottom: 1rem !important; }
@@ -250,19 +262,17 @@
             {% endif %}
             <div class="carousel-item {% if loop.first %}active{% endif %}">
                 <div class="promo-slide-inner {{ slide_bg }}{% if not slide_img and slide_badge == 'telegram' %} promo-slide-telegram-only{% endif %}">
-                    {% if slide_badge %}<span class="promo-slide-badge promo-badge-{{ slide_badge }}">{{ {'telegram':'Telegram','promo':'Акция','bonus':'Бонус','hit':'Хит','new':'Новинка'}[slide_badge] }}</span>{% endif %}
                     {% if slide_img %}
-                    <a href="{{ slide_link }}" class="promo-slide-img-wrap d-block text-decoration-none">
-                        <img src="{{ url_for('static', filename=img_path + slide_img) }}" alt="{{ slide_title }}" {% if not loop.first %}loading="lazy"{% endif %}>
-                    </a>
+                    <div class="promo-slide-bg" style="background-image: url('{{ url_for('static', filename=img_path + slide_img) }}');" role="img" aria-label="{{ slide_title }}"></div>
+                    <a href="{{ slide_link }}" class="promo-slide-bg-link" aria-label="{{ slide_title }}"></a>
                     {% elif slide_badge != 'telegram' %}
-                    <a href="{{ slide_link }}" class="promo-slide-img-wrap d-block text-decoration-none">
-                        <div class="promo-carousel-placeholder d-flex align-items-center justify-content-center w-100">
-                            <i class="fab fa-telegram fa-5x opacity-50 me-3"></i>
-                            <span>{{ slide_title }}</span>
-                        </div>
-                    </a>
+                    <div class="promo-slide-bg promo-slide-bg-placeholder">
+                        <i class="fab fa-telegram fa-5x opacity-50 me-3"></i>
+                        <span>{{ slide_title }}</span>
+                    </div>
+                    <a href="{{ slide_link }}" class="promo-slide-bg-link promo-slide-bg-link-placeholder" aria-label="{{ slide_title }}"></a>
                     {% endif %}
+                    {% if slide_badge %}<span class="promo-slide-badge promo-badge-{{ slide_badge }}">{{ {'telegram':'Telegram','promo':'Акция','bonus':'Бонус','hit':'Хит','new':'Новинка'}[slide_badge] }}</span>{% endif %}
                     <div class="promo-slide-caption-wrap">
                         <h2>{{ slide_title }}</h2>
                         {% if slide_product %}
@@ -277,6 +287,7 @@
                         {% endif %}
                         <a href="{{ slide_link }}" class="btn promo-slide-btn btn-lg">{{ slide_btn }}</a>
                     </div>
+                    {% if not slide_img and slide_badge == 'telegram' %}<a href="{{ slide_link }}" class="promo-slide-bg-link" aria-label="{{ slide_title }}"></a>{% endif %}
                 </div>
             </div>
             {% endfor %}
@@ -286,6 +297,9 @@
         <button class="promo-nav-btn" type="button" data-bs-target="#promoCarousel" data-bs-slide="prev" aria-label="Назад"><span class="carousel-control-prev-icon"></span></button>
         <button class="promo-nav-btn" type="button" data-bs-target="#promoCarousel" data-bs-slide="next" aria-label="Вперёд"><span class="carousel-control-next-icon"></span></button>
     </div>
+</div>
+<div class="d-block d-md-none text-center my-3">
+    <a href="{{ url_for('catalog') }}" class="btn btn-primary btn-lg w-100 catalog-entry-btn">В каталог</a>
 </div>
 {% endif %}
 
@@ -451,7 +465,7 @@
 <!-- Почему нам доверяют — карусель (скролл по 1 карточке) -->
 <h2 class="mb-4 mt-5 fw-bold">Почему нам доверяют</h2>
 {% if recent_reviews %}
-<div class="carousel-nav-wrapper mb-5">
+<div class="carousel-nav-wrapper carousel-nav-wrapper-reviews mb-5">
 <div class="psc-wrap psc-reviews" id="reviewsCarousel">
     <div class="psc-arrows-area">
         <div class="psc-viewport psc-reviews-viewport">
@@ -481,6 +495,9 @@
     {% if recent_reviews|length > 1 %}
     <div class="psc-indicators" id="reviewsCarouselIndicators"></div>
     {% endif %}
+    <div class="reviews-telegram-link mt-2 small text-muted">
+        Больше отзывов в телеграм боте: <a href="{{ telegram_bot_url or 'https://t.me/iluma_prime_bot' }}" target="_blank" rel="noopener">@iluma_prime_bot</a>
+    </div>
 </div>
 </div>
 {% endif %}
@@ -618,6 +635,24 @@
         }
 
         updateIndicators();
+
+        /* Свайп пальцем на мобильных */
+        var touchStartX = 0;
+        var touchEndX = 0;
+        var minSwipe = 50;
+        function onTouchStart(e) {
+            if (e.touches.length) touchStartX = e.touches[0].clientX;
+        }
+        function onTouchEnd(e) {
+            if (e.changedTouches.length) touchEndX = e.changedTouches[0].clientX;
+            var delta = touchStartX - touchEndX;
+            if (delta > minSwipe) doNext();
+            else if (delta < -minSwipe) doPrev();
+        }
+        if (viewport) {
+            viewport.addEventListener('touchstart', onTouchStart, { passive: true });
+            viewport.addEventListener('touchend', onTouchEnd, { passive: true });
+        }
 
         window.addEventListener('resize', function() {
             visibleCount = getVisibleCount();

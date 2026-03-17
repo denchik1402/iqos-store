@@ -16,6 +16,7 @@ jobs:
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           script: |
             cd /home/lilstore/my_shop
+            git config --global --add safe.directory /home/lilstore/my_shop
             git pull origin main
             source venv/bin/activate
             pip install -r requirements.txt --quiet
