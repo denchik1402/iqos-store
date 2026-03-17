@@ -460,6 +460,8 @@ cd /home/lilstore/my_shop
 git pull
 source venv/bin/activate
 pip install -r requirements.txt
+# Если добавили новые фото в папки товаров — обновить галереи в БД:
+python update_product_galleries.py
 exit
 sudo systemctl restart lilstore lilstore-bot
 ```
