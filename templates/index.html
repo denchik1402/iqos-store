@@ -250,19 +250,17 @@
             {% endif %}
             <div class="carousel-item {% if loop.first %}active{% endif %}">
                 <div class="promo-slide-inner {{ slide_bg }}{% if not slide_img and slide_badge == 'telegram' %} promo-slide-telegram-only{% endif %}">
-                    {% if slide_badge %}<span class="promo-slide-badge promo-badge-{{ slide_badge }}">{{ {'telegram':'Telegram','promo':'Акция','bonus':'Бонус','hit':'Хит','new':'Новинка'}[slide_badge] }}</span>{% endif %}
                     {% if slide_img %}
-                    <a href="{{ slide_link }}" class="promo-slide-img-wrap d-block text-decoration-none">
-                        <img src="{{ url_for('static', filename=img_path + slide_img) }}" alt="{{ slide_title }}" {% if not loop.first %}loading="lazy"{% endif %}>
-                    </a>
+                    <div class="promo-slide-bg" style="background-image: url('{{ url_for('static', filename=img_path + slide_img) }}');" role="img" aria-label="{{ slide_title }}"></div>
+                    <a href="{{ slide_link }}" class="promo-slide-bg-link" aria-label="{{ slide_title }}"></a>
                     {% elif slide_badge != 'telegram' %}
-                    <a href="{{ slide_link }}" class="promo-slide-img-wrap d-block text-decoration-none">
-                        <div class="promo-carousel-placeholder d-flex align-items-center justify-content-center w-100">
-                            <i class="fab fa-telegram fa-5x opacity-50 me-3"></i>
-                            <span>{{ slide_title }}</span>
-                        </div>
-                    </a>
+                    <div class="promo-slide-bg promo-slide-bg-placeholder">
+                        <i class="fab fa-telegram fa-5x opacity-50 me-3"></i>
+                        <span>{{ slide_title }}</span>
+                    </div>
+                    <a href="{{ slide_link }}" class="promo-slide-bg-link promo-slide-bg-link-placeholder" aria-label="{{ slide_title }}"></a>
                     {% endif %}
+                    {% if slide_badge %}<span class="promo-slide-badge promo-badge-{{ slide_badge }}">{{ {'telegram':'Telegram','promo':'Акция','bonus':'Бонус','hit':'Хит','new':'Новинка'}[slide_badge] }}</span>{% endif %}
                     <div class="promo-slide-caption-wrap">
                         <h2>{{ slide_title }}</h2>
                         {% if slide_product %}
@@ -277,6 +275,7 @@
                         {% endif %}
                         <a href="{{ slide_link }}" class="btn promo-slide-btn btn-lg">{{ slide_btn }}</a>
                     </div>
+                    {% if not slide_img and slide_badge == 'telegram' %}<a href="{{ slide_link }}" class="promo-slide-bg-link" aria-label="{{ slide_title }}"></a>{% endif %}
                 </div>
             </div>
             {% endfor %}

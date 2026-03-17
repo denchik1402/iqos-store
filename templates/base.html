@@ -374,21 +374,34 @@
         .promo-badge-bonus { background: linear-gradient(135deg, #ffc107, #e0a800); color: #1a1a2e; }
         .promo-badge-hit { background: linear-gradient(135deg, #28a745, #1e7e34); color: white; }
         .promo-badge-new { background: linear-gradient(135deg, #6f42c1, #5a32a3); color: white; }
-        .promo-slide-img-wrap {
-            flex: 0 0 58%;
+        .promo-slide-bg {
+            position: absolute;
+            left: 0;
+            top: 0;
+            bottom: 0;
+            width: 58%;
+            background-size: contain;
+            background-repeat: no-repeat;
+            background-position: right center;
+            z-index: 0;
+        }
+        .promo-slide-bg-link {
+            position: absolute;
+            left: 0;
+            top: 0;
+            bottom: 0;
+            width: 58%;
+            z-index: 1;
+        }
+        .promo-slide-bg-placeholder {
             display: flex;
             align-items: center;
-            justify-content: flex-end;
-            padding: 20px;
-            overflow: hidden;
-            color: inherit;
-        }
-        .promo-slide-img-wrap img {
-            max-height: 380px;
-            width: auto;
-            object-fit: contain;
-            object-position: right center;
-            transform: translateX(50%);
+            justify-content: center;
+            min-height: 280px;
+            width: 58%;
+            background: linear-gradient(135deg, #0d6efd 0%, #084298 100%);
+            color: white;
+            font-size: 1.5rem;
         }
         .promo-slide-caption-wrap {
             flex: 1;
@@ -398,6 +411,8 @@
             align-items: flex-end;
             padding: 40px 50px 40px 20px;
             text-align: right;
+            position: relative;
+            z-index: 2;
         }
         .promo-slide-caption-wrap h2 {
             font-size: 1.75rem;
@@ -437,14 +452,7 @@
             transform: translateY(-3px) scale(1.02);
             box-shadow: 0 8px 24px rgba(0,0,0,0.45);
         }
-        .promo-carousel-placeholder {
-            min-height: 280px;
-            width: 100%;
-            background: linear-gradient(135deg, #0d6efd 0%, #084298 100%);
-            color: white;
-            font-size: 1.5rem;
-        }
-        .promo-slide-telegram .promo-slide-img-wrap .promo-carousel-placeholder {
+        .promo-slide-telegram-only .promo-slide-bg-placeholder {
             background: linear-gradient(135deg, #0088cc 0%, #229ED9 100%);
         }
         .promo-slide-telegram-only .promo-slide-caption-wrap {
@@ -452,6 +460,11 @@
             max-width: 100%;
             align-items: center;
             text-align: center;
+        }
+        .promo-slide-telegram-only .promo-slide-bg-link {
+            position: absolute;
+            inset: 0;
+            z-index: 1;
         }
         .promo-carousel a {
             text-decoration: none;
@@ -461,14 +474,51 @@
         [data-theme="dark"] .promo-carousel-indicators button.active { background-color: white; }
         [data-theme="dark"] .promo-slide-btn { background: #fff !important; color: #1a1a2e !important; }
         @media (max-width: 768px) {
-            .promo-slide-inner { flex-direction: column; min-height: auto; }
+            .promo-carousel .carousel-item { min-height: 380px; }
+            .promo-slide-inner {
+                flex-direction: column;
+                min-height: 380px;
+                height: 380px;
+            }
             .promo-slide-badge { top: 12px; left: 16px; padding: 5px 10px; font-size: 0.7rem; }
-            .promo-slide-img-wrap { flex: none; justify-content: center; min-height: 160px; overflow: hidden; }
-            .promo-slide-img-wrap img { max-height: 160px; width: 100%; object-fit: contain; object-position: center; transform: none !important; }
-            .promo-slide-caption-wrap { align-items: center; text-align: center; padding: 20px 16px 75px; }
+            .promo-slide-bg {
+                left: 0;
+                top: 0;
+                right: 0;
+                bottom: 0;
+                width: 100%;
+                background-size: cover;
+                background-position: center;
+            }
+            .promo-slide-bg::after {
+                content: '';
+                position: absolute;
+                inset: 0;
+                background: linear-gradient(to top, rgba(0,0,0,0.6) 0%, rgba(0,0,0,0.2) 40%, transparent 70%);
+                pointer-events: none;
+            }
+            .promo-slide-bg-link {
+                left: 0;
+                top: 0;
+                right: 0;
+                bottom: 0;
+                width: 100%;
+            }
+            .promo-slide-bg-placeholder {
+                width: 100%;
+                min-height: 100%;
+            }
+            .promo-slide-caption-wrap {
+                align-items: center;
+                text-align: center;
+                padding: 20px 16px 70px;
+                justify-content: center;
+            }
             .promo-slide-caption-wrap h2 { font-size: 1.25rem; }
             .promo-slide-btn { padding: 10px 20px; font-size: 0.9rem; }
-            .promo-carousel-nav { bottom: 12px; left: 50%; right: auto; transform: translateX(-50%); gap: 8px; }
+            .promo-carousel-nav { bottom: 16px; right: 16px; left: auto; transform: none; gap: 8px; }
+            .promo-carousel-indicators { bottom: 16px; left: 16px; transform: none; right: auto; }
+            .promo-carousel-indicators button { width: 18px; height: 5px; }
             .promo-nav-btn { width: 38px; height: 38px; }
         }
         /* Мобильная адаптация: карточки товаров компактнее */
