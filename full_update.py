@@ -621,7 +621,7 @@ IMAGE_MAP = {
     'IQOS Iluma i Prime Garnet Red': 'Devices/IQOS Iluma i Prime Garnet Red/iqos_4.1_iluma_core_prime_i_garnet_red_without_terea_@1.5x-n.png',
     'IQOS Iluma i Prime Aspen Green': 'Devices/IQOS Iluma i Prime Aspen Green/iqos-iluma-i-prime-aspen-green-photoroom-1-768x645.png',
     'IQOS ILUMA I PRIME SELETTI LIMITED EDITION': 'Devices/IQOS ILUMA I PRIME SELETTI LIMITED EDITION/iqos-iluma-i-prime-seletti-.webp',
-    'lil SOLID DUAL Чёрный Титан': 'Devices/lil SOLID DUAL Чёрный Титан/9c489a07101e290c762e07d9760629c8.jpg',
+    'lil SOLID DUAL Чёрный Титан': 'Devices/lil SOLID DUAL Чёрный Титан/9c489a07101e290c762e07d9760629c8.png',
     'lil SOLID DUAL Зелёный Кобальт': 'Devices/lil SOLID DUAL Зелёный Кобальт/311x172_1x_1x.webp',
     'lil SOLID DUAL Белый Хром': 'Devices/lil SOLID DUAL Белый Хром/35d65367-91c0-4cb6-8d32-67221e0264f6.800x600.png',
     'lil SOLID DUAL Красная Медь': 'Devices/lil SOLID DUAL Красная Медь/76ddcd14-430b-4c70-86c7-8af308d1a336.800x600.png',
