@@ -187,9 +187,22 @@
     border: 2px solid #fff;
     box-shadow: 0 1px 3px rgba(0,0,0,0.2);
 }
+/* Панель: поделиться, сортировка, вид — одинаковая высота, выровнены */
+.catalog-toolbar-actions {
+    display: flex; align-items: center; flex-wrap: wrap; gap: 0.5rem;
+}
+.catalog-toolbar-actions .btn,
+.catalog-toolbar-actions .dropdown .btn,
+.catalog-toolbar-actions .btn-group .btn {
+    height: 38px; min-height: 38px;
+    padding: 0 0.75rem;
+    display: inline-flex; align-items: center; justify-content: center;
+    line-height: 1;
+}
+.catalog-toolbar-actions .dropdown .btn { min-width: 140px; justify-content: space-between; }
 /* Переключатель вида */
 .view-switcher .btn.active { background: #0d6efd; color: #fff !important; border-color: #0d6efd; }
-.view-switcher .btn { padding: 0.35rem 0.6rem; }
+.view-switcher .btn { padding: 0 0.6rem; }
 /* Вид списком */
 .catalog-list .product-card {
     display: flex;
@@ -259,6 +272,8 @@
 [data-theme="dark"] .breadcrumb-item a { color: #6ea8fe; }
 [data-theme="dark"] .breadcrumb-item.active { color: var(--text-muted); }
 [data-theme="dark"] .form-select { background: var(--bg-input); border-color: var(--border); color: var(--text); }
+[data-theme="dark"] .catalog-toolbar-actions .btn-outline-secondary { border-color: var(--border); color: var(--text); }
+[data-theme="dark"] .catalog-toolbar-actions .btn-outline-secondary:hover { background: var(--bg-input); color: var(--text); border-color: var(--text-muted); }
 </style>
 
 <!-- Хлебные крошки -->
@@ -410,12 +425,12 @@
     <div class="col-md-9">
         <div class="d-flex flex-wrap align-items-center justify-content-between gap-2 mb-4">
             <h1 class="mb-0">{% if category %}{{ category.name }}{% else %}Все товары{% endif %}</h1>
-            <div class="d-flex align-items-center gap-2">
+            <div class="d-flex align-items-center gap-2 catalog-toolbar-actions">
                 <button type="button" class="btn btn-outline-secondary btn-sm" id="catalogShareBtn" title="Копировать ссылку с фильтрами">
                     <i class="fas fa-share-alt me-1"></i>Поделиться
                 </button>
                 <div class="dropdown">
-                    <button class="btn btn-outline-secondary dropdown-toggle" type="button" id="sortDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                    <button class="btn btn-outline-secondary btn-sm dropdown-toggle" type="button" id="sortDropdown" data-bs-toggle="dropdown" aria-expanded="false">
                         {% if filters.sort == 'price_asc' %}Сначала дешевле
                         {% elif filters.sort == 'price_desc' %}Сначала дороже
                         {% elif filters.sort == 'newest' %}Новинки

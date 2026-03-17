@@ -1821,19 +1821,21 @@ def populate_promo_and_hits():
 
 
 def populate_product_colors():
-    """Присваивает цвет товарам по названию/описанию (для фильтра каталога)."""
+    """Присваивает цвет товарам по названию/описанию (для фильтра каталога). Только товарам без цвета."""
     try:
         from assign_product_colors import detect_color
     except ImportError:
         return
     with app.app_context():
-        products = Product.query.all()
+        from sqlalchemy import or_
+        products = Product.query.filter(or_(Product.color.is_(None), Product.color == '')).all()
+        if not products:
+            return
         for p in products:
             color = detect_color(p.name, p.description)
             if color:
                 p.color = color
-        if products:
-            db.session.commit()
+        db.session.commit()
 
 
 def migrate_banner_badge():
@@ -1962,22 +1964,26 @@ def migrate_promo_and_order():
 
 
 if __name__ == '__main__':
-    with app.app_context():
-        # Схема БД — через Alembic (вместо ручных ALTER TABLE)
-        try:
-            from alembic_runner import run_alembic
-            run_alembic()
-        except Exception as e:
-            logger.warning("Alembic: %s (попытка db.create_all)", e)
-            db.create_all()
-        # Миграции данных (баннеры, цвета, хиты)
-        migrate_default_banners()
-        migrate_special_banners()
-        populate_product_colors()
-        if Category.query.count() == 0:
-            from create_test_data import create_test_data
-            create_test_data()
-        populate_promo_and_hits()
+    skip_migrations = os.environ.get('SKIP_STARTUP_MIGRATIONS', '').lower() in ('1', 'true', 'yes')
+    if skip_migrations:
+        logger.info("SKIP_STARTUP_MIGRATIONS=1 — пропуск Alembic и миграций данных")
+    if not skip_migrations:
+        with app.app_context():
+            # Схема БД — через Alembic (вместо ручных ALTER TABLE)
+            try:
+                from alembic_runner import run_alembic
+                run_alembic()
+            except Exception as e:
+                logger.warning("Alembic: %s (попытка db.create_all)", e)
+                db.create_all()
+            # Миграции данных (баннеры, цвета, хиты)
+            migrate_default_banners()
+            migrate_special_banners()
+            populate_product_colors()
+            if Category.query.count() == 0:
+                from create_test_data import create_test_data
+                create_test_data()
+            populate_promo_and_hits()
     
     debug = os.environ.get('FLASK_DEBUG', 'false').lower() in ('1', 'true', 'yes')
     app.run(debug=debug)
