@@ -508,3 +508,4 @@ sudo systemctl restart lilstore lilstore-bot
 | CI/CD падает | Проверьте секреты в GitHub, права sudo для lilstore |
 | config.py перезаписывается | config.py в .gitignore — на сервере не делайте `git checkout config.py` |
 | Permission denied при git reset | `git` требует владельца `lilstore`. Перед git: `sudo chown -R lilstore:lilstore /home/lilstore/my_shop`. После git: `sudo chown -R www-data:www-data /home/lilstore/my_shop/static` |
+| 500 при входе в админку | Проверьте логи: `sudo journalctl -u lilstore -n 100 --no-pager`. Убедитесь, что в config.py заданы `ADMIN_SECRET`, `SECRET_KEY`, `SITE_URL` (https://...). Для HTTPS нужен `SESSION_COOKIE_SECURE`. |

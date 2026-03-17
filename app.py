@@ -57,6 +57,14 @@ app.config['UPLOAD_FOLDER'] = 'static/images/products'
 app.config['BANNERS_FOLDER'] = 'static/images/banners'
 app.config['WTF_CSRF_ENABLED'] = True
 app.config['WTF_CSRF_CHECK_DEFAULT'] = True
+# Для HTTPS: сессия должна передаваться по Secure
+try:
+    import config
+    if getattr(config, 'SITE_URL', '').startswith('https://'):
+        app.config['SESSION_COOKIE_SECURE'] = True
+        app.config['SESSION_COOKIE_SAMESITE'] = 'Lax'
+except ImportError:
+    pass
 
 db.init_app(app)
 
@@ -139,6 +147,7 @@ def not_found_error(e):
 @app.errorhandler(500)
 def internal_error(e):
     """Страница 500 — ошибка сервера"""
+    logger.exception("500 Internal Server Error: %s", e)
     try:
         db.session.rollback()
     except Exception:
@@ -974,7 +983,7 @@ def admin():
 
 def _get_admin_secret():
     admin_secret = os.environ.get('ADMIN_SECRET')
-    if not admin_secret and os.path.exists('config.py'):
+    if not admin_secret and os.path.exists(_config_path):
         try:
             import config
             admin_secret = getattr(config, 'ADMIN_SECRET', None)
