@@ -14,23 +14,33 @@ jobs:
           host: ${{ secrets.SSH_HOST }}
           username: ${{ secrets.SSH_USER }}
           key: ${{ secrets.SSH_PRIVATE_KEY }}
+          command_timeout: 2m
           script: |
+            set -e
+            set -o pipefail
+            echo "=== 1. chown lilstore ==="
             sudo chown -R lilstore:lilstore /home/lilstore/my_shop
+            echo "=== 2. git pull ==="
             cd /home/lilstore/my_shop
             git config --global --add safe.directory /home/lilstore/my_shop
             git fetch origin main
             git reset --hard origin/main
+            echo "=== 3. pip install ==="
             source venv/bin/activate
             pip install -r requirements.txt --quiet
+            echo "=== 4. migrations ==="
             python3 -c "
             from app import app
             from alembic_runner import run_alembic
             with app.app_context():
                 run_alembic()
             " || python3 init_db.py
+            echo "=== 5. update_product_galleries ==="
             python3 update_product_galleries.py 2>/dev/null || true
+            echo "=== 6. chown www-data ==="
             sudo chown -R www-data:www-data /home/lilstore/my_shop/static
             sudo find /home/lilstore/my_shop/static -type d -exec chmod 755 {} \;
             sudo find /home/lilstore/my_shop/static -type f -exec chmod 644 {} \;
+            echo "=== 7. restart services ==="
             sudo systemctl restart lilstore lilstore-bot
-            echo "Deploy completed successfully"
+            echo "=== Deploy completed successfully ==="
