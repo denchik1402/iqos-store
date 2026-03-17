@@ -17,7 +17,8 @@ jobs:
           script: |
             cd /home/lilstore/my_shop
             git config --global --add safe.directory /home/lilstore/my_shop
-            git pull origin main
+            git fetch origin main
+            git reset --hard origin/main
             source venv/bin/activate
             pip install -r requirements.txt --quiet
             python3 -c "
@@ -26,5 +27,6 @@ jobs:
             with app.app_context():
                 run_alembic()
             " || python3 init_db.py
+            python3 update_product_galleries.py 2>/dev/null || true
             sudo systemctl restart lilstore lilstore-bot
             echo "Deploy completed successfully"
