@@ -322,7 +322,8 @@
         .promo-carousel-nav {
             position: absolute;
             bottom: 44px;
-            right: 20px;
+            left: 20px;
+            right: auto;
             display: flex;
             gap: 10px;
             z-index: 10;
@@ -374,24 +375,24 @@
         .promo-badge-bonus { background: linear-gradient(135deg, #ffc107, #e0a800); color: #1a1a2e; }
         .promo-badge-hit { background: linear-gradient(135deg, #28a745, #1e7e34); color: white; }
         .promo-badge-new { background: linear-gradient(135deg, #6f42c1, #5a32a3); color: white; }
-        /* Изображение (без фона): левый верхний угол ~2/3, градиент баннера — на всём слайде */
+        /* Изображение: десктоп — левая половина на всю высоту; мобильная — 2/3 сверху */
         .promo-slide-bg {
             position: absolute;
             left: 0;
             top: 0;
-            width: 66.67%;
-            height: 66.67%;
+            width: 50%;
+            height: 100%;
             background-size: contain;
             background-repeat: no-repeat;
-            background-position: left top;
+            background-position: left center;
             z-index: 0;
         }
         .promo-slide-bg-link {
             position: absolute;
             left: 0;
             top: 0;
-            width: 66.67%;
-            height: 66.67%;
+            width: 50%;
+            height: 100%;
             z-index: 1;
         }
         .promo-slide-bg-placeholder {
@@ -399,8 +400,8 @@
             align-items: center;
             justify-content: center;
             min-height: 200px;
-            width: 66.67%;
-            height: 66.67%;
+            width: 50%;
+            height: 100%;
             background: linear-gradient(135deg, #0d6efd 0%, #084298 100%);
             color: white;
             font-size: 1.5rem;
@@ -487,6 +488,22 @@
         }
         [data-theme="dark"] .catalog-entry-btn:hover {
             background: var(--bg-input) !important; color: var(--text) !important; border-color: var(--text-muted) !important;
+        }
+        /* Десктоп: явные стили, чтобы мобильные не «протекали» */
+        @media (min-width: 769px) {
+            .promo-slide-inner {
+                flex-direction: row;
+                min-height: 420px;
+            }
+            .promo-slide-bg {
+                width: 50%;
+                height: 100%;
+                background-position: left center;
+            }
+            .promo-slide-bg-link { width: 50%; height: 100%; }
+            .promo-slide-bg-placeholder { width: 50%; height: 100%; }
+            .promo-carousel-nav { left: 20px; right: auto; }
+            .promo-slide-caption-wrap { padding: 40px 50px 120px 20px; }
         }
         @media (max-width: 768px) {
             .promo-carousel .carousel-item { min-height: 380px; }
