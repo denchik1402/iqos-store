@@ -124,6 +124,12 @@ def health():
     return jsonify({"status": "ok"}), 200
 
 
+@app.route('/version')
+def version():
+    """Проверка версии деплоя — data-build в HTML должен совпадать"""
+    return jsonify({"build": "20240317-mobile"}), 200
+
+
 @app.errorhandler(404)
 def not_found_error(e):
     """Страница 404 — не найдена"""
