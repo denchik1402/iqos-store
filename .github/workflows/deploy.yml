@@ -15,6 +15,7 @@ jobs:
           username: ${{ secrets.SSH_USER }}
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           script: |
+            sudo chown -R lilstore:lilstore /home/lilstore/my_shop
             cd /home/lilstore/my_shop
             git config --global --add safe.directory /home/lilstore/my_shop
             git fetch origin main
@@ -28,5 +29,8 @@ jobs:
                 run_alembic()
             " || python3 init_db.py
             python3 update_product_galleries.py 2>/dev/null || true
+            sudo chown -R www-data:www-data /home/lilstore/my_shop/static
+            sudo find /home/lilstore/my_shop/static -type d -exec chmod 755 {} \;
+            sudo find /home/lilstore/my_shop/static -type f -exec chmod 644 {} \;
             sudo systemctl restart lilstore lilstore-bot
             echo "Deploy completed successfully"

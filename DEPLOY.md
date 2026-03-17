@@ -336,7 +336,7 @@ chmod 600 /home/lilstore/.ssh/authorized_keys
 | `SSH_HOST` | `104.128.141.177` |
 | `SSH_USER` | `lilstore` |
 
-### 4.4. Разрешите sudo для перезапуска сервисов
+### 4.4. Разрешите sudo для перезапуска сервисов и смены прав
 
 На сервере:
 
@@ -348,6 +348,8 @@ sudo visudo
 
 ```
 lilstore ALL=(ALL) NOPASSWD: /bin/systemctl restart lilstore, /bin/systemctl restart lilstore-bot
+lilstore ALL=(ALL) NOPASSWD: /usr/bin/chown
+lilstore ALL=(ALL) NOPASSWD: /usr/bin/find
 ```
 
 Сохраните (Ctrl+O, Enter, Ctrl+X).
@@ -455,16 +457,35 @@ sudo journalctl -u lilstore-bot -f
 
 **Обновление вручную (если CI/CD не сработал):**
 ```bash
+# 1. Права для Git (lilstore должен владеть проектом)
+sudo chown -R lilstore:lilstore /home/lilstore/my_shop
+
+# 2. Обновление кода
 su - lilstore
 cd /home/lilstore/my_shop
-git pull
+git fetch origin main
+git reset --hard origin/main
 source venv/bin/activate
-pip install -r requirements.txt
-# Если добавили новые фото в папки товаров — обновить галереи в БД:
-python update_product_galleries.py
+pip install -r requirements.txt --quiet
+python3 update_product_galleries.py
 exit
+
+# 3. Права для Nginx (www-data должен читать статику)
+sudo chown -R www-data:www-data /home/lilstore/my_shop/static
+sudo find /home/lilstore/my_shop/static -type d -exec chmod 755 {} \;
+sudo find /home/lilstore/my_shop/static -type f -exec chmod 644 {} \;
+
+# 4. Перезапуск
 sudo systemctl restart lilstore lilstore-bot
 ```
+
+**Права доступа (памятка):**
+
+| Операция | Владелец | Команда |
+|----------|----------|---------|
+| Git (pull, reset) | `lilstore` | `sudo chown -R lilstore:lilstore /home/lilstore/my_shop` |
+| Работа сайта (Nginx читает статику) | `www-data` | `sudo chown -R www-data:www-data /home/lilstore/my_shop/static` |
+| После git pull | → `www-data` | Всегда менять права на static обратно |
 
 ---
 
@@ -477,3 +498,4 @@ sudo systemctl restart lilstore lilstore-bot
 | Бот не отвечает | Проверьте `TELEGRAM_BOT_TOKEN` в config.py, логи: `sudo journalctl -u lilstore-bot -n 50` |
 | CI/CD падает | Проверьте секреты в GitHub, права sudo для lilstore |
 | config.py перезаписывается | config.py в .gitignore — на сервере не делайте `git checkout config.py` |
+| Permission denied при git reset | `git` требует владельца `lilstore`. Перед git: `sudo chown -R lilstore:lilstore /home/lilstore/my_shop`. После git: `sudo chown -R www-data:www-data /home/lilstore/my_shop/static` |
