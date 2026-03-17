@@ -307,15 +307,14 @@ def index():
         if banner_ids:
             fresh = {b.id: b for b in Banner.query.filter(Banner.id.in_(banner_ids)).options(joinedload(Banner.product)).all()}
             promo_slides = [fresh[b.id] if isinstance(b, Banner) else b for b in promo_slides]
-        # Учитываем показы (impressions) для баннеров
-        for bid in banner_ids:
-            try:
-                b = Banner.query.filter_by(id=bid).first()
-                if b:
+        # Учитываем показы (impressions) — один commit вместо N
+        try:
+            for b in promo_slides:
+                if isinstance(b, Banner):
                     b.impressions = (b.impressions or 0) + 1
-                    db.session.commit()
-            except Exception:
-                db.session.rollback()
+            db.session.commit()
+        except Exception:
+            db.session.rollback()
 
     hit_product_ids = {p.id for p in (hit_products or [])}
     
