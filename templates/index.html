@@ -46,12 +46,13 @@
     container-name: psc;
 }
 .psc-viewport.psc-reviews-viewport { container-name: rsc; }
-.psc-track { display: flex; gap: 1rem; padding: 0.5rem 0; transition: transform 0.3s ease-out; width: max-content; will-change: transform; }
+.psc-track { display: flex; gap: 0.75rem; padding: 0.5rem 0; transition: transform 0.3s ease-out; width: max-content; will-change: transform; }
 /* Карточки ровно 4 в ряд — целые, без обрезки */
-.psc-item { flex: 0 0 calc((100cqw - 3 * 1rem) / 4); min-width: 0; flex-shrink: 0; }
-@container psc (max-width: 900px) { .psc-item { flex: 0 0 calc((100cqw - 2 * 1rem) / 3); } }
-@container psc (max-width: 600px) { .psc-item { flex: 0 0 calc((100cqw - 1 * 1rem) / 2); } }
-@container psc (max-width: 400px) { .psc-item { flex: 0 0 100%; } }
+.psc-item { flex: 0 0 calc((100cqw - 3 * 0.75rem) / 4); min-width: 0; flex-shrink: 0; }
+@container psc (max-width: 900px) { .psc-item { flex: 0 0 calc((100cqw - 2 * 0.75rem) / 3); } }
+@container psc (max-width: 600px) { .psc-item { flex: 0 0 calc((100cqw - 1 * 0.75rem) / 2); } }
+/* На узких экранах — 2 карточки, компактно (не 1 на всю ширину) */
+@container psc (max-width: 400px) { .psc-item { flex: 0 0 calc((100cqw - 0.75rem) / 2); } }
 /* Стрелки: заливка и свечение при наведении */
 .psc-prev, .psc-next {
     position: absolute; top: 50%; transform: translateY(-50%); width: 56px; height: 56px;
@@ -194,6 +195,18 @@
     .premium-blocks .block-left { grid-row: auto; }
     .reviews-carousel .carousel-item .col-md-4 { max-width: 100%; }
     .carousel-nav-wrapper { padding: 0 2.5rem; }
+}
+@media (max-width: 576px) {
+    .carousel-nav-wrapper { padding: 0 2rem; overflow: hidden; }
+    .psc-wrap { overflow: hidden; }
+    .psc-viewport { overflow: hidden; }
+    .psc-prev { left: 4px; width: 40px; height: 40px; }
+    .psc-next { right: 4px; width: 40px; height: 40px; }
+    .psc-prev .carousel-control-prev-icon, .psc-next .carousel-control-next-icon { background-size: 1.2rem; }
+    .psc-track { gap: 0.5rem; }
+    h2.mb-4 { font-size: 1.35rem; margin-bottom: 1rem !important; }
+    .psc-item .product-card { padding: 10px; }
+    .psc-item .product-card-img-wrap { margin-bottom: 0.5rem; }
 }
 </style>
 {% endblock %}

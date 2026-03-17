@@ -87,6 +87,7 @@
             background: var(--bg-body);
             color: var(--text);
             transition: background 0.3s, color 0.3s;
+            overflow-x: hidden;
         }
         main {
             flex: 1;
@@ -182,6 +183,10 @@
             transform: translateY(-8px);
             border-color: #0d6efd;
         }
+        @media (hover: none) {
+            .product-card:hover { transform: none; }
+            .product-card:hover .product-card-img-wrap img { transform: none !important; }
+        }
         /* Единая высота изображений в карточках — контейнер фиксирует размер */
         .product-card-img-wrap {
             position: relative;
@@ -196,7 +201,7 @@
         .product-card-img-wrap img {
             width: 100% !important;
             height: 100% !important;
-            max-width: none !important;
+            max-width: 100% !important;
             object-fit: cover;
             display: block;
             transform-origin: center center;
@@ -458,9 +463,22 @@
         @media (max-width: 768px) {
             .promo-slide-inner { flex-direction: column; min-height: auto; }
             .promo-slide-badge { top: 12px; left: 16px; padding: 5px 10px; font-size: 0.7rem; }
-            .promo-slide-img-wrap { flex: none; justify-content: center; min-height: 220px; }
-            .promo-slide-img-wrap img { max-height: 200px; object-position: center; }
-            .promo-slide-caption-wrap { align-items: center; text-align: center; padding: 25px; }
+            .promo-slide-img-wrap { flex: none; justify-content: center; min-height: 180px; overflow: hidden; }
+            .promo-slide-img-wrap img { max-height: 180px; width: 100%; object-fit: contain; object-position: center; transform: none !important; }
+            .promo-slide-caption-wrap { align-items: center; text-align: center; padding: 20px 16px; }
+            .promo-slide-caption-wrap h2 { font-size: 1.25rem; }
+        }
+        /* Мобильная адаптация: карточки товаров компактнее */
+        @media (max-width: 576px) {
+            .product-card { padding: 12px; margin-bottom: 12px; }
+            .product-card-img-wrap { min-height: 0; aspect-ratio: 1; margin-bottom: 0.75rem; }
+            .product-card-img-wrap img { max-width: 100%; object-fit: cover; }
+            .product-card .product-title { min-height: 2.4em; font-size: 0.95rem; -webkit-line-clamp: 2; }
+            .product-card .product-price { font-size: 1.1rem; margin-bottom: 0.5rem; }
+            .product-card .d-grid { gap: 0.5rem !important; }
+            .product-card .btn-sm { padding: 0.35rem 0.5rem; font-size: 0.8rem; }
+            main.container { padding-left: 0.75rem; padding-right: 0.75rem; }
+            .navbar #headerSearchForm input[type="search"] { width: 140px !important; max-width: 100%; }
         }
         .review-card {
             border: 1px solid var(--border);
