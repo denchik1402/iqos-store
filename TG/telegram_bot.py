@@ -869,12 +869,15 @@ async def show_admin_menu(update_or_query, is_callback: bool):
 
     with app.app_context():
         users = TelegramUser.query.order_by(TelegramUser.role.desc(), TelegramUser.username).all()
-        text = "⚙️ <b>Admin — Назначение ролей</b>\n\nВыбери пользователя:"
+        text = "⚙️ <b>Admin — Назначение ролей</b>\n\nВыбери пользователя или найди по username:"
+        if not users:
+            text += "\n\n⚠️ В списке только те, кто уже написал боту (/start). Попросите человека отправить /start."
         keyboard = []
         for u in users[:30]:
             role_emoji = {"admin": "👑", "boss": "👔", "courier": "🚚", "user": "👤"}.get(u.role, "•")
             uname = f"@{u.username}" if u.username else str(u.telegram_id)
             keyboard.append([InlineKeyboardButton(f"{role_emoji} {uname} ({u.role})", callback_data=f"admin_user_{u.id}")])
+        keyboard.append([InlineKeyboardButton("➕ Найти по username", callback_data="admin_find_username")])
         keyboard.append([InlineKeyboardButton("◀️ Назад", callback_data="menu_main")])
         await send(text, InlineKeyboardMarkup(keyboard))
 
@@ -889,14 +892,22 @@ async def show_admin_user_role(update_or_query, user_db_id: int):
         if not u:
             await send("Пользователь не найден.")
             return
-        text = f"👤 {u.username or u.telegram_id}\nТекущая роль: {u.role}\n\nВыбери новую роль:"
-        keyboard = [
-            [InlineKeyboardButton("👤 Пользователь", callback_data=f"admin_set_{u.id}_user")],
-            [InlineKeyboardButton("🚚 Курьер", callback_data=f"admin_set_{u.id}_courier")],
-            [InlineKeyboardButton("👔 Boss", callback_data=f"admin_set_{u.id}_boss")],
-            [InlineKeyboardButton("👑 Admin", callback_data=f"admin_set_{u.id}_admin")],
+        text = f"👤 @{u.username or u.telegram_id}\nТекущая роль: {u.role}\n\nВыбери новую роль или отмени текущую:"
+        keyboard = []
+        if u.role != 'user':
+            keyboard.append([InlineKeyboardButton("❌ Отменить роль", callback_data=f"admin_set_{u.id}_user")])
+        keyboard.extend([
+            [
+                InlineKeyboardButton("👤 Пользователь", callback_data=f"admin_set_{u.id}_user"),
+                InlineKeyboardButton("🚚 Курьер", callback_data=f"admin_set_{u.id}_courier"),
+            ],
+            [
+                InlineKeyboardButton("👔 Boss", callback_data=f"admin_set_{u.id}_boss"),
+                InlineKeyboardButton("👑 Admin", callback_data=f"admin_set_{u.id}_admin"),
+            ],
+            [InlineKeyboardButton("➕ Найти по username", callback_data="admin_find_username")],
             [InlineKeyboardButton("◀️ Назад", callback_data="menu_admin")],
-        ]
+        ])
         await send(text, InlineKeyboardMarkup(keyboard))
 
 
@@ -1284,6 +1295,20 @@ async def handle_callback(update: Update, context: ContextTypes.DEFAULT_TYPE):
     if data == "menu_admin":
         await show_admin_menu(query, True)
         return
+    if data == "admin_find_username":
+        if not role_can_access(get_user_role(user_id), 'admin'):
+            await query.answer("⛔ Только для администратора.", show_alert=True)
+            return
+        context.user_data['awaiting_admin_username'] = True
+        await query.answer()
+        await query.edit_message_text(
+            "➕ <b>Найти по username</b>\n\n"
+            "Введите @username (без @ или с @).\n\n"
+            "⚠️ В списке только те, кто уже написал боту (/start). "
+            "Если человека нет — попросите его отправить /start боту.",
+            parse_mode='HTML'
+        )
+        return
     if data == "menu_admin_promo":
         await show_admin_promo_menu(query, True)
         return
@@ -1392,6 +1417,56 @@ async def handle_text_message(update: Update, context: ContextTypes.DEFAULT_TYPE
 
     if context.user_data.get('awaiting_checkout'):
         await handle_checkout_message(update, context)
+        return
+
+    # Admin: поиск пользователя по username для назначения роли
+    if context.user_data.get('awaiting_admin_username') and role_can_access(role, 'admin'):
+        context.user_data.pop('awaiting_admin_username', None)
+        raw = (update.message.text or '').strip().lstrip('@')
+        if not raw:
+            await update.message.reply_text("Введите username (например: denchik1402 или @denchik1402)")
+            return
+        app, db, Product, Category, Review, Order, OrderItem, TelegramUser, *_ = get_db()
+        with app.app_context():
+            search = raw.lower()
+            found = TelegramUser.query.filter(
+                db.func.lower(TelegramUser.username) == search
+            ).all()
+            if not found:
+                found = [u for u in TelegramUser.query.all() if u.username and search in u.username.lower()]
+        if not found:
+            await update.message.reply_text(
+                f"❌ Пользователь @{raw} не найден.\n\n"
+                "В списке только те, кто уже написал боту (/start). "
+                "Попросите человека отправить /start боту.",
+                parse_mode='HTML'
+            )
+            await update.message.reply_text("Выбери раздел:", reply_markup=_build_main_menu_keyboard(role), parse_mode='HTML')
+            return
+        u = found[0] if len(found) == 1 else None
+        if u:
+            text = f"👤 @{u.username or u.telegram_id}\nТекущая роль: {u.role}\n\nВыбери новую роль или отмени текущую:"
+            keyboard = []
+            if u.role != 'user':
+                keyboard.append([InlineKeyboardButton("❌ Отменить роль", callback_data=f"admin_set_{u.id}_user")])
+            keyboard.extend([
+                [
+                    InlineKeyboardButton("👤 Пользователь", callback_data=f"admin_set_{u.id}_user"),
+                    InlineKeyboardButton("🚚 Курьер", callback_data=f"admin_set_{u.id}_courier"),
+                ],
+                [
+                    InlineKeyboardButton("👔 Boss", callback_data=f"admin_set_{u.id}_boss"),
+                    InlineKeyboardButton("👑 Admin", callback_data=f"admin_set_{u.id}_admin"),
+                ],
+                [InlineKeyboardButton("➕ Найти по username", callback_data="admin_find_username")],
+                [InlineKeyboardButton("◀️ Назад", callback_data="menu_admin")],
+            ])
+            await update.message.reply_text(text, reply_markup=InlineKeyboardMarkup(keyboard), parse_mode='HTML')
+        else:
+            text = "Найдено несколько пользователей. Выбери:"
+            kb = [[InlineKeyboardButton(f"@{f.username} ({f.role})", callback_data=f"admin_user_{f.id}")] for f in found[:15]]
+            kb.append([InlineKeyboardButton("◀️ Назад", callback_data="menu_admin")])
+            await update.message.reply_text(text, reply_markup=InlineKeyboardMarkup(kb), parse_mode='HTML')
         return
 
     # Ответ staff на вопрос пользователя (reply к нашему сообщению)

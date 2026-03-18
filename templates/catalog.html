@@ -346,7 +346,8 @@
                 </div>
             </div>
             
-            <!-- Модель -->
+            <!-- Модель (показываем только если есть товары с моделью в категории) -->
+            {% if filter_models or filters.model %}
             <div class="filter-section">
                 <div class="filter-title" data-bs-toggle="collapse" data-bs-target="#filterModel" aria-expanded="false">
                     Модель <span class="chevron">▼</span>
@@ -366,8 +367,10 @@
                     {% endfor %}
                 </div>
             </div>
+            {% endif %}
             
-            <!-- Цвет -->
+            <!-- Цвет (показываем только если есть товары с цветом в категории) -->
+            {% if filter_colors or filters.color %}
             <div class="filter-section">
                 <div class="filter-title" data-bs-toggle="collapse" data-bs-target="#filterColor" aria-expanded="false">
                     Цвет <span class="chevron">▼</span>
@@ -387,6 +390,7 @@
                     {% endfor %}
                 </div>
             </div>
+            {% endif %}
             
             <!-- Показать -->
             <div class="filter-section">

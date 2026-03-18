@@ -1309,7 +1309,7 @@
                         <a class="nav-link" href="{{ url_for('catalog') }}">Каталог</a>
                         <div class="dropdown">
                             <button class="nav-link catalog-categories-toggle dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Категории" title="Категории"></button>
-                            <ul class="dropdown-menu">
+                        <ul class="dropdown-menu">
                                 <li><a class="dropdown-item" href="{{ url_for('catalog') }}">Все товары</a></li>
                                 {% if nav_categories %}
                                 <li><hr class="dropdown-divider"></li>
@@ -1317,7 +1317,7 @@
                                 <li><a class="dropdown-item" href="{{ url_for('catalog', category_slug=cat.slug) }}">{{ cat.name }}</a></li>
                                 {% endfor %}
                                 {% endif %}
-                            </ul>
+                        </ul>
                         </div>
                     </li>
                     <li class="nav-item">
@@ -1356,8 +1356,8 @@
                         <button type="button" class="nav-icon-btn nav-cart-btn" id="cart-sidebar-trigger" title="Корзина" aria-label="Открыть корзину">
                             <i class="fas fa-shopping-cart"></i>
                         </button>
-                        <span class="cart-counter" id="cart-counter">0</span>
-                    </div>
+                    <span class="cart-counter" id="cart-counter">0</span>
+                </div>
                 {% if telegram_bot_url %}
                 <a href="{{ telegram_bot_url }}" target="_blank" rel="noopener" class="navbar-telegram-wrap" title="Telegram">
                     <span class="navbar-telegram-icon">
@@ -1413,8 +1413,8 @@
                     <h5>Контакты</h5>
                     <p class="mb-1">+7 (985) 490-48-80</p>
                     <p class="mb-0"><a href="https://t.me/iluma_prime_bot" target="_blank" rel="noopener">@iluma_prime_bot</a></p>
+                    </div>
                 </div>
-            </div>
             <hr class="my-4" style="border-color: var(--border);">
             <div class="text-center">
                 <small class="text-muted">&copy; 2026 LIL STORE. Все права защищены.</small>
@@ -1637,8 +1637,8 @@
                 localStorage.setItem(COOKIE_KEY, 'true');
                 hideCookieBanner();
             });
-            
-            $(document).ready(function() {
+        
+        $(document).ready(function() {
                 $('.catalog-categories-toggle').on('keydown', function(e) {
                     if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); this.click(); }
                 });
@@ -1650,7 +1650,7 @@
                     $('#themeToggle, #themeToggleMobile').attr('title', theme === 'dark' ? 'Светлая тема' : 'Тёмная тема');
                 });
                 $('#themeToggle, #themeToggleMobile').attr('title', document.documentElement.getAttribute('data-theme') === 'dark' ? 'Светлая тема' : 'Тёмная тема');
-                updateCartCounter();
+            updateCartCounter();
                 var $backToTop = $('#backToTopBtn');
                 function toggleBackToTop() {
                     $backToTop.toggleClass('visible', window.pageYOffset > 300);

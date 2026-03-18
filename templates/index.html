@@ -307,7 +307,7 @@
 <div class="row text-center my-4 py-3">
     <div class="col-md-4 mb-3 mb-md-0">
         <div class="p-3 rounded-3 bg-white shadow-sm h-100">
-            <i class="fas fa-truck fa-3x text-primary mb-3"></i>
+        <i class="fas fa-truck fa-3x text-primary mb-3"></i>
             <h5 class="fw-bold">Быстрая доставка</h5>
             <p class="text-muted mb-0">Отправка в день заказа по всей России</p>
         </div>
@@ -382,7 +382,7 @@
 <div class="psc-wrap" id="newCarousel">
     <div class="psc-viewport">
     <div class="psc-track">
-        {% for product in new_products %}
+    {% for product in new_products %}
         <div class="psc-item">
             <div class="product-card position-relative h-100">
                 {% include 'includes/compare_btn.html' %}
@@ -392,11 +392,11 @@
                         {% set first_img = product.all_images[0] if product.all_images else product.image %}
                         {% if first_img %}
                         <img src="{{ url_for('static', filename='images/products/' + first_img) }}" class="img-fluid" alt="{{ product|product_alt }}" loading="lazy">
-                        {% else %}
+            {% else %}
                         <img src="https://via.placeholder.com/400" class="img-fluid" alt="{{ product|product_alt }}" loading="lazy">
-                        {% endif %}
+            {% endif %}
                     </div>
-                    <h5 class="product-title">{{ product.name }}</h5>
+            <h5 class="product-title">{{ product.name }}</h5>
                     <div class="product-price mb-2">{{ product.price|format_price }} ₽</div>
                 </a>
                 <div class="d-grid gap-2">
@@ -406,7 +406,7 @@
             </div>
         </div>
         {% endfor %}
-    </div>
+        </div>
     </div>
     {% if new_products|length > 1 %}
     <button type="button" class="psc-prev" data-psc="newCarousel" aria-label="Назад"><span class="carousel-control-prev-icon"></span></button>
@@ -434,8 +434,8 @@
             <h4>{{ blk.title }}</h4>
             {% if blk.description %}<p>{{ blk.description }}</p>{% endif %}
             {% if blk.button_text and blk.button_url %}<a href="{{ blk.button_url }}" class="btn btn-light btn-sm mt-2">{{ blk.button_text }}</a>{% endif %}
-        </div>
-        {% endfor %}
+    </div>
+    {% endfor %}
         {% else %}
         <div class="block block-left">
             <div class="block-img-container">
@@ -470,22 +470,22 @@
     <div class="psc-arrows-area">
         <div class="psc-viewport psc-reviews-viewport">
         <div class="psc-track rsc-track">
-            {% for review in recent_reviews %}
+    {% for review in recent_reviews %}
             <div class="rsc-item">
-                <div class="review-card">
+        <div class="review-card">
                     <i class="fas fa-quote-left text-primary opacity-25 mb-2" style="font-size: 1.5rem;"></i>
-                    <div class="rating">
-                        {% for i in range(review.rating) %}★{% endfor %}
-                        {% for i in range(5 - review.rating) %}☆{% endfor %}
-                    </div>
-                    <p class="mt-2">{{ review.text }}</p>
-                    <small class="text-muted">
-                        {{ review.customer_name }} • {{ review.created_at.strftime('%d.%m.%Y') }}
-                    </small>
-                </div>
+            <div class="rating">
+                {% for i in range(review.rating) %}★{% endfor %}
+                {% for i in range(5 - review.rating) %}☆{% endfor %}
             </div>
-            {% endfor %}
+            <p class="mt-2">{{ review.text }}</p>
+            <small class="text-muted">
+                {{ review.customer_name }} • {{ review.created_at.strftime('%d.%m.%Y') }}
+            </small>
         </div>
+    </div>
+    {% endfor %}
+</div>
         </div>
         {% if recent_reviews|length > 1 %}
         <button type="button" class="psc-prev" data-psc="reviewsCarousel" aria-label="Назад"><span class="carousel-control-prev-icon"></span></button>

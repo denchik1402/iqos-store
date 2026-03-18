@@ -215,7 +215,7 @@ ADMIN_SECRET = 'придумайте_надёжный_секрет'
 SECRET_KEY = 'сгенерируйте_ниже'
 TELEGRAM_DEFAULT_ADMIN = 'denchik1402'
 ILUMA_XLSX_PATH = ''   # можно пусто на сервере
-SITE_URL = 'http://104.128.141.177'   # или https://ваш-домен.ru
+SITE_URL = 'https://lilstore.ru'   # или http://104.128.141.177 до настройки SSL
 ```
 
 **Сгенерировать SECRET_KEY:**
@@ -387,7 +387,7 @@ git push
 
 ## Часть 5: Домен и SSL
 
-Если у вас есть домен (например lilstore.ru):
+Домен: **lilstore.ru**
 
 ### 5.1. Привяжите домен к серверу
 
@@ -402,7 +402,7 @@ git push
 
 ```bash
 sudo apt install -y certbot python3-certbot-nginx
-sudo certbot certonly --nginx -d ваш-домен.ru -d www.ваш-домен.ru --email your@email.com --agree-tos --non-interactive
+sudo certbot certonly --nginx -d lilstore.ru -d www.lilstore.ru --email your@email.com --agree-tos --non-interactive
 ```
 
 ### 5.3. Обновите Nginx
@@ -412,33 +412,37 @@ sudo certbot certonly --nginx -d ваш-домен.ru -d www.ваш-домен.r
 ### 5.4. Обновите config.py
 
 ```python
-SITE_URL = 'https://ваш-домен.ru'
+SITE_URL = 'https://lilstore.ru'
 ```
 
 ---
 
 ## Часть 6: Продвижение в поиске (SEO)
 
+Домен: **https://lilstore.ru**
+
 ### 6.1. Google Search Console
 
 1. Перейдите на https://search.google.com/search-console
 2. Войдите через Google-аккаунт
-3. **Добавить ресурс** → **URL-префикс** → введите `http://104.128.141.177` (или ваш домен)
+3. **Добавить ресурс** → **URL-префикс** → введите `https://lilstore.ru`
 4. Подтверждение: выберите **HTML-тег** — скопируйте meta-тег
 5. Добавьте его в `templates/base.html` в блок `<head>` (можно попросить разработчика)
-6. После подтверждения: **Файлы Sitemap** → добавьте `http://ваш-сайт/sitemap.xml`
+6. После подтверждения: **Файлы Sitemap** → добавьте `https://lilstore.ru/sitemap.xml`
 
 ### 6.2. Яндекс.Вебмастер
 
 1. Перейдите на https://webmaster.yandex.ru
 2. Войдите через Яндекс
-3. **Добавить сайт** → введите URL
+3. **Добавить сайт** → введите `https://lilstore.ru`
 4. Подтвердите права (HTML-тег или файл)
-5. **Индексирование** → **Файлы Sitemap** → добавьте `https://ваш-сайт/sitemap.xml`
+5. **Индексирование** → **Файлы Sitemap** → добавьте `https://lilstore.ru/sitemap.xml`
 
 ### 6.3. Sitemap на вашем сайте
 
-Сайт уже отдаёт sitemap по адресу `/sitemap.xml`. Убедитесь, что он открывается.
+Сайт отдаёт sitemap по адресу https://lilstore.ru/sitemap.xml. Проверьте, что:
+- `SITE_URL = 'https://lilstore.ru'` в config.py на сервере (для корректных URL в sitemap и robots.txt)
+- Страница открывается без ошибок
 
 ---
 
@@ -518,3 +522,4 @@ sudo systemctl restart lilstore lilstore-bot
 | 500 при входе в админку | Проверьте логи: `sudo journalctl -u lilstore -n 100 --no-pager`. Убедитесь, что в config.py заданы `ADMIN_SECRET`, `SECRET_KEY`, `SITE_URL` (https://...). Для HTTPS нужен `SESSION_COOKIE_SECURE`. |
 | CI/CD: sudo password required | В GitHub Secrets задайте `SSH_USER=root`. Deploy-ключ добавьте в `/root/.ssh/authorized_keys`. Root SSH: `PermitRootLogin prohibit-password` в `/etc/ssh/sshd_config`, затем `sudo systemctl reload ssh` (или `sshd`). |
 | 500 при сохранении баннеров/фото товаров | Папки `static/images/banners` и `static/images/products` — владелец `lilstore`: `sudo chown -R lilstore:lilstore /home/lilstore/my_shop/static/images/banners /home/lilstore/my_shop/static/images/products` |
+| Фильтры каталога (модель, цвет) не находят товары | Заполните поля `model` и `color` в БД: `cd /home/lilstore/my_shop && source venv/bin/activate && python3 assign_product_models.py && python3 assign_product_colors.py` |

@@ -7,9 +7,15 @@
 """
 
 import os
+import sys
 import sqlite3
 import json
 from datetime import datetime
+
+# Для извлечения model и color из названий устройств
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+from assign_product_models import detect_model
+from assign_product_colors import detect_color
 
 # ===================== ВСЕ СТИКИ (13 ПОЗИЦИЙ) =====================
 
@@ -673,6 +679,8 @@ def full_update():
             in_stock BOOLEAN DEFAULT 1,
             category_id INTEGER NOT NULL,
             views INTEGER DEFAULT 0,
+            model TEXT,
+            color TEXT,
             created_at TIMESTAMP,
             FOREIGN KEY (category_id) REFERENCES category (id)
         )
@@ -745,8 +753,8 @@ def full_update():
         images_json = json.dumps(stick.get('images', [])) if stick.get('images') else None
         img = IMAGE_MAP.get(stick['name'], stick['image'])
         cursor.execute('''
-            INSERT INTO product (name, slug, price, description, image, images, category_id, views, in_stock, created_at)
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?, 1, ?)
+            INSERT INTO product (name, slug, price, description, image, images, category_id, views, in_stock, model, color, created_at)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, 1, NULL, NULL, ?)
         ''', (stick['name'], slug, stick['price'], stick['description'], 
               img, images_json, cat_ids['terea-sticks'], 0, datetime.now()))
     
@@ -756,11 +764,13 @@ def full_update():
         slug = slugify(device['name']) + f'-{i}'
         images_json = json.dumps(device.get('images', [])) if device.get('images') else None
         img = IMAGE_MAP.get(device['name'], device['image'])
+        model_val = detect_model(device['name'], device.get('description', ''))
+        color_val = detect_color(device['name'], device.get('description', ''))
         cursor.execute('''
-            INSERT INTO product (name, slug, price, description, image, images, category_id, views, in_stock, created_at)
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?, 1, ?)
+            INSERT INTO product (name, slug, price, description, image, images, category_id, views, in_stock, model, color, created_at)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, 1, ?, ?, ?)
         ''', (device['name'], slug, device['price'], device['description'], 
-              img, images_json, cat_ids[cat_slug], 0, datetime.now()))
+              img, images_json, cat_ids[cat_slug], 0, model_val, color_val, datetime.now()))
     
     conn.commit()
     conn.close()

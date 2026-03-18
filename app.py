@@ -348,15 +348,15 @@ def catalog(category_slug=None):
     if request.args.get('on_sale') == '1':
         q = q.filter(Product.old_price.isnot(None), Product.old_price > 0)
     
-    # Фильтр: модель
+    # Фильтр: модель (без учёта регистра)
     model_filter = request.args.get('model', '').strip()
     if model_filter:
-        q = q.filter(Product.model == model_filter)
+        q = q.filter(db.func.lower(Product.model) == model_filter.lower())
     
-    # Фильтр: цвет
+    # Фильтр: цвет (без учёта регистра)
     color_filter = request.args.get('color', '').strip()
     if color_filter:
-        q = q.filter(Product.color == color_filter)
+        q = q.filter(db.func.lower(Product.color) == color_filter.lower())
     
     # Фильтр: эксклюзив
     if request.args.get('exclusive') == '1':
@@ -405,7 +405,7 @@ def catalog(category_slug=None):
     if view_mode not in ('grid', 'list'):
         view_mode = 'grid'
     
-    # Модели устройств для фильтра (фиксированный список)
+    # Модели устройств для фильтра (фиксированный порядок)
     DEVICE_MODELS = [
         'IQOS Iluma i One',
         'IQOS Iluma i Standart',
@@ -414,6 +414,22 @@ def catalog(category_slug=None):
         'lil SOLID 3.0',
     ]
     filter_colors_fixed = ['Серый', 'Зеленый', 'Синий', 'Бежевый', 'Красный', 'Черный', 'Оранжевый', 'Фиолетовый', 'Желтый', 'Смешанный']
+    
+    # Показывать только те фильтры, по которым есть товары в текущей категории
+    base_q = Product.query.filter_by(category_id=category.id) if category else Product.query
+    available_models = [r[0] for r in base_q.filter(
+        Product.model.isnot(None), Product.model != ''
+    ).with_entities(Product.model).distinct().all()]
+    available_colors = [r[0] for r in base_q.filter(
+        Product.color.isnot(None), Product.color != ''
+    ).with_entities(Product.color).distinct().all()]
+    filter_models = [m for m in DEVICE_MODELS if m in available_models]
+    filter_colors = [c for c in filter_colors_fixed if c in available_colors]
+    # Показывать выбранный фильтр даже если он даёт 0 результатов (чтобы пользователь видел, что выбрано)
+    if model_filter and model_filter not in filter_models:
+        filter_models = [model_filter] + filter_models
+    if color_filter and color_filter not in filter_colors:
+        filter_colors = [color_filter] + filter_colors
     
     # Текущие значения фильтров для UI
     filters = {
@@ -434,8 +450,8 @@ def catalog(category_slug=None):
                          category=category,
                          categories=categories,
                          filters=filters,
-                         filter_models=DEVICE_MODELS,
-                         filter_colors=filter_colors_fixed,
+                         filter_models=filter_models,
+                         filter_colors=filter_colors,
                          price_range_min=price_range_min,
                          price_range_max=price_range_max)
 
@@ -1678,11 +1694,12 @@ def sitemap():
     for p in Product.query.filter_by(in_stock=True).all():
         p_lastmod = _lastmod(getattr(p, 'updated_at', None) or p.created_at)
         pages.append({'loc': base + url_for('product', product_slug=p.get_url_slug()), 'changefreq': 'weekly', 'priority': '0.7', 'lastmod': p_lastmod})
+    from xml.sax.saxutils import escape as xml_escape
     xml = ['<?xml version="1.0" encoding="UTF-8"?>', '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">']
     for p in pages:
         lm = '<lastmod>{}</lastmod>'.format(p['lastmod']) if p.get('lastmod') else ''
         xml.append('<url><loc>{}</loc>{}<changefreq>{}</changefreq><priority>{}</priority></url>'.format(
-            p['loc'].replace('&', '&amp;'), lm, p['changefreq'], p['priority']))
+            xml_escape(p['loc']), lm, p['changefreq'], p['priority']))
     xml.append('</urlset>')
     result = '\n'.join(xml)
     cache.set('sitemap_xml', result, timeout=3600)
