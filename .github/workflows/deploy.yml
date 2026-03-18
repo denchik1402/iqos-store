@@ -18,33 +18,29 @@ jobs:
           script: |
             set -e
             set -o pipefail
+            # Деплой под root — без sudo (SSH_USER=root в секретах GitHub)
             echo "=== 1. chown lilstore ==="
-            sudo chown -R lilstore:lilstore /home/lilstore/my_shop
+            chown -R lilstore:lilstore /home/lilstore/my_shop
             echo "=== 2. git pull ==="
-            cd /home/lilstore/my_shop
-            git config --global --add safe.directory /home/lilstore/my_shop
-            git fetch origin main
-            git reset --hard origin/main
-            git clean -fd alembic/versions/
+            sudo -u lilstore bash -c 'cd /home/lilstore/my_shop && git config --global --add safe.directory /home/lilstore/my_shop && git fetch origin main && git reset --hard origin/main && git clean -fd alembic/versions/'
             echo "=== 3. pip install ==="
-            source venv/bin/activate
-            pip install -r requirements.txt --quiet
+            sudo -u lilstore bash -c 'cd /home/lilstore/my_shop && source venv/bin/activate && pip install -r requirements.txt --quiet'
             echo "=== 4. migrations ==="
-            python3 -c "
+            sudo -u lilstore bash -c 'cd /home/lilstore/my_shop && source venv/bin/activate && python3 -c "
             from app import app
             from alembic_runner import run_alembic
             with app.app_context():
                 run_alembic()
-            " || python3 init_db.py
+            " || python3 init_db.py'
             echo "=== 5. update_product_galleries ==="
-            python3 update_product_galleries.py 2>/dev/null || true
-            echo "=== 6. chown www-data ==="
-            sudo chown -R www-data:www-data /home/lilstore/my_shop/static
-            sudo find /home/lilstore/my_shop/static -type d -exec chmod 755 {} \;
-            sudo find /home/lilstore/my_shop/static -type f -exec chmod 644 {} \;
-            sudo mkdir -p /home/lilstore/my_shop/static/images/banners
-            sudo chown -R lilstore:lilstore /home/lilstore/my_shop/static/images/banners
-            sudo find /home/lilstore/my_shop/static/images/banners -type d -exec chmod 755 {} \;
+            sudo -u lilstore bash -c 'cd /home/lilstore/my_shop && source venv/bin/activate && python3 update_product_galleries.py' 2>/dev/null || true
+            echo "=== 6. chown www-data + banners ==="
+            chown -R www-data:www-data /home/lilstore/my_shop/static
+            find /home/lilstore/my_shop/static -type d -exec chmod 755 {} \;
+            find /home/lilstore/my_shop/static -type f -exec chmod 644 {} \;
+            mkdir -p /home/lilstore/my_shop/static/images/banners
+            chown -R lilstore:lilstore /home/lilstore/my_shop/static/images/banners
+            find /home/lilstore/my_shop/static/images/banners -type d -exec chmod 755 {} \;
             echo "=== 7. restart services ==="
-            sudo /usr/bin/systemctl restart lilstore lilstore-bot
+            systemctl restart lilstore lilstore-bot
             echo "=== Deploy completed successfully ==="

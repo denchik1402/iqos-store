@@ -334,7 +334,7 @@ chmod 600 /home/lilstore/.ssh/authorized_keys
 |------|-------|
 | `SSH_PRIVATE_KEY` | Весь приватный ключ (deploy_key) — включая BEGIN и END |
 | `SSH_HOST` | `104.128.141.177` |
-| `SSH_USER` | `lilstore` |
+| `SSH_USER` | `root` (рекомендуется — деплой без sudo) или `lilstore` (нужен visudo) |
 
 ### 4.4. Разрешите sudo для перезапуска сервисов и смены прав
 
@@ -475,7 +475,12 @@ sudo chown -R www-data:www-data /home/lilstore/my_shop/static
 sudo find /home/lilstore/my_shop/static -type d -exec chmod 755 {} \;
 sudo find /home/lilstore/my_shop/static -type f -exec chmod 644 {} \;
 
-# 4. Перезапуск
+# 4. Папка баннеров — приложение (lilstore) должно записывать загрузки
+sudo mkdir -p /home/lilstore/my_shop/static/images/banners
+sudo chown -R lilstore:lilstore /home/lilstore/my_shop/static/images/banners
+sudo find /home/lilstore/my_shop/static/images/banners -type d -exec chmod 755 {} \;
+
+# 5. Перезапуск
 sudo systemctl restart lilstore lilstore-bot
 ```
 
@@ -485,7 +490,8 @@ sudo systemctl restart lilstore lilstore-bot
 |----------|----------|---------|
 | Git (pull, reset) | `lilstore` | `sudo chown -R lilstore:lilstore /home/lilstore/my_shop` |
 | Работа сайта (Nginx читает статику) | `www-data` | `sudo chown -R www-data:www-data /home/lilstore/my_shop/static` |
-| После git pull | → `www-data` | Всегда менять права на static обратно |
+| Загрузка баннеров в админке | `lilstore` | `sudo chown -R lilstore:lilstore /home/lilstore/my_shop/static/images/banners` |
+| После git pull | → `www-data` + `banners` → `lilstore` | См. шаги 3–4 в ручном деплое |
 
 **Перенос баннеров на прод:**
 
@@ -509,4 +515,5 @@ sudo systemctl restart lilstore lilstore-bot
 | config.py перезаписывается | config.py в .gitignore — на сервере не делайте `git checkout config.py` |
 | Permission denied при git reset | `git` требует владельца `lilstore`. Перед git: `sudo chown -R lilstore:lilstore /home/lilstore/my_shop`. После git: `sudo chown -R www-data:www-data /home/lilstore/my_shop/static` |
 | 500 при входе в админку | Проверьте логи: `sudo journalctl -u lilstore -n 100 --no-pager`. Убедитесь, что в config.py заданы `ADMIN_SECRET`, `SECRET_KEY`, `SITE_URL` (https://...). Для HTTPS нужен `SESSION_COOKIE_SECURE`. |
-| CI/CD: sudo password required | Обновите visudo: замените `/bin/systemctl` на `/usr/bin/systemctl`. Правило: `lilstore ALL=(ALL) NOPASSWD: /usr/bin/systemctl restart lilstore lilstore-bot` |
+| CI/CD: sudo password required | **Вариант 1:** В GitHub Secrets задайте `SSH_USER=root` (деплой под root, без sudo). **Вариант 2:** visudo для lilstore: `Defaults:lilstore !requiretty` и `lilstore ALL=(ALL) NOPASSWD: /usr/bin/chown`, `/usr/bin/find`, `/usr/bin/systemctl restart lilstore lilstore-bot` |
+| 500 при сохранении баннеров/блоков «Премиальные устройства» | Папка `static/images/banners` должна быть владельцем `lilstore`. Выполните: `sudo chown -R lilstore:lilstore /home/lilstore/my_shop/static/images/banners` |
