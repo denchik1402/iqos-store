@@ -69,16 +69,8 @@ except ImportError:
 db.init_app(app)
 
 from flask_wtf.csrf import CSRFProtect
-from flask_limiter import Limiter
-from flask_limiter.util import get_remote_address
 
 csrf = CSRFProtect(app)
-limiter = Limiter(
-    app=app,
-    key_func=get_remote_address,
-    default_limits=["5000 per day", "500 per hour"],
-    storage_uri="memory://",
-)
 
 from sqlalchemy import event
 from sqlalchemy.engine import Engine
@@ -587,7 +579,6 @@ def update_cart(product_id):
     return redirect(url_for('cart'))
 
 @app.route('/checkout', methods=['GET', 'POST'])
-@limiter.limit("10 per minute", exempt_when=lambda: request.method == "GET")
 def checkout():
     """Оформление заказа"""
     cart_items, subtotal = _get_cart_products(session.get('cart', {}))
@@ -688,7 +679,6 @@ def order_success(order_id):
     return render_template('order_success.html', order=order)
 
 @app.route('/add-review', methods=['POST'])
-@limiter.limit("5 per minute")
 def add_review():
     """Добавление отзыва (статус: на модерации). Только для покупателей."""
     product_id = request.form.get('product_id', type=int)
@@ -771,7 +761,6 @@ def privacy():
     return render_template('privacy.html')
 
 @app.route('/api/cart-count')
-@limiter.limit("60 per minute")
 def cart_count():
     """API для получения количества товаров в корзине"""
     count = len(session.get('cart', {}))
@@ -780,7 +769,6 @@ def cart_count():
 
 @csrf.exempt
 @app.route('/api/clear-cart', methods=['POST'])
-@limiter.limit("30 per minute")
 def clear_cart_api():
     """Очистка корзины"""
     session['cart'] = {}
@@ -789,7 +777,6 @@ def clear_cart_api():
 
 
 @app.route('/api/search-suggestions')
-@limiter.limit("60 per minute")
 def search_suggestions_api():
     """API для автодополнения при поиске — товары по части названия (параметризовано)"""
     q = (request.args.get('q') or '').strip()
@@ -809,7 +796,6 @@ def search_suggestions_api():
 
 
 @app.route('/api/products-by-ids')
-@limiter.limit("60 per minute")
 def products_by_ids_api():
     """API для блока «Вы смотрели» — товары по id из query ids=1,2,3"""
     ids_str = request.args.get('ids', '')
@@ -841,7 +827,6 @@ def products_by_ids_api():
 
 
 @app.route('/api/cart-items')
-@limiter.limit("60 per minute")
 def cart_items_api():
     """API для боковой корзины — список товаров и сумма"""
     cart_items, total = _get_cart_products(session.get('cart', {}))
@@ -854,7 +839,6 @@ def cart_items_api():
 
 @csrf.exempt
 @app.route('/api/validate-promo', methods=['POST'])
-@limiter.limit("20 per minute")
 def validate_promo():
     """Проверка промокода и расчёт скидки"""
     code = (request.form.get('code') or (request.get_json(silent=True) or {}).get('code') or '').strip().upper()
