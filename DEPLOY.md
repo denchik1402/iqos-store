@@ -347,7 +347,7 @@ sudo visudo
 В конец файла добавьте (замените `lilstore` если другой пользователь):
 
 ```
-lilstore ALL=(ALL) NOPASSWD: /bin/systemctl restart lilstore, /bin/systemctl restart lilstore-bot
+lilstore ALL=(ALL) NOPASSWD: /usr/bin/systemctl restart lilstore lilstore-bot
 lilstore ALL=(ALL) NOPASSWD: /usr/bin/chown
 lilstore ALL=(ALL) NOPASSWD: /usr/bin/find
 ```
@@ -509,3 +509,4 @@ sudo systemctl restart lilstore lilstore-bot
 | config.py перезаписывается | config.py в .gitignore — на сервере не делайте `git checkout config.py` |
 | Permission denied при git reset | `git` требует владельца `lilstore`. Перед git: `sudo chown -R lilstore:lilstore /home/lilstore/my_shop`. После git: `sudo chown -R www-data:www-data /home/lilstore/my_shop/static` |
 | 500 при входе в админку | Проверьте логи: `sudo journalctl -u lilstore -n 100 --no-pager`. Убедитесь, что в config.py заданы `ADMIN_SECRET`, `SECRET_KEY`, `SITE_URL` (https://...). Для HTTPS нужен `SESSION_COOKIE_SECURE`. |
+| CI/CD: sudo password required | Обновите visudo: замените `/bin/systemctl` на `/usr/bin/systemctl`. Правило: `lilstore ALL=(ALL) NOPASSWD: /usr/bin/systemctl restart lilstore lilstore-bot` |

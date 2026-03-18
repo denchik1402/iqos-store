@@ -25,6 +25,7 @@ jobs:
             git config --global --add safe.directory /home/lilstore/my_shop
             git fetch origin main
             git reset --hard origin/main
+            git clean -fd alembic/versions/
             echo "=== 3. pip install ==="
             source venv/bin/activate
             pip install -r requirements.txt --quiet
@@ -42,5 +43,5 @@ jobs:
             sudo find /home/lilstore/my_shop/static -type d -exec chmod 755 {} \;
             sudo find /home/lilstore/my_shop/static -type f -exec chmod 644 {} \;
             echo "=== 7. restart services ==="
-            sudo systemctl restart lilstore lilstore-bot
+            sudo /usr/bin/systemctl restart lilstore lilstore-bot
             echo "=== Deploy completed successfully ==="
