@@ -1425,6 +1425,9 @@ def admin_banner_add():
             return redirect(url_for('admin', tab='banners'))
         except (ValueError, TypeError) as e:
             logger.warning("Admin banner add: %s", e)
+        except (PermissionError, OSError) as e:
+            logger.exception("Admin banner add: ошибка записи файла: %s", e)
+            flash('Ошибка сохранения изображения. Проверьте права на static/images/banners.', 'danger')
     return render_template('admin_banner_edit.html', banner=None, products_for_link=Product.query.order_by(Product.name).limit(200).all())
 
 
@@ -1456,6 +1459,9 @@ def admin_banner_edit(banner_id):
             return redirect(url_for('admin', tab='banners'))
         except (ValueError, TypeError) as e:
             logger.warning("Admin banner edit: %s", e)
+        except (PermissionError, OSError) as e:
+            logger.exception("Admin banner edit: ошибка записи файла: %s", e)
+            flash('Ошибка сохранения изображения. Проверьте права на static/images/banners.', 'danger')
     return render_template('admin_banner_edit.html', banner=banner, products_for_link=Product.query.order_by(Product.name).limit(200).all())
 
 
@@ -1535,6 +1541,13 @@ def admin_homeblock_add():
             return redirect(url_for('admin', tab='banners'))
         except (ValueError, TypeError) as e:
             logger.warning("Admin homeblock add: %s", e)
+        except (PermissionError, OSError) as e:
+            logger.exception("Admin homeblock add: ошибка записи файла: %s", e)
+            flash('Ошибка сохранения изображения. Проверьте права на static/images/banners.', 'danger')
+        except Exception as e:
+            logger.exception("Admin homeblock add: неожиданная ошибка: %s", e)
+            db.session.rollback()
+            flash(f'Ошибка: {type(e).__name__}. Проверьте логи на сервере: journalctl -u lilstore -n 50', 'danger')
     return render_template('admin_homeblock_edit.html', block=None)
 
 
@@ -1564,6 +1577,13 @@ def admin_homeblock_edit(block_id):
             return redirect(url_for('admin', tab='banners'))
         except (ValueError, TypeError) as e:
             logger.warning("Admin homeblock edit: %s", e)
+        except (PermissionError, OSError) as e:
+            logger.exception("Admin homeblock edit: ошибка записи файла (проверьте права на static/images/banners): %s", e)
+            flash('Ошибка сохранения изображения. Проверьте права на папку static/images/banners на сервере.', 'danger')
+        except Exception as e:
+            logger.exception("Admin homeblock edit: неожиданная ошибка: %s", e)
+            db.session.rollback()
+            flash(f'Ошибка: {type(e).__name__}. Проверьте логи: journalctl -u lilstore -n 50', 'danger')
     return render_template('admin_homeblock_edit.html', block=block)
 
 
