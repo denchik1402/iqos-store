@@ -42,6 +42,9 @@ jobs:
             sudo chown -R www-data:www-data /home/lilstore/my_shop/static
             sudo find /home/lilstore/my_shop/static -type d -exec chmod 755 {} \;
             sudo find /home/lilstore/my_shop/static -type f -exec chmod 644 {} \;
+            sudo mkdir -p /home/lilstore/my_shop/static/images/banners
+            sudo chown -R lilstore:lilstore /home/lilstore/my_shop/static/images/banners
+            sudo find /home/lilstore/my_shop/static/images/banners -type d -exec chmod 755 {} \;
             echo "=== 7. restart services ==="
             sudo /usr/bin/systemctl restart lilstore lilstore-bot
             echo "=== Deploy completed successfully ==="
