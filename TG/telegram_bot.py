@@ -134,23 +134,42 @@ def role_can_access(role: str, menu: str) -> bool:
 # ==================== ГЛАВНОЕ МЕНЮ ====================
 
 def _build_main_menu_keyboard(role: str) -> InlineKeyboardMarkup:
-    """Собирает клавиатуру главного меню по роли."""
-    keyboard = []
-    keyboard.append([InlineKeyboardButton("🛒 Каталог", callback_data="menu_catalog")])
-    keyboard.append([InlineKeyboardButton("🛍 Корзина", callback_data="menu_cart")])
-    keyboard.append([InlineKeyboardButton("📦 Оформить заказ", callback_data="menu_checkout")])
-    keyboard.append([InlineKeyboardButton("💬 Задать вопрос", callback_data="menu_ask_question")])
+    """Собирает клавиатуру главного меню по роли (2 колонки)."""
+    keyboard = [
+        [
+            InlineKeyboardButton("🛒 Каталог", callback_data="menu_catalog"),
+            InlineKeyboardButton("📦 Оформить заказ", callback_data="menu_checkout"),
+        ],
+        [
+            InlineKeyboardButton("🛍 Корзина", callback_data="menu_cart"),
+            InlineKeyboardButton("💬 Задать вопрос", callback_data="menu_ask_question"),
+        ],
+    ]
     site_url = get_site_url()
     if site_url.startswith('https://'):
         keyboard.append([InlineKeyboardButton("🚀 Запустить приложение", web_app=WebAppInfo(url=site_url))])
     if role_can_access(role, 'courier'):
-        keyboard.append([InlineKeyboardButton("🚚 Курьер — Заказы", callback_data="menu_courier_orders")])
-        keyboard.append([InlineKeyboardButton("❓ Как отвечать на вопросы", callback_data="menu_support_help")])
-    if role_can_access(role, 'boss'):
+        keyboard.append([InlineKeyboardButton("⚙️ Управление", callback_data="menu_management")])
+    return InlineKeyboardMarkup(keyboard)
+
+
+def _build_management_menu_keyboard(role: str) -> InlineKeyboardMarkup:
+    """Подменю «Управление»: Курьер (только курьеры), Boss (курьеры+боссы), Промокоды/Как отвечать/Admin (все staff)."""
+    keyboard = []
+    if role == 'courier':
+        keyboard.append([
+            InlineKeyboardButton("🚚 Курьер — Заказы", callback_data="menu_courier_orders"),
+            InlineKeyboardButton("👔 Boss — Меню", callback_data="menu_boss"),
+        ])
+    elif role_can_access(role, 'boss'):
         keyboard.append([InlineKeyboardButton("👔 Boss — Меню", callback_data="menu_boss")])
-    if role_can_access(role, 'admin'):
+    if role_can_access(role, 'courier'):
+        keyboard.append([
+            InlineKeyboardButton("🎟 Промокоды", callback_data="menu_admin_promo"),
+            InlineKeyboardButton("❓ Как отвечать", callback_data="menu_support_help"),
+        ])
         keyboard.append([InlineKeyboardButton("⚙️ Admin — Назначения", callback_data="menu_admin")])
-        keyboard.append([InlineKeyboardButton("🎟 Промокоды", callback_data="menu_admin_promo")])
+    keyboard.append([InlineKeyboardButton("◀️ Назад", callback_data="menu_main")])
     return InlineKeyboardMarkup(keyboard)
 
 
@@ -173,9 +192,8 @@ async def cmd_start(update: Update, context: ContextTypes.DEFAULT_TYPE):
         context.user_data.pop('checkout_data', None)
 
     text = (
-        f"👋 Привет, {first_name}!\n\n"
-        "🛍 Я бот магазина <b>LIL STORE</b>.\n"
-        "Выбери раздел ниже:"
+        "🛍 <b>LIL STORE</b>\n\n"
+        "Привет! Выбери раздел:"
     )
     reply_markup = _build_main_menu_keyboard(role)
     msg = update.effective_message
@@ -774,7 +792,7 @@ async def show_admin_promo_menu(update_or_query, is_callback: bool):
             pass
         if admin_url:
             keyboard.append([InlineKeyboardButton("🌐 Открыть в админке", url=admin_url)])
-        keyboard.append([InlineKeyboardButton("◀️ Назад", callback_data="menu_main")])
+        keyboard.append([InlineKeyboardButton("◀️ Назад", callback_data="menu_management")])
         if not promos:
             text += "Промокодов пока нет."
         await send(text, InlineKeyboardMarkup(keyboard))
@@ -878,7 +896,7 @@ async def show_admin_menu(update_or_query, is_callback: bool):
             uname = f"@{u.username}" if u.username else str(u.telegram_id)
             keyboard.append([InlineKeyboardButton(f"{role_emoji} {uname} ({u.role})", callback_data=f"admin_user_{u.id}")])
         keyboard.append([InlineKeyboardButton("➕ Найти по username", callback_data="admin_find_username")])
-        keyboard.append([InlineKeyboardButton("◀️ Назад", callback_data="menu_main")])
+        keyboard.append([InlineKeyboardButton("◀️ Назад", callback_data="menu_management")])
         await send(text, InlineKeyboardMarkup(keyboard))
 
 
@@ -962,28 +980,20 @@ async def handle_callback(update: Update, context: ContextTypes.DEFAULT_TYPE):
         # Показываем главное меню
         data = "menu_main"
     if data == "menu_main":
-        # Эмулируем start
         context.user_data.pop('awaiting_checkout', None)
         context.user_data.pop('awaiting_question', None)
         role = get_user_role(user_id)
-        text = "🛍 <b>LIL STORE</b>\n\nВыбери раздел:"
-        keyboard = []
-        keyboard.append([InlineKeyboardButton("🛒 Каталог", callback_data="menu_catalog")])
-        keyboard.append([InlineKeyboardButton("🛍 Корзина", callback_data="menu_cart")])
-        keyboard.append([InlineKeyboardButton("📦 Оформить заказ", callback_data="menu_checkout")])
-        keyboard.append([InlineKeyboardButton("💬 Задать вопрос", callback_data="menu_ask_question")])
-        site_url = get_site_url()
-        if site_url.startswith('https://'):
-            keyboard.append([InlineKeyboardButton("🚀 Запустить приложение", web_app=WebAppInfo(url=site_url))])
-        if role_can_access(role, 'courier'):
-            keyboard.append([InlineKeyboardButton("🚚 Курьер — Заказы", callback_data="menu_courier_orders")])
-            keyboard.append([InlineKeyboardButton("❓ Как отвечать на вопросы", callback_data="menu_support_help")])
-        if role_can_access(role, 'boss'):
-            keyboard.append([InlineKeyboardButton("👔 Boss — Меню", callback_data="menu_boss")])
-        if role_can_access(role, 'admin'):
-            keyboard.append([InlineKeyboardButton("⚙️ Admin — Назначения", callback_data="menu_admin")])
-            keyboard.append([InlineKeyboardButton("🎟 Промокоды", callback_data="menu_admin_promo")])
-        await _safe_edit_message(query, text, InlineKeyboardMarkup(keyboard))
+        text = "🛍 <b>LIL STORE</b>\n\nПривет! Выбери раздел:"
+        await _safe_edit_message(query, text, _build_main_menu_keyboard(role))
+        return
+
+    if data == "menu_management":
+        role = get_user_role(user_id)
+        if not role_can_access(role, 'courier'):
+            await query.answer("⛔ Только для сотрудников.", show_alert=True)
+            return
+        text = "⚙️ <b>Управление</b>\n\nВыбери раздел:"
+        await _safe_edit_message(query, text, _build_management_menu_keyboard(role))
         return
 
     # Задать вопрос (подсказка для пользователя) — включаем режим ожидания вопроса
@@ -1023,7 +1033,7 @@ async def handle_callback(update: Update, context: ContextTypes.DEFAULT_TYPE):
                 "2. Выполните команду /set_notify в том чате\n"
                 "После этого вопросы будут приходить туда, и вы сможете отвечать через Reply."
             )
-        keyboard = [[InlineKeyboardButton("◀️ Назад", callback_data="menu_main")]]
+        keyboard = [[InlineKeyboardButton("◀️ Назад", callback_data="menu_management")]]
         await _safe_edit_message(query, text, InlineKeyboardMarkup(keyboard))
         return
 
@@ -1409,11 +1419,49 @@ async def _maybe_save_notification_chat(update: Update):
 
 # ==================== ОБРАБОТКА ТЕКСТА (CHECKOUT + ВОПРОСЫ) ====================
 
+async def handle_bot_mentioned(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    """Ответ на упоминание бота (@bot) в групповых чатах — показываем меню."""
+    await _maybe_save_notification_chat(update)
+    user = update.effective_user
+    if not user:
+        return
+    get_or_create_user(user.id, (user.username or '').strip(), user.first_name or 'друг')
+    role = get_user_role(user.id)
+    text = "🛍 <b>LIL STORE</b>\n\nПривет! Выбери раздел:"
+    await update.message.reply_text(text, reply_markup=_build_main_menu_keyboard(role), parse_mode='HTML')
+
+
+def _is_bot_mentioned_in_message(update: Update) -> bool:
+    """Проверяет, упомянут ли бот в сообщении (для групп, когда filters.Mention недоступен)."""
+    msg = update.message
+    if not msg or not msg.text or not msg.entities:
+        return False
+    chat = update.effective_chat
+    if not chat or chat.type not in ('group', 'supergroup'):
+        return False
+    bot_username = None
+    if _config_exists():
+        try:
+            import config
+            bot_username = getattr(config, 'TELEGRAM_BOT_USERNAME', None)
+        except ImportError:
+            pass
+    if not bot_username:
+        return False
+    mention = f"@{bot_username}".lower()
+    return mention in msg.text.lower()
+
+
 async def handle_text_message(update: Update, context: ContextTypes.DEFAULT_TYPE):
     """Обработка текста: checkout, вопросы от user, ответы staff, иначе — меню"""
     await _maybe_save_notification_chat(update)
     user_id = update.effective_user.id if update.effective_user else 0
     role = get_user_role(user_id)
+
+    # Упоминание бота в группах (fallback, если отдельный handler не сработал)
+    if _is_bot_mentioned_in_message(update):
+        await handle_bot_mentioned(update, context)
+        return
 
     if context.user_data.get('awaiting_checkout'):
         await handle_checkout_message(update, context)
@@ -1583,7 +1631,21 @@ def main():
         .read_timeout(60)
         .build()
     )
-    # Текстовые сообщения — показывать меню (должен быть до CommandHandler для надёжности)
+    # Упоминание бота (@bot) в группах — отвечаем меню (должен быть до общего TEXT handler)
+    bot_username = None
+    if _config_exists():
+        try:
+            import config
+            bot_username = getattr(config, 'TELEGRAM_BOT_USERNAME', None)
+        except ImportError:
+            pass
+    if bot_username:
+        try:
+            mention_filter = filters.ChatType.GROUPS & filters.TEXT & filters.Mention(bot_username)
+            application.add_handler(MessageHandler(mention_filter, handle_bot_mentioned))
+        except (AttributeError, TypeError):
+            pass  # filters.Mention добавлен в PTB 20.7
+    # Текстовые сообщения — показывать меню
     application.add_handler(MessageHandler(
         filters.TEXT & ~filters.COMMAND,
         handle_text_message
