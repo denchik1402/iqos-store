@@ -154,15 +154,13 @@ def _build_main_menu_keyboard(role: str) -> InlineKeyboardMarkup:
 
 
 def _build_management_menu_keyboard(role: str) -> InlineKeyboardMarkup:
-    """Подменю «Управление»: Курьер (только курьеры), Boss (курьеры+боссы), Промокоды/Как отвечать/Admin (все staff)."""
+    """Подменю «Управление»: Курьер (курьеры+боссы+админ), Boss (курьеры+боссы), Промокоды/Как отвечать/Admin (все staff)."""
     keyboard = []
-    if role == 'courier':
+    if role_can_access(role, 'courier'):
         keyboard.append([
             InlineKeyboardButton("🚚 Курьер — Заказы", callback_data="menu_courier_orders"),
             InlineKeyboardButton("👔 Boss — Меню", callback_data="menu_boss"),
         ])
-    elif role_can_access(role, 'boss'):
-        keyboard.append([InlineKeyboardButton("👔 Boss — Меню", callback_data="menu_boss")])
     if role_can_access(role, 'courier'):
         keyboard.append([
             InlineKeyboardButton("🎟 Промокоды", callback_data="menu_admin_promo"),
