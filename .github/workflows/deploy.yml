@@ -34,13 +34,16 @@ jobs:
             " || python3 init_db.py'
             echo "=== 5. update_product_galleries ==="
             sudo -u lilstore bash -c 'cd /home/lilstore/my_shop && source venv/bin/activate && python3 update_product_galleries.py' 2>/dev/null || true
-            echo "=== 6. chown www-data + banners ==="
+            echo "=== 6. chown: www-data (static), lilstore (uploads) ==="
             chown -R www-data:www-data /home/lilstore/my_shop/static
             find /home/lilstore/my_shop/static -type d -exec chmod 755 {} \;
             find /home/lilstore/my_shop/static -type f -exec chmod 644 {} \;
             mkdir -p /home/lilstore/my_shop/static/images/banners
+            mkdir -p /home/lilstore/my_shop/static/images/products
             chown -R lilstore:lilstore /home/lilstore/my_shop/static/images/banners
+            chown -R lilstore:lilstore /home/lilstore/my_shop/static/images/products
             find /home/lilstore/my_shop/static/images/banners -type d -exec chmod 755 {} \;
+            find /home/lilstore/my_shop/static/images/products -type d -exec chmod 755 {} \;
             echo "=== 7. restart services ==="
             systemctl restart lilstore lilstore-bot
             echo "=== Deploy completed successfully ==="
