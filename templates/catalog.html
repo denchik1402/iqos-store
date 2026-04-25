@@ -1,6 +1,13 @@
 {% extends "base.html" %}
 
 {% block canonical_url %}{{ request.url_root.rstrip('/') }}{% if category %}{{ url_for('catalog', category_slug=category.slug) }}{% else %}{{ url_for('catalog') }}{% endif %}{% endblock %}
+{% block meta_robots %}
+{% if request.args.get('model') or request.args.get('color') or request.args.get('price_min') or request.args.get('price_max') or request.args.get('sort') or request.args.get('view') or request.args.get('page') %}
+noindex, follow
+{% else %}
+index, follow
+{% endif %}
+{% endblock %}
 {% block rel_prev_next %}
 {% if pagination and pagination.pages > 1 %}
 {% set _args = request.args.to_dict(flat=True) %}

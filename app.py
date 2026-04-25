@@ -179,6 +179,20 @@ def inject_nav_categories():
     return {'nav_categories': categories}
 
 @app.context_processor
+def inject_seo_defaults():
+    """SEO дефолты: canonical/og без query-параметров и с корректным хостом."""
+    try:
+        base = _sitemap_base_url()
+    except Exception:
+        base = request.url_root.rstrip('/')
+    path = request.path if request.path.startswith('/') else '/' + request.path
+    clean_url = (base + path).rstrip('/') if path != '/' else base + '/'
+    return {
+        'seo_canonical_url': clean_url,
+        'seo_og_url': clean_url,
+    }
+
+@app.context_processor
 def inject_cart():
     """Корзина для виджета «В корзину» (количество по product_id)"""
     cart = session.get('cart', {})
@@ -1677,39 +1691,49 @@ def sitemap():
     cached = cache.get('sitemap_xml')
     if cached:
         return Response(cached, mimetype='application/xml')
-    base = _sitemap_base_url()
-    from datetime import datetime as _dt
-    def _lastmod(d):
-        return _dt.strftime(d, '%Y-%m-%d') if d else None
-    # Дата последнего обновления контента (для lastmod статических страниц)
-    latest = db.session.query(db.func.max(Product.updated_at)).scalar() or db.session.query(db.func.max(Product.created_at)).scalar()
-    lastmod_default = _lastmod(latest) if latest else None
-    pages = [
-        {'loc': base + url_for('index'), 'changefreq': 'daily', 'priority': '1.0', 'lastmod': lastmod_default},
-        {'loc': base + url_for('catalog'), 'changefreq': 'daily', 'priority': '0.9', 'lastmod': lastmod_default},
-        {'loc': base + url_for('about'), 'changefreq': 'monthly', 'priority': '0.5', 'lastmod': lastmod_default},
-        {'loc': base + url_for('contacts'), 'changefreq': 'monthly', 'priority': '0.5', 'lastmod': lastmod_default},
-        {'loc': base + url_for('delivery'), 'changefreq': 'monthly', 'priority': '0.5', 'lastmod': lastmod_default},
-        {'loc': base + url_for('faq'), 'changefreq': 'monthly', 'priority': '0.6', 'lastmod': lastmod_default},
-        {'loc': base + url_for('compare'), 'changefreq': 'weekly', 'priority': '0.6', 'lastmod': lastmod_default},
-        {'loc': base + url_for('privacy'), 'changefreq': 'yearly', 'priority': '0.3', 'lastmod': lastmod_default},
-    ]
-    for cat in Category.query.all():
-        cat_lastmod = _lastmod(getattr(cat, 'updated_at', None) or cat.created_at)
-        pages.append({'loc': base + url_for('catalog', category_slug=cat.slug), 'changefreq': 'weekly', 'priority': '0.8', 'lastmod': cat_lastmod})
-    for p in Product.query.filter_by(in_stock=True).all():
-        p_lastmod = _lastmod(getattr(p, 'updated_at', None) or p.created_at)
-        pages.append({'loc': base + url_for('product', product_slug=p.get_url_slug()), 'changefreq': 'weekly', 'priority': '0.7', 'lastmod': p_lastmod})
-    from xml.sax.saxutils import escape as xml_escape
-    xml = ['<?xml version="1.0" encoding="UTF-8"?>', '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">']
-    for p in pages:
-        lm = '<lastmod>{}</lastmod>'.format(p['lastmod']) if p.get('lastmod') else ''
-        xml.append('<url><loc>{}</loc>{}<changefreq>{}</changefreq><priority>{}</priority></url>'.format(
-            xml_escape(p['loc']), lm, p['changefreq'], p['priority']))
-    xml.append('</urlset>')
-    result = '\n'.join(xml)
-    cache.set('sitemap_xml', result, timeout=3600)
-    return Response(result, mimetype='application/xml')
+    try:
+        base = _sitemap_base_url()
+        from datetime import datetime as _dt
+        def _lastmod(d):
+            return _dt.strftime(d, '%Y-%m-%d') if d else None
+        # Дата последнего обновления контента (для lastmod статических страниц)
+        latest = db.session.query(db.func.max(Product.updated_at)).scalar() or db.session.query(db.func.max(Product.created_at)).scalar()
+        lastmod_default = _lastmod(latest) if latest else None
+        pages = [
+            {'loc': base + url_for('index'), 'changefreq': 'daily', 'priority': '1.0', 'lastmod': lastmod_default},
+            {'loc': base + url_for('catalog'), 'changefreq': 'daily', 'priority': '0.9', 'lastmod': lastmod_default},
+            {'loc': base + url_for('about'), 'changefreq': 'monthly', 'priority': '0.5', 'lastmod': lastmod_default},
+            {'loc': base + url_for('contacts'), 'changefreq': 'monthly', 'priority': '0.5', 'lastmod': lastmod_default},
+            {'loc': base + url_for('delivery'), 'changefreq': 'monthly', 'priority': '0.5', 'lastmod': lastmod_default},
+            {'loc': base + url_for('faq'), 'changefreq': 'monthly', 'priority': '0.6', 'lastmod': lastmod_default},
+            {'loc': base + url_for('privacy'), 'changefreq': 'yearly', 'priority': '0.3', 'lastmod': lastmod_default},
+        ]
+        for cat in Category.query.all():
+            cat_lastmod = _lastmod(getattr(cat, 'updated_at', None) or cat.created_at)
+            pages.append({'loc': base + url_for('catalog', category_slug=cat.slug), 'changefreq': 'weekly', 'priority': '0.8', 'lastmod': cat_lastmod})
+        for p in Product.query.filter_by(in_stock=True).all():
+            p_lastmod = _lastmod(getattr(p, 'updated_at', None) or p.created_at)
+            pages.append({'loc': base + url_for('product', product_slug=p.get_url_slug()), 'changefreq': 'weekly', 'priority': '0.7', 'lastmod': p_lastmod})
+        from xml.sax.saxutils import escape as xml_escape
+        xml = ['<?xml version="1.0" encoding="UTF-8"?>', '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">']
+        for p in pages:
+            lm = '<lastmod>{}</lastmod>'.format(p['lastmod']) if p.get('lastmod') else ''
+            xml.append('<url><loc>{}</loc>{}<changefreq>{}</changefreq><priority>{}</priority></url>'.format(
+                xml_escape(p['loc']), lm, p['changefreq'], p['priority']))
+        xml.append('</urlset>')
+        result = '\n'.join(xml)
+        cache.set('sitemap_xml', result, timeout=3600)
+        return Response(result, mimetype='application/xml')
+    except Exception as e:
+        logger.exception("Sitemap generation failed: %s", e)
+        fallback = (
+            '<?xml version="1.0" encoding="UTF-8"?>\n'
+            '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n'
+            f'<url><loc>{_sitemap_base_url() + url_for("index")}</loc><changefreq>daily</changefreq><priority>1.0</priority></url>\n'
+            f'<url><loc>{_sitemap_base_url() + url_for("catalog")}</loc><changefreq>daily</changefreq><priority>0.9</priority></url>\n'
+            '</urlset>'
+        )
+        return Response(fallback, mimetype='application/xml')
 
 
 @app.route('/compare')
