@@ -124,6 +124,12 @@ def health():
     return jsonify({"status": "ok"}), 200
 
 
+@app.route('/google023383757b58384d.html')
+def google_site_verification_file():
+    """Google Search Console: верификация через HTML-файл."""
+    return send_from_directory(app.root_path, 'google023383757b58384d.html')
+
+
 @app.route('/version')
 def version():
     """Проверка версии деплоя — data-build в HTML должен совпадать"""
