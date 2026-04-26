@@ -1,0 +1,10 @@
+[Unit]
+Description=LIL STORE healthcheck and auto-restart
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=oneshot
+ExecStart=/usr/local/bin/healthcheck_lilstore.sh
+User=root
+Group=root

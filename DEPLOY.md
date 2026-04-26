@@ -459,6 +459,28 @@ sudo journalctl -u lilstore -f
 sudo journalctl -u lilstore-bot -f
 ```
 
+**Автовосстановление при просадках (502/5xx):**
+```bash
+# 1. Скопировать healthcheck-скрипт и systemd units
+sudo cp /home/lilstore/my_shop/deploy/healthcheck_lilstore.sh /usr/local/bin/healthcheck_lilstore.sh
+sudo chmod +x /usr/local/bin/healthcheck_lilstore.sh
+sudo cp /home/lilstore/my_shop/deploy/lilstore-healthcheck.service /etc/systemd/system/lilstore-healthcheck.service
+sudo cp /home/lilstore/my_shop/deploy/lilstore-healthcheck.timer /etc/systemd/system/lilstore-healthcheck.timer
+
+# 2. Включить таймер (проверка каждую минуту)
+sudo systemctl daemon-reload
+sudo systemctl enable --now lilstore-healthcheck.timer
+
+# 3. Проверить
+sudo systemctl status lilstore-healthcheck.timer --no-pager
+sudo journalctl -t lilstore-healthcheck -n 50 --no-pager
+```
+
+Что делает healthcheck:
+- Проверяет `https://lilstore.ru/`, `https://lilstore.ru/sitemap.xml`, `https://lilstore.ru/robots.txt` и `http://127.0.0.1:8000/health`
+- Если хотя бы один endpoint не `200`, автоматически перезапускает `lilstore` и `nginx`
+- Пишет результат в journal с тегом `lilstore-healthcheck`
+
 **Обновление вручную (если CI/CD не сработал):**
 ```bash
 # 1. Права для Git (lilstore должен владеть проектом)
