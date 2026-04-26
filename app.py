@@ -3,6 +3,7 @@ from datetime import datetime
 import os
 import shutil
 import logging
+from urllib.parse import urlsplit
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
@@ -67,6 +68,40 @@ except ImportError:
     pass
 
 db.init_app(app)
+
+@app.before_request
+def enforce_canonical_site_url():
+    """
+    Принудительный 301 на канонический SITE_URL (https + нужный host).
+    Нужен для устранения дублей http/https и www/non-www.
+    """
+    if request.method not in ('GET', 'HEAD'):
+        return None
+    site_url = None
+    if os.path.exists(_config_path):
+        try:
+            import config
+            site_url = getattr(config, 'SITE_URL', None)
+        except ImportError:
+            site_url = None
+    if not site_url or not isinstance(site_url, str) or not site_url.startswith('http'):
+        return None
+    # В локальной разработке редиректы не навязываем
+    if '127.0.0.1' in site_url or 'localhost' in site_url:
+        return None
+    target = urlsplit(site_url.rstrip('/'))
+    if not target.scheme or not target.netloc:
+        return None
+    req_scheme = request.headers.get('X-Forwarded-Proto', request.scheme).split(',')[0].strip().lower()
+    req_host = request.host.lower()
+    target_scheme = target.scheme.lower()
+    target_host = target.netloc.lower()
+    if req_scheme == target_scheme and req_host == target_host:
+        return None
+    path_with_qs = request.full_path if request.query_string else request.path
+    if path_with_qs.endswith('?'):
+        path_with_qs = path_with_qs[:-1]
+    return redirect(f'{target_scheme}://{target_host}{path_with_qs}', code=301)
 
 from flask_wtf.csrf import CSRFProtect
 
