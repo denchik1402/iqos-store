@@ -165,6 +165,12 @@ def google_site_verification_file():
     return send_from_directory(app.root_path, 'google023383757b58384d.html')
 
 
+@app.route('/favicon.ico')
+def favicon_ico_fallback():
+    """Фолбэк для роботов/браузеров: /favicon.ico -> favicon.svg."""
+    return redirect(url_for('static', filename='favicon.svg'), code=301)
+
+
 @app.route('/version')
 def version():
     """Проверка версии деплоя — data-build в HTML должен совпадать"""

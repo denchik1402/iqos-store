@@ -480,6 +480,7 @@ sudo journalctl -t lilstore-healthcheck -n 50 --no-pager
 - Проверяет `https://lilstore.ru/`, `https://lilstore.ru/sitemap.xml`, `https://lilstore.ru/robots.txt` и `http://127.0.0.1:8000/health`
 - Если хотя бы один endpoint не `200`, автоматически перезапускает `lilstore` и `nginx`
 - Пишет результат в journal с тегом `lilstore-healthcheck`
+- Отправляет уведомление в Telegram (`TELEGRAM_CHAT_ID` из `config.py`) при сбое/восстановлении/критической ошибке
 
 **Обновление вручную (если CI/CD не сработал):**
 ```bash
