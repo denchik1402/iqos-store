@@ -46,3 +46,7 @@ SITE_PHONE = '+7 (993) 596-82-25'
 SITE_ADDRESS = 'Москва, Ленинградское шоссе, 16А'
 SITE_CITY = 'Москва'
 
+# Яндекс.Метрика: номер счётчика (только цифры) из https://metrika.yandex.ru
+# Создайте счётчик для https://lilstore.ru и вставьте ID, например: 12345678
+YANDEX_METRIKA_ID = ''
+

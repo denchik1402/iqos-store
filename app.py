@@ -272,6 +272,20 @@ def inject_site_contacts():
     }
 
 
+def _get_yandex_metrika_id():
+    """ID счётчика Яндекс.Метрики (только цифры). Пусто — счётчик не подключается."""
+    raw = _get_site_setting('YANDEX_METRIKA_ID', '')
+    if not raw:
+        return None
+    digits = ''.join(c for c in str(raw).strip() if c.isdigit())
+    return int(digits) if digits else None
+
+
+@app.context_processor
+def inject_yandex_metrika():
+    return {'yandex_metrika_id': _get_yandex_metrika_id()}
+
+
 @app.context_processor
 def inject_seo_defaults():
     """SEO дефолты: canonical/og без query-параметров и с корректным хостом."""

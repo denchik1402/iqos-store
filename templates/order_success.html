@@ -2,6 +2,20 @@
 
 {% block title %}Заказ оформлен - LIL STORE{% endblock %}
 
+{% block extra_js %}
+{% if yandex_metrika_id %}
+<script>
+(function () {
+    if (typeof ym !== 'function') return;
+    ym({{ yandex_metrika_id }}, 'reachGoal', 'order_completed', {
+        order_number: {{ order.order_number|tojson }},
+        order_price: {{ order.total_amount|float }}
+    });
+})();
+</script>
+{% endif %}
+{% endblock %}
+
 {% block content %}
 <div class="text-center py-5">
     <i class="fas fa-check-circle fa-5x text-success mb-4"></i>

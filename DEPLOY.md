@@ -220,7 +220,10 @@ SITE_URL = 'https://lilstore.ru'   # или http://104.128.141.177 до наст
 SITE_PHONE = '+7 (993) 596-82-25'
 SITE_ADDRESS = 'Москва, Ленинградское шоссе, 16А'
 SITE_CITY = 'Москва'
+YANDEX_METRIKA_ID = '12345678'   # номер счётчика из metrika.yandex.ru
 ```
+
+**Яндекс.Метрика:** в [metrika.yandex.ru](https://metrika.yandex.ru) создайте счётчик для `https://lilstore.ru`, скопируйте номер (цифры) в `YANDEX_METRIKA_ID`. После деплоя в Вебмастере нажмите «Проверить счётчик». Цель `order_completed` срабатывает на странице успешного заказа — при желании создайте её в настройках счётчика.
 
 **Сгенерировать SECRET_KEY:**
 ```bash
