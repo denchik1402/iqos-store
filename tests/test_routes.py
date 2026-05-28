@@ -76,6 +76,7 @@ def test_robots(client, app_ctx):
     r = client.get('/robots.txt')
     assert r.status_code == 200
     assert b'Sitemap' in r.data
+    assert b'Disallow: /banner-click' in r.data
 
 
 def test_sitemap(client, app_ctx):

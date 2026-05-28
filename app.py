@@ -346,12 +346,19 @@ def product_url_filter(product):
     return url_for('product', product_slug=product.get_url_slug())
 
 
+def _redirect_noindex(url):
+    """Редирект, не предназначенный для индексации (баннеры, служебные переходы)."""
+    resp = redirect(url)
+    resp.headers['X-Robots-Tag'] = 'noindex, nofollow'
+    return resp
+
+
 @app.route('/banner-click/<int:banner_id>')
 def banner_click(banner_id):
     """Редирект по клику на баннер + учёт клика для A/B-статистики"""
     banner = Banner.query.filter_by(id=banner_id, is_active=True).first()
     if not banner:
-        return redirect(url_for('index'))
+        return _redirect_noindex(url_for('index'))
     try:
         banner.clicks = (banner.clicks or 0) + 1
         db.session.commit()
@@ -363,8 +370,8 @@ def banner_click(banner_id):
     else:
         target = banner.button_url or url_for('catalog')
     if target.startswith('http'):
-        return redirect(target)
-    return redirect(target if target.startswith('/') else '/' + target)
+        return _redirect_noindex(target)
+    return _redirect_noindex(target if target.startswith('/') else '/' + target)
 
 
 def _get_index_cached_data():
@@ -1825,7 +1832,11 @@ def robots():
     except Exception:
         base = request.url_root.rstrip('/')
     return Response(
-        'User-agent: *\nAllow: /\nDisallow: /admin\nSitemap: ' + base + url_for('sitemap') + '\n',
+        'User-agent: *\n'
+        'Allow: /\n'
+        'Disallow: /admin\n'
+        'Disallow: /banner-click\n'
+        'Sitemap: ' + base + url_for('sitemap') + '\n',
         mimetype='text/plain'
     )
 

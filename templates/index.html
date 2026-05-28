@@ -254,6 +254,7 @@
             {% if slide.__class__.__name__ == 'Banner' %}
             {% set slide_img = slide.image %}
             {% set slide_link = url_for('banner_click', banner_id=slide.id) %}
+            {% set slide_link_rel = 'nofollow' %}
             {% set slide_title = slide.title %}
             {% set slide_subtitle = slide.subtitle or '' %}
             {% set slide_btn = slide.button_text or 'Купить сейчас' %}
@@ -264,6 +265,7 @@
             {% else %}
             {% set slide_img = slide.all_images[0] if slide.all_images else slide.image %}
             {% set slide_link = slide|product_url %}
+            {% set slide_link_rel = '' %}
             {% set slide_title = slide.name %}
             {% set slide_subtitle = '' %}
             {% set slide_btn = 'Купить сейчас' %}
@@ -276,13 +278,13 @@
                 <div class="promo-slide-inner {{ slide_bg }}{% if not slide_img and slide_badge == 'telegram' %} promo-slide-telegram-only{% endif %}">
                     {% if slide_img %}
                     <div class="promo-slide-bg" style="background-image: url('{{ url_for('static', filename=img_path + slide_img) }}');" role="img" aria-label="{{ slide_title }}"></div>
-                    <a href="{{ slide_link }}" class="promo-slide-bg-link" aria-label="{{ slide_title }}"></a>
+                    <a href="{{ slide_link }}" class="promo-slide-bg-link" aria-label="{{ slide_title }}"{% if slide_link_rel %} rel="{{ slide_link_rel }}"{% endif %}></a>
                     {% elif slide_badge != 'telegram' %}
                     <div class="promo-slide-bg promo-slide-bg-placeholder">
                         <i class="fab fa-telegram fa-5x opacity-50 me-3"></i>
                         <span>{{ slide_title }}</span>
                     </div>
-                    <a href="{{ slide_link }}" class="promo-slide-bg-link promo-slide-bg-link-placeholder" aria-label="{{ slide_title }}"></a>
+                    <a href="{{ slide_link }}" class="promo-slide-bg-link promo-slide-bg-link-placeholder" aria-label="{{ slide_title }}"{% if slide_link_rel %} rel="{{ slide_link_rel }}"{% endif %}></a>
                     {% endif %}
                     {% if slide_badge %}<span class="promo-slide-badge promo-badge-{{ slide_badge }}">{{ {'telegram':'Telegram','promo':'Акция','bonus':'Бонус','hit':'Хит','new':'Новинка'}[slide_badge] }}</span>{% endif %}
                     <div class="promo-slide-caption-wrap">
@@ -297,9 +299,9 @@
                         {% elif slide_subtitle %}
                         <p class="promo-price mb-0">{{ slide_subtitle|replace('\n', '<br>')|safe }}</p>
                         {% endif %}
-                        <a href="{{ slide_link }}" class="btn promo-slide-btn btn-lg">{{ slide_btn }}</a>
+                        <a href="{{ slide_link }}" class="btn promo-slide-btn btn-lg"{% if slide_link_rel %} rel="{{ slide_link_rel }}"{% endif %}>{{ slide_btn }}</a>
                     </div>
-                    {% if not slide_img and slide_badge == 'telegram' %}<a href="{{ slide_link }}" class="promo-slide-bg-link" aria-label="{{ slide_title }}"></a>{% endif %}
+                    {% if not slide_img and slide_badge == 'telegram' %}<a href="{{ slide_link }}" class="promo-slide-bg-link" aria-label="{{ slide_title }}"{% if slide_link_rel %} rel="{{ slide_link_rel }}"{% endif %}></a>{% endif %}
                 </div>
             </div>
             {% endfor %}
