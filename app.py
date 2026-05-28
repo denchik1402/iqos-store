@@ -1051,32 +1051,76 @@ def admin():
         chart_status_labels=chart_status_labels, chart_status_data=chart_status_data, chart_status_colors=chart_status_colors,
         top_products_by_views=top_products_by_views, banner_stats=banner_stats,
         banners=banners, home_blocks=home_blocks, products_for_link=products_for_link,
-        carousel_slides=carousel_slides)
+        carousel_slides=carousel_slides,
+        admin_role=_get_admin_role(),
+        admin_can_delete_orders=_admin_can_delete_orders(),
+    )
+
+
+ADMIN_ROLE_ADMIN = 'admin'
+ADMIN_ROLE_BOSS = 'boss'
+
+
+def _get_config_secret(attr_name, env_name=None):
+    env_name = env_name or attr_name
+    val = os.environ.get(env_name)
+    if not val and os.path.exists(_config_path):
+        try:
+            import config
+            val = getattr(config, attr_name, None)
+        except ImportError:
+            pass
+    return val
 
 
 def _get_admin_secret():
-    admin_secret = os.environ.get('ADMIN_SECRET')
-    if not admin_secret and os.path.exists(_config_path):
-        try:
-            import config
-            admin_secret = getattr(config, 'ADMIN_SECRET', None)
-        except ImportError:
-            pass
-    return admin_secret
+    return _get_config_secret('ADMIN_SECRET')
+
+
+def _get_boss_secret():
+    return _get_config_secret('BOSS_SECRET')
+
+
+def _set_admin_session(role):
+    session['admin_logged_in'] = True
+    session['admin_role'] = role
+    session.permanent = True
+
+
+def _get_admin_role():
+    if not session.get('admin_logged_in'):
+        return None
+    return session.get('admin_role', ADMIN_ROLE_ADMIN)
+
+
+def _admin_can_delete_orders():
+    return _get_admin_role() == ADMIN_ROLE_ADMIN
+
+
+def _authenticate_admin_key(key):
+    """Проверка ключа: admin или boss. Возвращает роль или None."""
+    key = (key or '').strip()
+    if not key:
+        return None
+    admin_secret = _get_admin_secret()
+    boss_secret = _get_boss_secret()
+    if admin_secret and key == admin_secret:
+        return ADMIN_ROLE_ADMIN
+    if boss_secret and key == boss_secret:
+        return ADMIN_ROLE_BOSS
+    return None
 
 
 def _admin_key_valid():
-    """Проверка доступа в админку: сессия или ключ в POST (для входа)"""
+    """Проверка доступа в админку: сессия или ключ в URL (не рекомендуется)."""
     if session.get('admin_logged_in'):
         return True
-    secret = _get_admin_secret()
-    if not secret:
-        return False
-    # Обратная совместимость: ключ в URL (не рекомендуется)
-    if request.args.get('key') == secret:
-        session['admin_logged_in'] = True
-        session.permanent = True
-        return True
+    key = request.args.get('key')
+    if key:
+        role = _authenticate_admin_key(key)
+        if role:
+            _set_admin_session(role)
+            return True
     return False
 
 
@@ -1095,11 +1139,10 @@ def admin_login():
     """Вход в админку по ключу (POST). Ключ не передаётся в URL."""
     next_url = request.form.get('next_url') or request.args.get('next') or url_for('admin')
     if request.method == 'POST':
-        key = (request.form.get('key') or '').strip()
-        secret = _get_admin_secret()
-        if secret and key == secret:
-            session['admin_logged_in'] = True
-            session.permanent = True
+        key = request.form.get('key')
+        role = _authenticate_admin_key(key)
+        if role:
+            _set_admin_session(role)
             return redirect(next_url)
         return render_template('admin_login.html', next_url=next_url, error='Неверный ключ')
     return render_template('admin_login.html', next_url=next_url)
@@ -1109,6 +1152,7 @@ def admin_login():
 def admin_logout():
     """Выход из админки"""
     session.pop('admin_logged_in', None)
+    session.pop('admin_role', None)
     return redirect(url_for('admin_login'))
 
 
@@ -1403,9 +1447,12 @@ def admin_promo_edit(promo_id):
 
 @app.route('/admin/order/<int:order_id>/delete', methods=['POST'])
 def admin_order_delete(order_id):
-    """Удаление заказа"""
+    """Удаление заказа (только роль admin)"""
     if not _admin_key_valid():
         return "Доступ запрещён", 403
+    if not _admin_can_delete_orders():
+        flash('Удаление заказов доступно только администратору.', 'warning')
+        return redirect(url_for('admin', tab='orders'))
     order = db.get_or_404(Order, order_id)
     db.session.delete(order)
     db.session.commit()

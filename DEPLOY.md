@@ -212,6 +212,7 @@ TELEGRAM_BOT_TOKEN = 'ваш_токен_от_BotFather'
 TELEGRAM_BOT_USERNAME = 'iluma_prime_bot'
 TELEGRAM_ADMIN_IDS = '390144231'
 ADMIN_SECRET = 'придумайте_надёжный_секрет'
+BOSS_SECRET = 'отдельный_ключ_для_босса'   # тот же /admin, без удаления заказов
 SECRET_KEY = 'сгенерируйте_ниже'
 TELEGRAM_DEFAULT_ADMIN = 'denchik1402'
 ILUMA_XLSX_PATH = ''   # можно пусто на сервере
