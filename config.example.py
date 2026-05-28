@@ -41,3 +41,8 @@ ILUMA_XLSX_PATH = r'c:\Users\Dubko\Desktop\iluma.xlsx'
 # Для кнопки "Запустить приложение" (Web App) нужен HTTPS (например ngrok или хостинг)
 SITE_URL = 'http://127.0.0.1:5000'
 
+# Контакты на сайте (телефон, адрес для Яндекса/Google и страницы «Контакты»)
+SITE_PHONE = '+7 (993) 596-82-25'
+SITE_ADDRESS = 'Москва, Ленинградское шоссе, 16А'
+SITE_CITY = 'Москва'
+

@@ -13,9 +13,14 @@
   "name": "LIL STORE",
   "url": "{{ request.url_root.rstrip('/') }}",
   "description": "Магазин оригинальных устройств IQOS и стиков TEREA. Бронь на сайте, доставка 1–2 дня.",
-  "telephone": "+7 (985) 490-48-80",
+  "telephone": "{{ site_phone }}",
   "sameAs": ["https://t.me/iluma_prime_bot"],
-  "address": {"@type": "PostalAddress", "addressCountry": "RU"}
+  "address": {
+    "@type": "PostalAddress",
+    "addressCountry": "RU",
+    "addressLocality": "{{ site_city }}",
+    "streetAddress": "Ленинградское шоссе, 16А"
+  }
 }
 </script>
 <script type="application/ld+json">
@@ -24,8 +29,15 @@
   "@type": "LocalBusiness",
   "name": "LIL STORE",
   "image": "{{ request.url_root.rstrip('/') }}{{ url_for('static', filename='LOGO3.png') }}",
-  "telephone": "+7 (985) 490-48-80",
+  "telephone": "{{ site_phone }}",
   "url": "{{ request.url_root.rstrip('/') }}",
+  "address": {
+    "@type": "PostalAddress",
+    "addressCountry": "RU",
+    "addressLocality": "{{ site_city }}",
+    "streetAddress": "Ленинградское шоссе, 16А"
+  },
+  "areaServed": {"@type": "City", "name": "{{ site_city }}"},
   "priceRange": "$$",
   "openingHoursSpecification": [
     {"@type": "OpeningHoursSpecification", "dayOfWeek": ["Monday","Tuesday","Wednesday","Thursday","Friday"], "opens": "09:00", "closes": "21:00"},

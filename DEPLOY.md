@@ -217,6 +217,9 @@ SECRET_KEY = 'сгенерируйте_ниже'
 TELEGRAM_DEFAULT_ADMIN = 'denchik1402'
 ILUMA_XLSX_PATH = ''   # можно пусто на сервере
 SITE_URL = 'https://lilstore.ru'   # или http://104.128.141.177 до настройки SSL
+SITE_PHONE = '+7 (993) 596-82-25'
+SITE_ADDRESS = 'Москва, Ленинградское шоссе, 16А'
+SITE_CITY = 'Москва'
 ```
 
 **Сгенерировать SECRET_KEY:**
