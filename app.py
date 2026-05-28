@@ -165,10 +165,20 @@ def google_site_verification_file():
     return send_from_directory(app.root_path, 'google023383757b58384d.html')
 
 
+def _send_favicon_svg():
+    """Фавиконка 120×120 SVG в корне сайта (200 OK, без редиректа — требование Яндекса/Google)."""
+    return send_from_directory(app.root_path, 'favicon.svg', mimetype='image/svg+xml')
+
+
+@app.route('/favicon.svg')
+def favicon_svg():
+    return _send_favicon_svg()
+
+
 @app.route('/favicon.ico')
-def favicon_ico_fallback():
-    """Фолбэк для роботов/браузеров: /favicon.ico -> favicon.svg."""
-    return redirect(url_for('static', filename='favicon.svg'), code=301)
+def favicon_ico():
+    """Запросы к /favicon.ico — тот же SVG, без редиректа."""
+    return _send_favicon_svg()
 
 
 @app.route('/version')
@@ -229,8 +239,10 @@ def inject_seo_defaults():
     path = request.path if request.path.startswith('/') else '/' + request.path
     clean_url = (base + path).rstrip('/') if path != '/' else base + '/'
     return {
+        'seo_site_url': base,
         'seo_canonical_url': clean_url,
         'seo_og_url': clean_url,
+        'seo_favicon_url': base + '/favicon.svg',
     }
 
 @app.context_processor

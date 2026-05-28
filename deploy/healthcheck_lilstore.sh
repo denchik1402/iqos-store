@@ -8,6 +8,7 @@ SITE_ENDPOINTS=(
   "/"
   "/sitemap.xml"
   "/robots.txt"
+  "/favicon.svg"
 )
 LOCAL_ENDPOINT="http://127.0.0.1:8000/health"
 LOG_TAG="lilstore-healthcheck"

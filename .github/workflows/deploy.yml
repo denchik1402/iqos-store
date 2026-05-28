@@ -44,6 +44,12 @@ jobs:
             chown -R lilstore:lilstore /home/lilstore/my_shop/static/images/products
             find /home/lilstore/my_shop/static/images/banners -type d -exec chmod 755 {} \;
             find /home/lilstore/my_shop/static/images/products -type d -exec chmod 755 {} \;
+            echo "=== 6b. nginx + healthcheck ==="
+            cp /home/lilstore/my_shop/deploy/nginx-lilstore.conf /etc/nginx/sites-available/lilstore
+            nginx -t
+            systemctl reload nginx
+            cp /home/lilstore/my_shop/deploy/healthcheck_lilstore.sh /usr/local/bin/healthcheck_lilstore.sh
+            chmod +x /usr/local/bin/healthcheck_lilstore.sh
             echo "=== 7. restart services ==="
             systemctl restart lilstore lilstore-bot
             echo "=== Deploy completed successfully ==="
