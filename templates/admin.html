@@ -193,9 +193,11 @@
             </div>
         </div>
 
-        {# Вкладка: Категории (SEO meta) #}
+        {# Вкладка: Категории #}
         <div class="tab-pane {% if tab == 'categories' %}show active{% endif %}" role="tabpanel">
-            <div class="alert alert-info mb-3">Уникальные meta description и keywords для страниц категорий улучшают SEO.</div>
+            <div class="mb-3 d-flex flex-wrap align-items-center gap-2">
+                <a href="{{ url_for('admin_category_add') }}" class="btn btn-success">➕ Добавить категорию</a>
+            </div>
             <div class="card shadow-sm">
                 <div class="card-body p-0">
                     <div class="table-responsive">
@@ -203,19 +205,27 @@
                             <thead class="table-light">
                                 <tr>
                                     <th>Категория</th>
+                                    <th>Товаров</th>
                                     <th>Meta Description</th>
-                                    <th>Meta Keywords</th>
-                                    <th style="width: 100px;">Действия</th>
+                                    <th style="width: 160px;">Действия</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 {% for c in categories %}
                                 <tr>
-                                    <td><strong>{{ c.name }}</strong><br><small class="text-muted">/catalog/{{ c.slug }}</small></td>
-                                    <td>{{ (c.meta_description or '—')[:60] }}{% if c.meta_description and c.meta_description|length > 60 %}…{% endif %}</td>
-                                    <td>{{ (c.meta_keywords or '—')[:40] }}{% if c.meta_keywords and c.meta_keywords|length > 40 %}…{% endif %}</td>
                                     <td>
-                                        <a href="{{ url_for('admin_category_edit', category_id=c.id) }}" class="btn btn-sm btn-primary">✏️ Редактировать</a>
+                                        <strong>{{ c.name }}</strong><br>
+                                        <small class="text-muted">/catalog/{{ c.slug }}</small>
+                                        {% if c.description %}<br><small class="text-muted">{{ c.description[:80] }}{% if c.description|length > 80 %}…{% endif %}</small>{% endif %}
+                                    </td>
+                                    <td>{{ c.products|length }}</td>
+                                    <td>{{ (c.meta_description or '—')[:60] }}{% if c.meta_description and c.meta_description|length > 60 %}…{% endif %}</td>
+                                    <td class="text-nowrap">
+                                        <a href="{{ url_for('admin_category_edit', category_id=c.id) }}" class="btn btn-sm btn-primary" title="Редактировать">✏️</a>
+                                        <form method="post" action="{{ url_for('admin_category_delete', category_id=c.id) }}" class="d-inline" onsubmit="return confirm('Удалить категорию «{{ c.name }}»?');">
+                                            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                                            <button type="submit" class="btn btn-sm btn-outline-danger" title="Удалить" {% if c.products|length %}disabled{% endif %}>🗑</button>
+                                        </form>
                                     </td>
                                 </tr>
                                 {% endfor %}
@@ -224,6 +234,7 @@
                     </div>
                 </div>
             </div>
+            <p class="text-muted small mt-2 mb-0">Удаление доступно только для пустых категорий (без товаров).</p>
         </div>
 
         {# Вкладка: Отзывы #}

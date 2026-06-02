@@ -1,6 +1,7 @@
 from flask import Flask, render_template, request, redirect, url_for, session, jsonify, flash, Response, send_from_directory
 from datetime import datetime
 import os
+import re
 import shutil
 import logging
 from urllib.parse import urlsplit
@@ -351,6 +352,29 @@ def _parse_product_description_for_form(description):
     intro = tmp.get_intro_text()
     specs = '\n'.join(f'{k}: {v}' for k, v in tmp.get_characteristics())
     return intro, specs
+
+
+def _make_unique_category_slug(name, slug_input=None, exclude_id=None):
+    """Slug для категории: из поля slug или названия, с проверкой уникальности."""
+    raw = (slug_input or '').strip() or (name or '').strip()
+    s = raw.lower()
+    s = re.sub(r'[^\w\s-]', '', s, flags=re.UNICODE)
+    s = re.sub(r'[\s_]+', '-', s).strip('-')
+    s = (s[:100] if s else 'category')
+
+    def _taken(slug):
+        q = Category.query.filter_by(slug=slug)
+        if exclude_id:
+            q = q.filter(Category.id != exclude_id)
+        return q.first() is not None
+
+    if _taken(s):
+        base = s
+        n = 2
+        while _taken(s):
+            s = f'{base}-{n}'[:100]
+            n += 1
+    return s
 
 
 @app.template_filter('sanitize_html')
@@ -1381,24 +1405,93 @@ def admin_product_edit(product_id):
     return render_template('admin_product_edit.html', product=product, description_intro=desc_intro, specifications=desc_specs)
 
 
+@app.route('/admin/category/add', methods=['GET', 'POST'])
+def admin_category_add():
+    """Добавление категории"""
+    login = _admin_or_login('admin_category_add.html')
+    if login is not None:
+        return login
+    if request.method == 'POST':
+        name = (request.form.get('name') or '').strip()
+        if not name:
+            flash('Укажите название категории.', 'danger')
+            return render_template('admin_category_add.html')
+        try:
+            slug = _make_unique_category_slug(name, request.form.get('slug'))
+            desc = (request.form.get('description') or '').strip() or None
+            meta_desc = (request.form.get('meta_description') or '').strip() or None
+            meta_kw = (request.form.get('meta_keywords') or '').strip() or None
+            category = Category(
+                name=name,
+                slug=slug,
+                description=desc,
+                meta_description=meta_desc,
+                meta_keywords=meta_kw,
+            )
+            db.session.add(category)
+            db.session.commit()
+            _invalidate_cache('nav_categories', 'sitemap_xml')
+            flash(f'Категория «{name}» создана.', 'success')
+            return redirect(url_for('admin', tab='categories'))
+        except Exception as e:
+            db.session.rollback()
+            logger.warning("Admin category add: %s", e)
+            flash('Не удалось создать категорию. Проверьте, что slug уникален.', 'danger')
+    return render_template('admin_category_add.html')
+
+
 @app.route('/admin/category/<int:category_id>/edit', methods=['GET', 'POST'])
 def admin_category_edit(category_id):
-    """Редактирование meta категории (SEO)"""
+    """Редактирование категории"""
     login = _admin_or_login('admin_category_edit.html')
     if login is not None:
         return login
     category = db.get_or_404(Category, category_id)
     if request.method == 'POST':
-        desc = (request.form.get('description') or '').strip() or None
-        meta_desc = (request.form.get('meta_description') or '').strip() or None
-        meta_kw = (request.form.get('meta_keywords') or '').strip() or None
-        category.description = desc
-        category.meta_description = meta_desc
-        category.meta_keywords = meta_kw
-        db.session.commit()
-        _invalidate_cache()
-        return redirect(url_for('admin', tab='categories'))
+        name = (request.form.get('name') or '').strip()
+        if not name:
+            flash('Укажите название категории.', 'danger')
+            return render_template('admin_category_edit.html', category=category)
+        try:
+            category.name = name
+            category.slug = _make_unique_category_slug(name, request.form.get('slug'), exclude_id=category.id)
+            desc = (request.form.get('description') or '').strip() or None
+            meta_desc = (request.form.get('meta_description') or '').strip() or None
+            meta_kw = (request.form.get('meta_keywords') or '').strip() or None
+            category.description = desc
+            category.meta_description = meta_desc
+            category.meta_keywords = meta_kw
+            db.session.commit()
+            _invalidate_cache('nav_categories', 'sitemap_xml')
+            flash('Категория сохранена.', 'success')
+            return redirect(url_for('admin', tab='categories'))
+        except Exception as e:
+            db.session.rollback()
+            logger.warning("Admin category edit: %s", e)
+            flash('Не удалось сохранить категорию.', 'danger')
     return render_template('admin_category_edit.html', category=category)
+
+
+@app.route('/admin/category/<int:category_id>/delete', methods=['POST'])
+def admin_category_delete(category_id):
+    """Удаление категории (только если нет товаров)"""
+    if not _admin_key_valid():
+        return "Доступ запрещён", 403
+    category = db.get_or_404(Category, category_id)
+    count = Product.query.filter_by(category_id=category.id).count()
+    if count:
+        flash(
+            f'Нельзя удалить «{category.name}»: в категории {count} товар(ов). '
+            'Сначала перенесите или удалите товары.',
+            'danger',
+        )
+        return redirect(url_for('admin', tab='categories'))
+    name = category.name
+    db.session.delete(category)
+    db.session.commit()
+    _invalidate_cache('nav_categories', 'sitemap_xml')
+    flash(f'Категория «{name}» удалена.', 'success')
+    return redirect(url_for('admin', tab='categories'))
 
 
 @app.route('/admin/product/<int:product_id>/remove-from-carousel', methods=['POST'])
