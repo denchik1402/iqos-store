@@ -150,7 +150,7 @@
     min-height: 270px;
     padding: 1rem 1.25rem;
 }
-/* Единый hover-zoom: шапка статьи и inline-картинки (×1.4 за 0.85s) */
+/* Единый hover-zoom: шапка статьи и inline-картинки (×1.4, плавно ~1.2s) */
 .article-img-zoom {
     overflow: hidden;
     line-height: 0;
@@ -166,7 +166,7 @@
 }
 .article-img-zoom img {
     transform-origin: center center;
-    transition: transform 0.85s cubic-bezier(0.25, 0.46, 0.45, 0.94) !important;
+    transition: transform 1.2s cubic-bezier(0.22, 1, 0.36, 1) !important;
     will-change: transform;
 }
 .article-hero-media.article-img-zoom img {
