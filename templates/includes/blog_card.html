@@ -12,7 +12,9 @@
             <span class="blog-card-read">Читать {% if compact %}→{% else %}статью {% endif %}<i class="fas fa-arrow-right ms-1"></i></span>
         </div>
         {% if post.cover_image %}
-        <div class="blog-card-media" style="background-image: url('{{ post.cover_image|blog_cover_url }}');" role="img" aria-label="{{ post.title }}"></div>
+        <div class="blog-card-media card-side-media">
+            <img src="{{ post.cover_image|blog_cover_url }}" alt="{{ post.title }}" loading="lazy" decoding="async">
+        </div>
         {% else %}
         <div class="blog-card-icon"><i class="fas {{ post.cover_icon or 'fa-book-open' }}"></i></div>
         {% endif %}
