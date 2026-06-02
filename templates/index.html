@@ -77,7 +77,7 @@
       "name": {{ cat.name|tojson }},
       "description": {{ (cat.meta_description or home.get('teaser') or cat.name)|tojson }},
       "url": "{{ request.url_root.rstrip('/') }}{{ url_for('catalog', category_slug=cat.slug) }}"
-      {% if category_image_url(cat) %},"image": "{{ request.url_root.rstrip('/') }}{{ category_image_url(cat) }}"{% endif %}
+      {% if cat|category_image_url %},"image": "{{ request.url_root.rstrip('/') }}{{ cat|category_image_url }}"{% endif %}
     }{% if not loop.last %},{% endif %}
     {% endfor %}
   ]
@@ -88,7 +88,7 @@
 
 {% block extra_css %}
 <link rel="stylesheet" href="{{ url_for('static', filename='css/index.css') }}?v=2">
-<link rel="stylesheet" href="{{ url_for('static', filename='css/blog.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/blog.css') }}?v=3">
 {% endblock %}
 
 {% block content %}
@@ -225,7 +225,7 @@
                         <span class="home-category-link">Перейти в категорию <i class="fas fa-arrow-right ms-1"></i></span>
                     </div>
                     {% if home.get('image') or cat.image %}
-                    <div class="home-category-media" style="background-image: url('{{ category_image_url(cat) }}');" role="img" aria-label="{{ home.get('image_alt', cat.name) }}"></div>
+                    <div class="home-category-media" style="background-image: url('{{ cat|category_image_url }}');" role="img" aria-label="{{ home.get('image_alt', cat.name) }}"></div>
                     {% endif %}
                 </div>
             </a>

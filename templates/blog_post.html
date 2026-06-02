@@ -6,7 +6,7 @@
 {% block canonical_url %}{{ request.url_root.rstrip('/') }}{{ url_for('blog_post', slug=post.slug) }}{% endblock %}
 
 {% block extra_css %}
-<link rel="stylesheet" href="{{ url_for('static', filename='css/blog.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/blog.css') }}?v=3">
 {% endblock %}
 
 {% block schema_ld %}
@@ -43,18 +43,17 @@
 </nav>
 
 <article>
-    <header class="article-hero{% if post.cover_image %} article-hero-cover{% endif %}">
-        {% if post.cover_image %}
-        <div class="article-hero-image">
-            <img src="{{ post.cover_image|blog_cover_url }}" alt="{{ post.title }}" fetchpriority="high">
-        </div>
-        {% else %}
-        <div class="article-hero-icon"><i class="fas {{ post.cover_icon or 'fa-book-open' }}"></i></div>
-        {% endif %}
+    <header class="article-hero{% if post.cover_image %} article-hero--with-cover{% endif %}">
         <div class="article-hero-text">
+            {% if not post.cover_image %}
+            <div class="article-hero-icon"><i class="fas {{ post.cover_icon or 'fa-book-open' }}"></i></div>
+            {% endif %}
             <div class="article-meta"><i class="far fa-clock me-1"></i>{{ post.reading_minutes or 5 }} мин чтения</div>
             <h1 class="h2 mb-0">{{ post.title }}</h1>
         </div>
+        {% if post.cover_image %}
+        <div class="article-hero-media" style="background-image: url('{{ post.cover_image|blog_cover_url }}');" role="img" aria-label="{{ post.title }}"></div>
+        {% endif %}
     </header>
 
     <div class="article-content">
