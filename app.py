@@ -615,8 +615,7 @@ def index():
                          promo_slides=promo_slides,
                          home_blocks=home_blocks,
                          banner_impression_ids=banner_impression_ids,
-                         blog_posts=BlogPost.query.filter_by(is_published=True)
-                         .order_by(BlogPost.created_at.desc()).limit(3).all())
+                         blog_posts=_query_published_blog_posts(limit=3))
 
 @app.route('/catalog/<string:category_slug>')
 @app.route('/catalog')
@@ -1092,19 +1091,49 @@ def faq():
     return render_template('faq.html')
 
 
+def _query_published_blog_posts(limit=None):
+    """Статьи блога; при отсутствии таблицы/колонок — пустой список (не роняем сайт)."""
+    try:
+        q = BlogPost.query.filter_by(is_published=True).order_by(BlogPost.created_at.desc())
+        if limit is not None:
+            q = q.limit(limit)
+        return q.all()
+    except Exception as e:
+        logger.warning('BlogPost query failed (run repair_schema.py): %s', e)
+        try:
+            db.session.rollback()
+        except Exception:
+            pass
+        return []
+
+
+def _get_blog_post_by_slug(slug):
+    try:
+        return BlogPost.query.filter_by(slug=slug, is_published=True).first()
+    except Exception as e:
+        logger.warning('BlogPost lookup failed: %s', e)
+        try:
+            db.session.rollback()
+        except Exception:
+            pass
+        return None
+
+
 @app.route('/blog')
 def blog_index():
     """Блог и гайды"""
-    posts = BlogPost.query.filter_by(is_published=True).order_by(BlogPost.created_at.desc()).all()
+    posts = _query_published_blog_posts()
     return render_template('blog.html', posts=posts)
 
 
 @app.route('/blog/<slug>')
 def blog_post(slug):
     """Статья блога"""
-    post = BlogPost.query.filter_by(slug=slug, is_published=True).first_or_404()
-    others = BlogPost.query.filter(BlogPost.is_published == True, BlogPost.id != post.id)\
-        .order_by(BlogPost.created_at.desc()).limit(3).all()
+    post = _get_blog_post_by_slug(slug)
+    if not post:
+        from flask import abort
+        abort(404)
+    others = [p for p in _query_published_blog_posts(limit=4) if p.id != post.id][:3]
     return render_template('blog_post.html', post=post, other_posts=others)
 
 
