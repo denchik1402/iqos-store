@@ -105,14 +105,14 @@ CATEGORY_SEO = {
     },
     'lil': {
         'meta_description': (
-            'Купить lil SOLID и lil SOLID DUAL в LIL STORE, Москва. '
+            'Купить LIL SOLID, LIL SOLID DUAL и LIL SOLID 4.0 в LIL STORE, Москва. '
             'Оригинальные устройства LIL для нагревания табака. '
-            'lil SOLID 3.0 и DUAL — все цвета в наличии. Доставка 1–2 дня.'
+            'Все модели и цвета в наличии. Доставка 1–2 дня.'
         ),
         'meta_keywords': (
-            'lil SOLID, lil SOLID DUAL, lil SOLID 3.0, LIL device, купить lil SOLID, '
-            'buy lil SOLID, нагреватель LIL, LIL tobacco heating, LIL STORE, '
-            'Москва, original LIL'
+            'LIL SOLID, LIL SOLID DUAL, LIL SOLID 3.0, LIL SOLID 4.0, LIL device, '
+            'купить LIL SOLID, buy LIL SOLID, нагреватель LIL, LIL tobacco heating, '
+            'LIL STORE, Москва, original LIL'
         ),
     },
     'exclusive': {
@@ -128,6 +128,82 @@ CATEGORY_SEO = {
         ),
     },
 }
+
+
+DEVICE_MODEL_SEO = {
+    'IQOS Iluma i One': {
+        'meta_description': (
+            'Купить IQOS Iluma i One в LIL STORE, Москва. Компактное устройство IQOS ILUMA '
+            'без лезвия, технология SMARTCORE. Оригинал, все цвета. Бронь на сайте, доставка 1–2 дня.'
+        ),
+        'meta_keywords': (
+            'IQOS Iluma i One, купить Iluma i One, buy IQOS i One, IQOS ILUMA compact, '
+            'SMARTCORE, IQOS без лезвия, original IQOS, оригинал IQOS, LIL STORE, Москва'
+        ),
+        'image_alt': 'IQOS Iluma i One — компактное устройство IQOS ILUMA, фото LIL STORE',
+    },
+    'IQOS Iluma i Standart': {
+        'meta_description': (
+            'Купить IQOS Iluma i Standart в LIL STORE, Москва. Сбалансированная модель IQOS ILUMA '
+            'без лезвия, SMARTCORE, увеличенная батарея. Оригинал, бронь на сайте, доставка 1–2 дня.'
+        ),
+        'meta_keywords': (
+            'IQOS Iluma i Standart, IQOS Iluma i Standard, купить Iluma i Standart, '
+            'buy IQOS i Standard, IQOS ILUMA, SMARTCORE, original IQOS, LIL STORE, Москва'
+        ),
+        'image_alt': 'IQOS Iluma i Standart — устройство IQOS ILUMA, фото LIL STORE',
+    },
+    'IQOS Iluma i Prime': {
+        'meta_description': (
+            'Купить IQOS Iluma i Prime в LIL STORE, Москва. Премиальное устройство IQOS ILUMA '
+            'без лезвия, SMARTCORE, максимальная автономность. Оригинал, доставка 1–2 дня.'
+        ),
+        'meta_keywords': (
+            'IQOS Iluma i Prime, купить Iluma i Prime, buy IQOS i Prime, IQOS ILUMA premium, '
+            'SMARTCORE, original IQOS, оригинал IQOS, LIL STORE, Москва'
+        ),
+        'image_alt': 'IQOS Iluma i Prime — премиальное устройство IQOS ILUMA, фото LIL STORE',
+    },
+    'LIL SOLID DUAL': {
+        'meta_description': (
+            'Купить LIL SOLID DUAL в LIL STORE, Москва. Устройство LIL с зарядным кейсом, '
+            'два режима нагрева, совместимость с HEETS и FIT. Оригинал, доставка 1–2 дня.'
+        ),
+        'meta_keywords': (
+            'LIL SOLID DUAL, купить LIL SOLID DUAL, buy LIL SOLID DUAL, LIL dual mode, '
+            'нагреватель LIL, LIL device, original LIL, LIL STORE, Москва'
+        ),
+        'image_alt': 'LIL SOLID DUAL — устройство LIL с кейсом, фото LIL STORE',
+    },
+    'LIL SOLID 3.0': {
+        'meta_description': (
+            'Купить LIL SOLID 3.0 в LIL STORE, Москва. Компактное устройство LIL с двумя режимами '
+            'интенсивности и съёмным нагревателем. Оригинал, бронь на сайте, доставка 1–2 дня.'
+        ),
+        'meta_keywords': (
+            'LIL SOLID 3.0, купить LIL SOLID 3.0, buy LIL SOLID 3.0, LIL 3.0, '
+            'нагреватель LIL, LIL device, original LIL, LIL STORE, Москва'
+        ),
+        'image_alt': 'LIL SOLID 3.0 — компактное устройство LIL, фото LIL STORE',
+    },
+    'LIL SOLID 4.0': {
+        'meta_description': (
+            'Купить LIL SOLID 4.0 в LIL STORE, Москва. Новое поколение LIL SOLID — '
+            'улучшенный нагреватель, стильный дизайн. Оригинальная продукция LIL, доставка 1–2 дня.'
+        ),
+        'meta_keywords': (
+            'LIL SOLID 4.0, купить LIL SOLID 4.0, buy LIL SOLID 4.0, LIL SOLID new, '
+            'LIL device, нагреватель LIL, LIL tobacco heating, original LIL, LIL STORE, Москва'
+        ),
+        'image_alt': 'LIL SOLID 4.0 — устройство LIL нового поколения, фото LIL STORE',
+    },
+}
+
+
+def normalize_device_model_name(name: str) -> str:
+    """LIL в названии модели — только заглавными."""
+    name = ' '.join((name or '').split())
+    return re.sub(r'\blil\s+solid\b', 'LIL SOLID', name, flags=re.IGNORECASE)
 
 
 def _truncate(text: str, max_len: int) -> str:
@@ -182,18 +258,21 @@ def _is_exclusive(product, category) -> bool:
 
 def _device_line(product) -> Optional[str]:
     name = (product.name or '').lower()
-    if 'lil solid dual' in name:
-        return 'lil SOLID DUAL'
-    if 'lil solid 3' in name:
-        return 'lil SOLID 3.0'
-    if 'i prime' in name or 'i prime' in (product.model or '').lower():
+    model = (product.model or '')
+    if 'lil solid dual' in name or model == 'LIL SOLID DUAL':
+        return 'LIL SOLID DUAL'
+    if 'lil solid 4' in name or model == 'LIL SOLID 4.0':
+        return 'LIL SOLID 4.0'
+    if 'lil solid 3' in name or model == 'LIL SOLID 3.0':
+        return 'LIL SOLID 3.0'
+    if 'i prime' in name or 'i prime' in model.lower():
         return 'IQOS Iluma i Prime'
     if 'i standart' in name or 'i standard' in name:
         return 'IQOS Iluma i Standard'
     if 'i one' in name:
         return 'IQOS Iluma i One'
     if product.model:
-        return product.model
+        return normalize_device_model_name(product.model)
     return 'IQOS ILUMA'
 
 
@@ -268,6 +347,30 @@ def generate_category_seo(category) -> dict[str, str]:
         'meta_keywords': _truncate(
             _dedupe_keywords([
                 name, f'купить {name}', 'IQOS', 'TEREA', 'ILUMA', SITE, CITY_RU, CITY_EN,
+            ]),
+            300,
+        ),
+    }
+
+
+def generate_device_model_seo(device_model) -> dict[str, str]:
+    name = normalize_device_model_name(getattr(device_model, 'name', None) or str(device_model))
+    preset = DEVICE_MODEL_SEO.get(name)
+    if preset:
+        return {
+            'image_alt': _truncate(preset['image_alt'], 200),
+            'meta_description': _truncate(preset['meta_description'], 300),
+            'meta_keywords': _truncate(preset['meta_keywords'], 300),
+        }
+    return {
+        'image_alt': _truncate(f'{name} — устройство, фото {SITE}', 200),
+        'meta_description': _truncate(
+            f'Купить {name} в {SITE}, {CITY_RU}. Оригинальная продукция, бронь на сайте, {DELIVERY}.',
+            300,
+        ),
+        'meta_keywords': _truncate(
+            _dedupe_keywords([
+                name, f'купить {name}', f'buy {name}', 'IQOS', 'LIL', 'ILUMA', SITE, CITY_RU, CITY_EN,
             ]),
             300,
         ),
@@ -415,16 +518,18 @@ def _generate_lil_seo(product, name: str, price: str) -> dict[str, str]:
 
     kw = [
         name, f'купить {name}', f'buy {name}',
-        line, 'lil SOLID', 'LIL device', 'купить lil SOLID', 'buy lil SOLID',
+        line, 'LIL SOLID', 'LIL device', 'купить LIL SOLID', 'buy LIL SOLID',
         'нагреватель LIL', 'LIL tobacco heating', 'original LIL', 'оригинал LIL',
         SITE, CITY_RU, CITY_EN,
     ]
     if dual:
-        kw.extend(['lil SOLID DUAL', 'LIL dual mode'])
+        kw.extend(['LIL SOLID DUAL', 'LIL dual mode'])
+    elif '4.0' in line:
+        kw.extend(['LIL SOLID 4.0', 'LIL 4.0'])
     else:
-        kw.extend(['lil SOLID 3.0', 'LIL 3.0'])
+        kw.extend(['LIL SOLID 3.0', 'LIL 3.0'])
     if color_en:
-        kw.append(f'lil SOLID {color_en}')
+        kw.append(f'LIL SOLID {color_en}')
 
     meta_keywords = _truncate(_dedupe_keywords(kw), 300)
     color_part = f', цвет {color_en}' if color_en else ''

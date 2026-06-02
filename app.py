@@ -124,6 +124,7 @@ def _set_sqlite_pragma(dbapi_connection, connection_record):
         cursor.close()
 
 from models import Product, Category, Review, Order, OrderItem, TelegramUser, BotSetting, PromoCode, Banner, HomeBlock, DeviceModel
+from seo_utils import normalize_device_model_name, generate_device_model_seo
 
 _telegram_bot_url_cache = None
 
@@ -629,6 +630,12 @@ def catalog(category_slug=None):
         filter_models = [model_filter] + filter_models
     if color_filter and color_filter not in filter_colors:
         filter_colors = [color_filter] + filter_colors
+
+    device_model_filter = None
+    if model_filter:
+        device_model_filter = DeviceModel.query.filter(
+            db.func.lower(DeviceModel.name) == model_filter.lower()
+        ).first()
     
     # Текущие значения фильтров для UI
     filters = {
@@ -652,7 +659,8 @@ def catalog(category_slug=None):
                          filter_models=filter_models,
                          filter_colors=filter_colors,
                          price_range_min=price_range_min,
-                         price_range_max=price_range_max)
+                         price_range_max=price_range_max,
+                         device_model_filter=device_model_filter)
 
 @app.route('/product/<int:product_id>')
 def product_redirect_id(product_id):
@@ -1286,6 +1294,17 @@ def _next_device_model_sort_order():
     return (max_order or 0) + 10
 
 
+def _save_device_model_seo(device_model, form):
+    """Сохраняет SEO из формы; пустые поля заполняет автоматически."""
+    for field in ('image_alt', 'meta_description', 'meta_keywords'):
+        val = (form.get(field) or '').strip()
+        setattr(device_model, field, val or None)
+    generated = generate_device_model_seo(device_model)
+    for field in ('image_alt', 'meta_description', 'meta_keywords'):
+        if not getattr(device_model, field):
+            setattr(device_model, field, generated[field])
+
+
 @app.route('/admin/login', methods=['GET', 'POST'])
 def admin_login():
     """Вход в админку по ключу (POST). Ключ не передаётся в URL."""
@@ -1527,7 +1546,7 @@ def admin_device_model_add():
     if login is not None:
         return login
     if request.method == 'POST':
-        name = (request.form.get('name') or '').strip()
+        name = normalize_device_model_name((request.form.get('name') or '').strip())
         if not name:
             flash('Укажите название модели.', 'danger')
             return render_template('admin_device_model_add.html', default_sort_order=_next_device_model_sort_order())
@@ -1539,6 +1558,7 @@ def admin_device_model_add():
             sort_raw = (request.form.get('sort_order') or '').strip()
             sort_order = int(sort_raw) if sort_raw else _next_device_model_sort_order()
             device_model = DeviceModel(name=name, sort_order=sort_order)
+            _save_device_model_seo(device_model, request.form)
             db.session.add(device_model)
             db.session.commit()
             flash(f'Модель «{name}» создана.', 'success')
@@ -1559,7 +1579,7 @@ def admin_device_model_edit(model_id):
     device_model = db.get_or_404(DeviceModel, model_id)
     product_count = _count_products_for_device_model(device_model.name)
     if request.method == 'POST':
-        name = (request.form.get('name') or '').strip()
+        name = normalize_device_model_name((request.form.get('name') or '').strip())
         if not name:
             flash('Укажите название модели.', 'danger')
             return render_template('admin_device_model_edit.html', device_model=device_model, product_count=product_count)
@@ -1575,6 +1595,7 @@ def admin_device_model_edit(model_id):
             sort_raw = (request.form.get('sort_order') or '').strip()
             device_model.name = name
             device_model.sort_order = int(sort_raw) if sort_raw else device_model.sort_order or 0
+            _save_device_model_seo(device_model, request.form)
             if old_name != name:
                 Product.query.filter(db.func.lower(Product.model) == old_name.lower()).update(
                     {'model': name}, synchronize_session=False

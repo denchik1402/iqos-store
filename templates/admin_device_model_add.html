@@ -18,13 +18,25 @@
                 <div class="mb-3">
                     <label class="form-label fw-bold">Название *</label>
                     <input type="text" name="name" class="form-control" required maxlength="100"
-                           placeholder="Например: IQOS Iluma i One">
-                    <small class="text-muted">Должно совпадать с полем «Модель» у товаров и отображаться в фильтре каталога.</small>
+                           placeholder="Например: LIL SOLID 4.0">
+                    <small class="text-muted">LIL в названии сохраняется заглавными (LIL SOLID). Используется в фильтре каталога и у товаров.</small>
                 </div>
                 <div class="mb-3">
                     <label class="form-label fw-bold">Порядок сортировки</label>
                     <input type="number" name="sort_order" class="form-control" value="{{ default_sort_order }}" min="0" step="1">
                     <small class="text-muted">Меньшее число — выше в списке фильтров.</small>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label fw-bold">Alt-текст (SEO)</label>
+                    <input type="text" name="image_alt" class="form-control" maxlength="200" placeholder="Если пусто — заполнится автоматически">
+                </div>
+                <div class="mb-3">
+                    <label class="form-label fw-bold">Meta Description (SEO)</label>
+                    <input type="text" name="meta_description" class="form-control" maxlength="300" placeholder="Если пусто — заполнится автоматически">
+                </div>
+                <div class="mb-3">
+                    <label class="form-label fw-bold">Meta Keywords (SEO)</label>
+                    <input type="text" name="meta_keywords" class="form-control" maxlength="300" placeholder="RU + EN ключевые слова через запятую">
                 </div>
                 <hr>
                 <button type="submit" class="btn btn-success">➕ Создать</button>

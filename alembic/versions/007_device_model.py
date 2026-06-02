@@ -20,8 +20,9 @@ DEFAULT_MODELS = [
     ('IQOS Iluma i One', 1),
     ('IQOS Iluma i Standart', 2),
     ('IQOS Iluma i Prime', 3),
-    ('lil SOLID DUAL', 4),
-    ('lil SOLID 3.0', 5),
+    ('LIL SOLID DUAL', 4),
+    ('LIL SOLID 3.0', 5),
+    ('LIL SOLID 4.0', 6),
 ]
 
 

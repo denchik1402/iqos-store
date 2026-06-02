@@ -10,11 +10,14 @@ import re
 # Маппинг: ключевые слова в названии -> модель (порядок важен — более специфичные первыми)
 MODEL_MAP = [
     # lil SOLID DUAL (до lil SOLID 3.0)
-    (r'\blil\s+solid\s+dual\b', 'lil SOLID DUAL'),
-    (r'\bsolid\s+dual\b', 'lil SOLID DUAL'),
-    # lil SOLID 3.0
-    (r'\blil\s+solid\s+3\.0\b', 'lil SOLID 3.0'),
-    (r'\bsolid\s+3\.0\b', 'lil SOLID 3.0'),
+    (r'\blil\s+solid\s+dual\b', 'LIL SOLID DUAL'),
+    (r'\bsolid\s+dual\b', 'LIL SOLID DUAL'),
+    # LIL SOLID 4.0 (до 3.0)
+    (r'\blil\s+solid\s+4\.0\b', 'LIL SOLID 4.0'),
+    (r'\bsolid\s+4\.0\b', 'LIL SOLID 4.0'),
+    # LIL SOLID 3.0
+    (r'\blil\s+solid\s+3\.0\b', 'LIL SOLID 3.0'),
+    (r'\bsolid\s+3\.0\b', 'LIL SOLID 3.0'),
     # IQOS Iluma i Prime
     (r'\bi\s+prime\b', 'IQOS Iluma i Prime'),
     (r'\biluma\s+i\s+prime\b', 'IQOS Iluma i Prime'),

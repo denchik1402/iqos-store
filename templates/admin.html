@@ -256,6 +256,7 @@
                                 <tr>
                                     <th>Модель</th>
                                     <th>Товаров</th>
+                                    <th>Meta Description</th>
                                     <th>Порядок</th>
                                     <th style="width: 160px;">Действия</th>
                                 </tr>
@@ -265,6 +266,7 @@
                                 <tr>
                                     <td><strong>{{ m.name }}</strong></td>
                                     <td>{{ device_model_counts.get(m.name, 0) }}</td>
+                                    <td>{{ (m.meta_description or '—')[:60] }}{% if m.meta_description and m.meta_description|length > 60 %}…{% endif %}</td>
                                     <td>{{ m.sort_order or 0 }}</td>
                                     <td class="text-nowrap">
                                         <a href="{{ url_for('admin_device_model_edit', model_id=m.id) }}" class="btn btn-sm btn-primary" title="Редактировать">✏️</a>

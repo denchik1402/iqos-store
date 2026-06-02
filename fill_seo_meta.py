@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 """
-Заполнение SEO-полей (image_alt, meta_description, meta_keywords) для товаров и категорий.
+Заполнение SEO-полей (image_alt, meta_description, meta_keywords) для товаров, категорий и моделей.
 
 Использование:
   python fill_seo_meta.py           # только пустые поля
@@ -12,17 +12,18 @@ import sys
 
 from app import app
 from extensions import db
-from models import Category, Product
-from seo_utils import generate_category_seo, generate_product_seo
+from models import Category, Product, DeviceModel
+from seo_utils import generate_category_seo, generate_product_seo, generate_device_model_seo
 
 
 def _should_set(current: str | None, force: bool) -> bool:
     return force or not (current or '').strip()
 
 
-def fill_seo(force: bool = False) -> tuple[int, int]:
+def fill_seo(force: bool = False) -> tuple[int, int, int]:
     categories_updated = 0
     products_updated = 0
+    models_updated = 0
 
     for category in Category.query.order_by(Category.id).all():
         seo = generate_category_seo(category)
@@ -51,8 +52,23 @@ def fill_seo(force: bool = False) -> tuple[int, int]:
         if changed:
             products_updated += 1
 
+    for device_model in DeviceModel.query.order_by(DeviceModel.id).all():
+        seo = generate_device_model_seo(device_model)
+        changed = False
+        if _should_set(device_model.image_alt, force):
+            device_model.image_alt = seo['image_alt']
+            changed = True
+        if _should_set(device_model.meta_description, force):
+            device_model.meta_description = seo['meta_description']
+            changed = True
+        if _should_set(device_model.meta_keywords, force):
+            device_model.meta_keywords = seo['meta_keywords']
+            changed = True
+        if changed:
+            models_updated += 1
+
     db.session.commit()
-    return categories_updated, products_updated
+    return categories_updated, products_updated, models_updated
 
 
 def main() -> int:
@@ -61,14 +77,17 @@ def main() -> int:
     args = parser.parse_args()
 
     with app.app_context():
-        cats, prods = fill_seo(force=args.force)
+        cats, prods, models = fill_seo(force=args.force)
         print(f'Updated categories: {cats}')
         print(f'Updated products: {prods}')
+        print(f'Updated device models: {models}')
         total = Category.query.count()
         filled_c = Category.query.filter(Category.meta_description.isnot(None)).count()
         filled_p = Product.query.filter(Product.meta_description.isnot(None)).count()
+        filled_m = DeviceModel.query.filter(DeviceModel.meta_description.isnot(None)).count()
         print(f'Categories with meta_description: {filled_c}/{total}')
         print(f'Products with meta_description: {filled_p}/{Product.query.count()}')
+        print(f'Device models with meta_description: {filled_m}/{DeviceModel.query.count()}')
     return 0
 
 

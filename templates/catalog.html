@@ -17,21 +17,27 @@ index, follow
 {% endif %}
 {% endblock %}
 {% block title %}
-    {% if category %}
+    {% if device_model_filter %}
+        {{ device_model_filter.name }} — купить в LIL STORE
+    {% elif category %}
         {{ category.name }} — купить в LIL STORE
     {% else %}
         Каталог IQOS и TEREA — LIL STORE
     {% endif %}
 {% endblock %}
 {% block meta_description %}
-    {% if category %}
+    {% if device_model_filter and device_model_filter.meta_description %}
+        {{ device_model_filter.meta_description }}
+    {% elif category %}
         {% if category.meta_description %}{{ category.meta_description }}{% else %}{{ category.name }}. {{ category.description or 'Оригинальная продукция.' }} Бронь на сайте, доставка 1–2 дня.{% endif %}
     {% else %}
         Каталог устройств IQOS и стиков TEREA. Оригинальная продукция, доставка по России.
     {% endif %}
 {% endblock %}
 {% block meta_keywords %}
-    {% if category and category.meta_keywords %}{{ category.meta_keywords }}{% else %}IQOS, TEREA, ILUMA, стики, нагревательные устройства, купить{% endif %}
+    {% if device_model_filter and device_model_filter.meta_keywords %}
+        {{ device_model_filter.meta_keywords }}
+    {% elif category and category.meta_keywords %}{{ category.meta_keywords }}{% else %}IQOS, TEREA, ILUMA, стики, нагревательные устройства, купить{% endif %}
 {% endblock %}
 {% block schema_ld %}
 {% set _base = request.url_root.rstrip('/') %}

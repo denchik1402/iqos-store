@@ -23,6 +23,9 @@ class DeviceModel(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(100), unique=True, nullable=False)
     sort_order = db.Column(db.Integer, default=0)
+    image_alt = db.Column(db.String(200))
+    meta_description = db.Column(db.String(300))
+    meta_keywords = db.Column(db.String(300))
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
 
 class BotSetting(db.Model):

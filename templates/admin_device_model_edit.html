@@ -28,6 +28,21 @@
                     <input type="number" name="sort_order" class="form-control"
                            value="{{ device_model.sort_order or 0 }}" min="0" step="1">
                 </div>
+                <div class="mb-3">
+                    <label class="form-label fw-bold">Alt-текст (SEO)</label>
+                    <input type="text" name="image_alt" class="form-control" maxlength="200"
+                           value="{{ device_model.image_alt or '' }}">
+                </div>
+                <div class="mb-3">
+                    <label class="form-label fw-bold">Meta Description (SEO)</label>
+                    <input type="text" name="meta_description" class="form-control" maxlength="300"
+                           value="{{ device_model.meta_description or '' }}">
+                </div>
+                <div class="mb-3">
+                    <label class="form-label fw-bold">Meta Keywords (SEO)</label>
+                    <input type="text" name="meta_keywords" class="form-control" maxlength="300"
+                           value="{{ device_model.meta_keywords or '' }}">
+                </div>
                 <hr>
                 <button type="submit" class="btn btn-primary">💾 Сохранить</button>
                 <a href="{{ url_for('admin', tab='models') }}" class="btn btn-outline-secondary">Отмена</a>
