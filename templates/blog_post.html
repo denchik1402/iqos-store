@@ -6,7 +6,7 @@
 {% block canonical_url %}{{ request.url_root.rstrip('/') }}{{ url_for('blog_post', slug=post.slug) }}{% endblock %}
 
 {% block extra_css %}
-<link rel="stylesheet" href="{{ url_for('static', filename='css/blog.css') }}?v=10">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/blog.css') }}?v=11">
 {% endblock %}
 
 {% block schema_ld %}
@@ -59,7 +59,7 @@
     </header>
 
     <div class="article-content">
-        {{ post.content|sanitize_blog_html|safe }}
+        {{ post.content|sanitize_blog_html|blog_article_images|safe }}
     </div>
 
     <div class="article-cta">

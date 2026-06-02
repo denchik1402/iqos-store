@@ -344,6 +344,20 @@ def _sanitize_blog_html(value):
     return bleach.clean(str(value), tags=ALLOWED_TAGS_BLOG, attributes=ALLOWED_ATTRS_BLOG, strip=True)
 
 
+def _wrap_blog_article_images(html: str) -> str:
+    """Оборачивает inline-картинки для hover-zoom в тексте статьи."""
+    if not html or '<img' not in html:
+        return html
+    if 'article-img-zoom' in html:
+        return html
+    return re.sub(
+        r'<img\b[^>]*>',
+        lambda m: f'<span class="article-img-zoom">{m.group(0)}</span>',
+        html,
+        flags=re.IGNORECASE,
+    )
+
+
 def _build_product_description(intro, specs_text):
     """Собирает description из вступления и строк «Ключ: значение»."""
     intro = _sanitize_product_html((intro or '').strip())
@@ -412,6 +426,14 @@ def sanitize_blog_html(value):
     if value is None or value == '':
         return ''
     return _sanitize_blog_html(value)
+
+
+@app.template_filter('blog_article_images')
+def blog_article_images(value):
+    """Обёртка inline-изображений статьи для hover-zoom."""
+    if value is None or value == '':
+        return ''
+    return _wrap_blog_article_images(str(value))
 
 
 def _blog_cover_static_path(cover_image):

@@ -187,22 +187,33 @@
     border-radius: 12px;
     margin: 1.25rem 0;
     display: block;
-    transform-origin: center center;
-    transition: transform 1s cubic-bezier(0.25, 0.46, 0.45, 0.94);
 }
-.article-content p:has(> img),
-.article-content figure {
+/* Inline-картинки в тексте (обёртка добавляется при рендере) */
+.article-content .article-img-zoom {
+    display: block;
     overflow: hidden;
     border-radius: 12px;
     margin: 1.25rem 0;
+    line-height: 0;
+    max-width: 100%;
 }
-.article-content p:has(> img) img,
-.article-content figure img {
-    margin: 0;
+.article-content p:has(> .article-img-zoom),
+.article-content .blog-lead p:has(> .article-img-zoom),
+.article-content .blog-callout p:has(> .article-img-zoom) {
+    margin-bottom: 0;
+}
+.article-content .article-img-zoom img {
     width: 100%;
+    max-width: 100%;
+    height: auto;
+    margin: 0;
+    border-radius: 0;
+    display: block;
+    transform-origin: center center;
+    transition: transform 0.85s cubic-bezier(0.25, 0.46, 0.45, 0.94) !important;
 }
-.article-content img:hover {
-    transform: scale(1.5);
+.article-content .article-img-zoom:hover img {
+    transform: scale(1.4) !important;
 }
 
 .blog-lead {
@@ -352,7 +363,7 @@
     .blog-card-media img,
     .home-category-media img,
     .article-hero-media img,
-    .article-content img {
+    .article-content .article-img-zoom img {
         transition: none;
     }
     .article-hero:hover .article-hero-media img {
