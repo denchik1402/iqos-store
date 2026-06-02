@@ -39,7 +39,7 @@ def fill_seo(force: bool = False) -> tuple[int, int, int, int]:
         if _should_set(category.description, force) and seo.get('seo_text'):
             category.description = seo['seo_text']
             changed = True
-        if home.get('image') and _should_set(category.image, force):
+        if home.get('image') and (force or category.image != home['image']):
             category.image = home['image']
             changed = True
         if changed:

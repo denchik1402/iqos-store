@@ -5,6 +5,7 @@ import re
 IMAGE_EXTENSIONS = frozenset({'.jpg', '.jpeg', '.png', '.gif', '.webp'})
 PRODUCT_WIDTHS = (400, 800)
 BANNER_WIDTHS = (400, 800, 1200)
+CATEGORY_WIDTHS = (400, 800)
 VARIANT_SUFFIX_RE = re.compile(r'_(\d+)w$')
 
 

@@ -5,6 +5,7 @@ RU + EN ключевые слова для Yandex и Google.
 """
 from __future__ import annotations
 
+import os
 import re
 from typing import Optional
 
@@ -184,6 +185,18 @@ CATEGORY_HOME = {
         'image_alt': 'Устройства LIL SOLID 3.0, Dual и 4.0',
     },
 }
+
+
+def category_home_image_filename(slug: str, db_image: str | None = None) -> str:
+    """Имя файла обложки категории для главной (CATEGORY_HOME приоритетнее БД)."""
+    home = CATEGORY_HOME.get(slug or '', {})
+    if home.get('image'):
+        return home['image']
+    raw = (db_image or '').strip().replace('\\', '/')
+    if raw.startswith('images/categories/'):
+        raw = raw.split('images/categories/', 1)[-1]
+    return os.path.basename(raw) if raw else ''
+
 
 DEVICE_MODEL_SEO = {
     'IQOS Iluma i One': {

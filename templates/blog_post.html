@@ -6,7 +6,7 @@
 {% block canonical_url %}{{ request.url_root.rstrip('/') }}{{ url_for('blog_post', slug=post.slug) }}{% endblock %}
 
 {% block extra_css %}
-<link rel="stylesheet" href="{{ url_for('static', filename='css/blog.css') }}?v=4">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/blog.css') }}?v=5">
 {% endblock %}
 
 {% block schema_ld %}

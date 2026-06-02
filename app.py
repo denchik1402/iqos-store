@@ -446,14 +446,11 @@ def category_home_filter(slug):
 
 @app.template_filter('category_image_url')
 def category_image_url(category):
-    """URL изображения категории."""
-    from seo_utils import CATEGORY_HOME
+    """URL изображения категории (CATEGORY_HOME приоритетнее устаревших значений в БД)."""
+    from seo_utils import category_home_image_filename
     if not category:
         return None
-    filename = (category.image or '').strip()
-    if not filename:
-        home = CATEGORY_HOME.get(category.slug or '', {})
-        filename = home.get('image', '')
+    filename = category_home_image_filename(category.slug, category.image)
     if not filename:
         return None
     return url_for('static', filename=f'images/categories/{filename}')

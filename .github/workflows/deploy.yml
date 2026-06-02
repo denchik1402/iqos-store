@@ -57,6 +57,7 @@ jobs:
             chown -R lilstore:lilstore /home/lilstore/my_shop/static/images/products
             chown -R lilstore:lilstore /home/lilstore/my_shop/static/images/blog
             chown -R lilstore:lilstore /home/lilstore/my_shop/static/images/categories
+            chmod -R a+rX /home/lilstore/my_shop/static/images/categories
             find /home/lilstore/my_shop/static/images/banners -type d -exec chmod 755 {} \;
             find /home/lilstore/my_shop/static/images/products -type d -exec chmod 755 {} \;
             find /home/lilstore/my_shop/static/images/blog -type d -exec chmod 755 {} \;

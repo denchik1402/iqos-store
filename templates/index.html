@@ -88,7 +88,7 @@
 
 {% block extra_css %}
 <link rel="stylesheet" href="{{ url_for('static', filename='css/index.css') }}?v=2">
-<link rel="stylesheet" href="{{ url_for('static', filename='css/blog.css') }}?v=4">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/blog.css') }}?v=5">
 {% endblock %}
 
 {% block content %}
@@ -216,6 +216,7 @@
     <div class="row g-3">
         {% for cat in nav_categories %}
         {% set home = cat.slug|category_home %}
+        {% set cat_fn = home.get('image') %}
         {% set cat_img = cat|category_image_url %}
         <div class="col-md-4">
             <a href="{{ url_for('catalog', category_slug=cat.slug) }}" class="home-category-card text-decoration-none h-100 d-block" title="{{ cat.meta_description or home.get('teaser', '') or cat.name }}">
@@ -225,9 +226,12 @@
                         <p class="text-muted small mb-3">{{ home.get('teaser') or (cat.meta_description[:120] + '…' if cat.meta_description and cat.meta_description|length > 120 else cat.meta_description or 'Смотреть товары') }}</p>
                         <span class="home-category-link">Перейти в категорию <i class="fas fa-arrow-right ms-1"></i></span>
                     </div>
-                    {% if cat_img %}
+                    {% if cat_fn %}
+                    {% set cimg = optimized_image('categories', cat_fn) %}
                     <div class="home-category-media card-side-media">
-                        <img src="{{ cat_img }}" alt="{{ home.get('image_alt', cat.name) }}" loading="lazy" decoding="async">
+                        <img src="{{ cimg.src_800 if cimg.has_variants else cimg.src }}"
+                             {% if cimg.srcset_webp %}srcset="{{ cimg.srcset_webp }}" sizes="180px"{% endif %}
+                             alt="{{ home.get('image_alt', cat.name) }}" loading="lazy" decoding="async">
                     </div>
                     {% endif %}
                 </div>

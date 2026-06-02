@@ -15,6 +15,7 @@ except ImportError:
 
 from image_utils import (
     BANNER_WIDTHS,
+    CATEGORY_WIDTHS,
     IMAGE_EXTENSIONS,
     PRODUCT_WIDTHS,
     is_variant_filename,
@@ -102,7 +103,11 @@ def _collect_jobs(folder, widths):
 
 def main():
     stats = {'created': 0, 'skipped': 0, 'errors': 0}
-    jobs = _collect_jobs('products', PRODUCT_WIDTHS) + _collect_jobs('banners', BANNER_WIDTHS)
+    jobs = (
+        _collect_jobs('products', PRODUCT_WIDTHS)
+        + _collect_jobs('banners', BANNER_WIDTHS)
+        + _collect_jobs('categories', CATEGORY_WIDTHS)
+    )
     if not jobs:
         print('Нет изображений для обработки.')
         return 0

@@ -552,7 +552,7 @@ def seed_category_seo_text() -> int:
         if seo.get('seo_text') and not (category.description or '').strip():
             category.description = seo['seo_text']
             changed = True
-        if home.get('image') and not (category.image or '').strip():
+        if home.get('image') and category.image != home['image']:
             category.image = home['image']
             changed = True
         if changed:

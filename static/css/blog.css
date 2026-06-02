@@ -68,7 +68,7 @@
     padding: 0.65rem 0.85rem;
 }
 .blog-card:hover .blog-card-media img {
-    transform: scale(1.2);
+    transform: scale(1.5);
 }
 .blog-card-icon {
     flex: 0 0 56px;
@@ -227,7 +227,7 @@
     padding: 0.75rem 1rem;
 }
 .home-category-card:hover .home-category-media img {
-    transform: scale(1.2);
+    transform: scale(1.5);
 }
 .home-category-card:hover .home-category-card-inner {
     transform: translateY(-4px);
