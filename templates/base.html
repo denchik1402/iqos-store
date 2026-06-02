@@ -269,13 +269,13 @@
         </div>
     </div>
 
-    <script defer src="{{ url_for('static', filename='vendor/jquery/jquery-3.6.0.min.js') }}"></script>
-    <script defer src="{{ url_for('static', filename='vendor/bootstrap/bootstrap.bundle.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='vendor/jquery/jquery-3.6.0.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='vendor/bootstrap/bootstrap.bundle.min.js') }}"></script>
     <script defer src="{{ url_for('static', filename='js/wishlist.js') }}"></script>
     <script defer src="{{ url_for('static', filename='js/compare.js') }}"></script>
     <script defer src="{{ url_for('static', filename='js/search_suggestions.js') }}"></script>
     
-    <script defer>
+    <script>
         (function loadTelegramSdk() {
             if (/tgWebApp|TelegramWebview/i.test(navigator.userAgent + location.search)) {
                 var s = document.createElement('script');
