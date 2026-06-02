@@ -15,6 +15,7 @@ from seo_utils import (
     generate_category_seo,
     generate_device_model_seo,
     normalize_device_model_name,
+    CATEGORY_HOME,
 )
 
 BLOG_POSTS = [
@@ -22,7 +23,8 @@ BLOG_POSTS = [
         'slug': 'kak-vybrat-iqos-iluma',
         'title': 'Как выбрать IQOS ILUMA: One, Standart или Prime',
         'excerpt': 'Сравниваем три линейки IQOS Iluma i — компактность, автономность и для кого подходит каждая модель.',
-        'cover_icon': 'fa-mobile-alt',
+        'cover_icon': 'fa-layer-group',
+        'cover_image': 'blog/covers/iqos-iluma.webp',
         'reading_minutes': 7,
         'meta_description': (
             'Как выбрать IQOS ILUMA: сравнение Iluma i One, Standart и Prime. '
@@ -86,6 +88,7 @@ BLOG_POSTS = [
         'title': 'TEREA vs HEETS: в чём разница и что выбрать',
         'excerpt': 'TEREA для ILUMA и HEETS для старых IQOS — совместимость, вкус, технология нагрева. Подробное сравнение.',
         'cover_icon': 'fa-exchange-alt',
+        'cover_image': 'blog/covers/iqos-iluma-seletti.webp',
         'reading_minutes': 6,
         'meta_description': (
             'TEREA vs HEETS: отличия стиков для IQOS ILUMA и классических IQOS/LIL. '
@@ -139,6 +142,7 @@ BLOG_POSTS = [
         'title': 'LIL SOLID 3.0, Dual и 4.0: какая модель лучше',
         'excerpt': 'Сравниваем три поколения LIL SOLID — размер, батарея, совместимость со стиками и для кого подходит каждая модель.',
         'cover_icon': 'fa-bolt',
+        'cover_image': 'blog/covers/lil-solid-dual.png',
         'reading_minutes': 6,
         'meta_description': (
             'LIL SOLID 3.0 vs Dual vs 4.0: сравнение моделей, батареи и совместимости со стиками HEETS. '
@@ -202,6 +206,7 @@ BLOG_POSTS = [
         'title': 'Лучшие вкусы TEREA: полный гид по линейке',
         'excerpt': 'Amber, Yellow, Turquoise, Pearl и другие — разбираем вкусовую линейку TEREA и помогаем выбрать первый блок.',
         'cover_icon': 'fa-palette',
+        'cover_image': 'blog/covers/iqos-iluma-seletti.webp',
         'reading_minutes': 8,
         'meta_description': (
             'Лучшие вкусы TEREA: Amber, Yellow, Turquoise, Pearl и другие. '
@@ -261,6 +266,7 @@ BLOG_POSTS = [
         'title': 'TEREA Pearl: что такое капсулы и какие вкусы попробовать',
         'excerpt': 'Разбираем линейку TEREA Pearl — технология ароматических капсул, отличия от обычных TEREA и топовые вкусы.',
         'cover_icon': 'fa-gem',
+        'cover_image': 'blog/covers/iqos-iluma.webp',
         'reading_minutes': 5,
         'meta_description': (
             'TEREA Pearl: что такое капсулы в стиках, как активировать, лучшие вкусы Purple Wave, '
@@ -313,6 +319,7 @@ BLOG_POSTS = [
         'title': 'IQOS ILUMA или LIL SOLID: что выбрать в 2026 году',
         'excerpt': 'Сравниваем две популярные экосистемы — технология нагрева, стики, цена, уход и кому что подойдёт.',
         'cover_icon': 'fa-balance-scale',
+        'cover_image': 'blog/covers/lil-solid.png',
         'reading_minutes': 7,
         'meta_description': (
             'IQOS ILUMA vs LIL SOLID: сравнение технологий, стиков TEREA и HEETS, цены и ухода. '
@@ -374,6 +381,7 @@ BLOG_POSTS = [
         'title': 'Уход за IQOS ILUMA: зарядка, хранение и типичные ошибки',
         'excerpt': 'Как правильно заряжать ILUMA, можно ли мыть устройство и что делать, если стик не нагревается.',
         'cover_icon': 'fa-tools',
+        'cover_image': 'blog/covers/iqos-iluma.webp',
         'reading_minutes': 5,
         'meta_description': (
             'Уход за IQOS ILUMA: зарядка, хранение, чистка, типичные ошибки. '
@@ -424,6 +432,7 @@ BLOG_POSTS = [
         'title': 'Переход с IQOS на ILUMA: что нужно знать',
         'excerpt': 'Меняете классический IQOS или LIL на ILUMA? Рассказываем про новые стики TEREA, отличия в использовании и что делать со старым устройством.',
         'cover_icon': 'fa-arrow-right',
+        'cover_image': 'blog/covers/iqos-iluma-seletti.webp',
         'reading_minutes': 6,
         'meta_description': (
             'Переход с IQOS на ILUMA: что меняется, новые стики TEREA, отличия от HEETS. '
@@ -473,6 +482,7 @@ BLOG_POSTS = [
         'title': 'Сколько стоит IQOS ILUMA: цены на устройства и стики TEREA',
         'excerpt': 'Актуальные цены на Iluma i One, Standart, Prime и блоки TEREA. Что входит в стоимость и как сэкономить при покупке.',
         'cover_icon': 'fa-ruble-sign',
+        'cover_image': 'blog/covers/iqos-iluma.webp',
         'reading_minutes': 4,
         'meta_description': (
             'Цены на IQOS ILUMA: Iluma i One, Standart, Prime и стики TEREA. '
@@ -531,9 +541,19 @@ def seed_category_seo_text() -> int:
     updated = 0
     for category in Category.query.all():
         seo = generate_category_seo(category)
+        home = CATEGORY_HOME.get(category.slug or '', {})
         changed = False
+        if seo.get('meta_description') and not (category.meta_description or '').strip():
+            category.meta_description = seo['meta_description']
+            changed = True
+        if seo.get('meta_keywords') and not (category.meta_keywords or '').strip():
+            category.meta_keywords = seo['meta_keywords']
+            changed = True
         if seo.get('seo_text') and not (category.description or '').strip():
             category.description = seo['seo_text']
+            changed = True
+        if home.get('image') and not (category.image or '').strip():
+            category.image = home['image']
             changed = True
         if changed:
             updated += 1
@@ -550,11 +570,30 @@ def seed_device_model_seo_text() -> int:
     return updated
 
 
-def seed_blog_posts() -> int:
-    created = 0
+def seed_blog_posts() -> tuple[int, int]:
+    created = updated = 0
     now = datetime.utcnow()
     for data in BLOG_POSTS:
-        if BlogPost.query.filter_by(slug=data['slug']).first():
+        existing = BlogPost.query.filter_by(slug=data['slug']).first()
+        if existing:
+            changed = False
+            for field in (
+                'cover_image', 'cover_icon', 'excerpt', 'meta_description',
+                'meta_keywords', 'reading_minutes', 'title',
+            ):
+                val = data.get(field)
+                if val is not None and getattr(existing, field) != val:
+                    setattr(existing, field, val)
+                    changed = True
+            if not (existing.meta_description or '').strip() and data.get('meta_description'):
+                existing.meta_description = data['meta_description']
+                changed = True
+            if not (existing.meta_keywords or '').strip() and data.get('meta_keywords'):
+                existing.meta_keywords = data['meta_keywords']
+                changed = True
+            if changed:
+                existing.updated_at = now
+                updated += 1
             continue
         post = BlogPost(
             slug=data['slug'],
@@ -564,6 +603,7 @@ def seed_blog_posts() -> int:
             meta_description=data['meta_description'],
             meta_keywords=data['meta_keywords'],
             cover_icon=data.get('cover_icon', 'fa-book-open'),
+            cover_image=data.get('cover_image'),
             reading_minutes=data.get('reading_minutes', 5),
             is_published=True,
             created_at=now,
@@ -571,7 +611,7 @@ def seed_blog_posts() -> int:
         )
         db.session.add(post)
         created += 1
-    return created
+    return created, updated
 
 
 def main() -> int:
@@ -579,11 +619,11 @@ def main() -> int:
         slugs = seed_device_model_slugs()
         cats = seed_category_seo_text()
         models = seed_device_model_seo_text()
-        posts = seed_blog_posts()
+        posts_created, posts_updated = seed_blog_posts()
         db.session.commit()
         print(f'Модели: slug обновлено {slugs}, seo_text {models}')
         print(f'Категории: seo_text {cats}')
-        print(f'Блог: создано статей {posts}')
+        print(f'Блог: создано {posts_created}, обновлено {posts_updated}')
     return 0
 
 

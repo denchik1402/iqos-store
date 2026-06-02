@@ -21,6 +21,7 @@
   "author": {"@type": "Organization", "name": "LIL STORE"},
   "publisher": {"@type": "Organization", "name": "LIL STORE", "url": "{{ request.url_root.rstrip('/') }}"},
   "mainEntityOfPage": "{{ request.url_root.rstrip('/') }}{{ url_for('blog_post', slug=post.slug) }}"
+  {% if post.cover_image %},"image": "{{ request.url_root.rstrip('/') }}{{ post.cover_image|blog_cover_url }}"{% endif %}
 }
 </script>
 <script type="application/ld+json">
@@ -42,14 +43,22 @@
 </nav>
 
 <article>
-    <header class="article-hero">
+    <header class="article-hero{% if post.cover_image %} article-hero-cover{% endif %}">
+        {% if post.cover_image %}
+        <div class="article-hero-image">
+            <img src="{{ post.cover_image|blog_cover_url }}" alt="{{ post.title }}" fetchpriority="high">
+        </div>
+        {% else %}
         <div class="article-hero-icon"><i class="fas {{ post.cover_icon or 'fa-book-open' }}"></i></div>
-        <div class="article-meta"><i class="far fa-clock me-1"></i>{{ post.reading_minutes or 5 }} мин чтения</div>
-        <h1 class="h2 mb-0">{{ post.title }}</h1>
+        {% endif %}
+        <div class="article-hero-text">
+            <div class="article-meta"><i class="far fa-clock me-1"></i>{{ post.reading_minutes or 5 }} мин чтения</div>
+            <h1 class="h2 mb-0">{{ post.title }}</h1>
+        </div>
     </header>
 
     <div class="article-content">
-        {{ post.content|sanitize_html|safe }}
+        {{ post.content|sanitize_blog_html|safe }}
     </div>
 
     <div class="article-cta">
@@ -67,15 +76,9 @@
     <div class="row g-4">
         {% for p in other_posts %}
         <div class="col-md-4">
-            <article class="blog-card h-100">
-                <a href="{{ url_for('blog_post', slug=p.slug) }}" class="blog-card-link">
-                    <div class="blog-card-icon"><i class="fas {{ p.cover_icon or 'fa-book-open' }}"></i></div>
-                    <div class="blog-card-body">
-                        <h3 class="blog-card-title h6">{{ p.title }}</h3>
-                        <span class="blog-card-read">Читать <i class="fas fa-arrow-right ms-1"></i></span>
-                    </div>
-                </a>
-            </article>
+            {% with post=p, title_tag='h3', title_class='h6', show_excerpt=false, compact=true, extra_class='h-100' %}
+            {% include 'includes/blog_card.html' %}
+            {% endwith %}
         </div>
         {% endfor %}
     </div>

@@ -62,6 +62,28 @@
   ]
 }
 </script>
+{% if nav_categories %}
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "ItemList",
+  "name": "Каталог по категориям LIL STORE",
+  "itemListElement": [
+    {% for cat in nav_categories %}
+    {% set ch = cat.slug|category_home %}
+    {
+      "@type": "ListItem",
+      "position": {{ loop.index }},
+      "name": {{ cat.name|tojson }},
+      "description": {{ (cat.meta_description or ch.teaser or cat.name)|tojson }},
+      "url": "{{ request.url_root.rstrip('/') }}{{ url_for('catalog', category_slug=cat.slug) }}"
+      {% if category_image_url(cat) %},"image": "{{ request.url_root.rstrip('/') }}{{ category_image_url(cat) }}"{% endif %}
+    }{% if not loop.last %},{% endif %}
+    {% endfor %}
+  ]
+}
+</script>
+{% endif %}
 {% endblock %}
 
 {% block extra_css %}
@@ -189,22 +211,22 @@
 </div>
 
 {% if nav_categories %}
-<section class="home-categories mb-5" aria-label="Категории товаров">
+<section class="home-categories mb-5" aria-label="Каталог по категориям">
     <h2 class="mb-4 fw-bold">Каталог по категориям</h2>
     <div class="row g-3">
         {% for cat in nav_categories %}
+        {% set ch = cat.slug|category_home %}
         <div class="col-md-4">
-            <a href="{{ url_for('catalog', category_slug=cat.slug) }}" class="home-category-card text-decoration-none h-100 d-block">
-                <div class="home-category-card-inner h-100">
-                    <div class="home-category-icon">
-                        {% if cat.slug == 'iqos-iluma' %}<i class="fas fa-mobile-alt"></i>
-                        {% elif cat.slug == 'terea-sticks' %}<i class="fas fa-box-open"></i>
-                        {% elif cat.slug == 'lil' %}<i class="fas fa-bolt"></i>
-                        {% else %}<i class="fas fa-th-large"></i>{% endif %}
+            <a href="{{ url_for('catalog', category_slug=cat.slug) }}" class="home-category-card text-decoration-none h-100 d-block" title="{{ cat.meta_description or ch.teaser or cat.name }}">
+                <div class="home-category-card-inner h-100{% if ch.image or cat.image %} has-image{% endif %}">
+                    <div class="home-category-content">
+                        <h3 class="h5 mb-2 text-dark">{{ cat.name }}</h3>
+                        <p class="text-muted small mb-3">{{ ch.teaser if ch and ch.teaser else (cat.meta_description[:120] + '…' if cat.meta_description and cat.meta_description|length > 120 else cat.meta_description or 'Смотреть товары') }}</p>
+                        <span class="home-category-link">Перейти в категорию <i class="fas fa-arrow-right ms-1"></i></span>
                     </div>
-                    <h3 class="h5 mb-2 text-dark">{{ cat.name }}</h3>
-                    <p class="text-muted small mb-3">{% if cat.slug == 'iqos-iluma' %}Устройства IQOS ILUMA — One, Standart, Prime{% elif cat.slug == 'terea-sticks' %}Оригинальные стики TEREA для ILUMA{% elif cat.slug == 'lil' %}LIL SOLID 3.0, DUAL и 4.0{% else %}Смотреть товары{% endif %}</p>
-                    <span class="home-category-link">Перейти в категорию <i class="fas fa-arrow-right ms-1"></i></span>
+                    {% if ch.image or cat.image %}
+                    <div class="home-category-media" style="background-image: url('{{ category_image_url(cat) }}');" role="img" aria-label="{{ ch.image_alt if ch and ch.image_alt else cat.name }}"></div>
+                    {% endif %}
                 </div>
             </a>
         </div>
@@ -378,17 +400,9 @@
     <div class="row g-4">
         {% for post in blog_posts %}
         <div class="col-md-6 col-lg-4">
-            <article class="blog-card h-100">
-                <a href="{{ url_for('blog_post', slug=post.slug) }}" class="blog-card-link text-decoration-none">
-                    <div class="blog-card-icon"><i class="fas {{ post.cover_icon or 'fa-book-open' }}"></i></div>
-                    <div class="blog-card-body">
-                        <div class="blog-card-meta">{{ post.reading_minutes or 5 }} мин чтения</div>
-                        <h3 class="blog-card-title h5">{{ post.title }}</h3>
-                        <p class="blog-card-excerpt">{{ post.excerpt }}</p>
-                        <span class="blog-card-read">Читать <i class="fas fa-arrow-right ms-1"></i></span>
-                    </div>
-                </a>
-            </article>
+            {% with extra_class='h-100' %}
+            {% include 'includes/blog_card.html' %}
+            {% endwith %}
         </div>
         {% endfor %}
     </div>

@@ -167,6 +167,23 @@ CATEGORY_SEO = {
     },
 }
 
+CATEGORY_HOME = {
+    'iqos-iluma': {
+        'image': 'iqos-iluma.png',
+        'teaser': 'Устройства IQOS ILUMA — One, Standart, Prime. Оригинал, бронь на сайте.',
+        'image_alt': 'IQOS ILUMA — Iluma i One, Standart и Prime',
+    },
+    'terea-sticks': {
+        'image': 'terea-sticks.png',
+        'teaser': 'Оригинальные стики TEREA для ILUMA — все вкусы, 20 стиков в блоке.',
+        'image_alt': 'Стики TEREA для IQOS ILUMA',
+    },
+    'lil': {
+        'image': 'lil.png',
+        'teaser': 'LIL SOLID 3.0, DUAL и 4.0 — оригинальные устройства в наличии.',
+        'image_alt': 'Устройства LIL SOLID 3.0, Dual и 4.0',
+    },
+}
 
 DEVICE_MODEL_SEO = {
     'IQOS Iluma i One': {

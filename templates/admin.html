@@ -62,6 +62,12 @@
             </a>
         </li>
         <li class="nav-item" role="presentation">
+            <a class="nav-link {% if tab == 'blog' %}active{% endif %}" 
+               href="{{ url_for('admin', tab='blog') }}" role="tab">
+                📝 Блог
+            </a>
+        </li>
+        <li class="nav-item" role="presentation">
             <a class="nav-link {% if tab == 'stats' %}active{% endif %}" 
                href="{{ url_for('admin', tab='stats', date_from=date_from, date_to=date_to) }}" role="tab">
                 📊 Статистика
@@ -522,6 +528,67 @@
             </div>
             {% if not home_blocks %}
             <div class="alert alert-info mt-3">Блоков нет. Будут показаны изображения из товаров (хиты/новинки).</div>
+            {% endif %}
+        </div>
+
+        {# Вкладка: Блог #}
+        <div class="tab-pane {% if tab == 'blog' %}show active{% endif %}" role="tabpanel">
+            <div class="mb-3 d-flex flex-wrap align-items-center gap-2">
+                <a href="{{ url_for('admin_blog_add') }}" class="btn btn-success">➕ Новая статья</a>
+                <a href="{{ url_for('blog_index') }}" class="btn btn-outline-primary" target="_blank" rel="noopener">Открыть блог на сайте</a>
+            </div>
+            {% if blog_posts %}
+            <div class="card shadow-sm">
+                <div class="card-body p-0">
+                    <div class="table-responsive">
+                        <table class="table table-hover mb-0">
+                            <thead class="table-light">
+                                <tr>
+                                    <th style="width:90px">Обложка</th>
+                                    <th>Заголовок</th>
+                                    <th>Slug</th>
+                                    <th style="width:90px">Статус</th>
+                                    <th style="width:110px">Дата</th>
+                                    <th style="width:140px">Действия</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for p in blog_posts %}
+                                <tr>
+                                    <td>
+                                        {% if p.cover_image %}
+                                        <img src="{{ p.cover_image|blog_cover_url }}" alt="" class="rounded" style="width:72px;height:48px;object-fit:cover">
+                                        {% else %}
+                                        <span class="d-inline-flex align-items-center justify-content-center rounded bg-light text-primary" style="width:72px;height:48px"><i class="fas {{ p.cover_icon or 'fa-book-open' }}"></i></span>
+                                        {% endif %}
+                                    </td>
+                                    <td>
+                                        <strong>{{ p.title }}</strong>
+                                        {% if p.excerpt %}<br><span class="text-muted small">{{ p.excerpt[:80] }}{% if p.excerpt|length > 80 %}…{% endif %}</span>{% endif %}
+                                    </td>
+                                    <td><code class="small">{{ p.slug }}</code></td>
+                                    <td>
+                                        {% if p.is_published %}<span class="badge bg-success">Опубликовано</span>
+                                        {% else %}<span class="badge bg-secondary">Черновик</span>{% endif %}
+                                    </td>
+                                    <td class="small">{{ p.created_at.strftime('%d.%m.%Y') if p.created_at else '—' }}</td>
+                                    <td>
+                                        <a href="{{ url_for('admin_blog_edit', post_id=p.id) }}" class="btn btn-sm btn-primary" title="Редактировать">✏️</a>
+                                        <a href="{{ url_for('blog_post', slug=p.slug) }}" class="btn btn-sm btn-outline-secondary" target="_blank" rel="noopener" title="На сайте">↗</a>
+                                        <form method="post" action="{{ url_for('admin_blog_delete', post_id=p.id) }}" class="d-inline" onsubmit="return confirm('Удалить статью «{{ p.title }}»?');">
+                                            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                                            <button type="submit" class="btn btn-sm btn-danger" title="Удалить">🗑</button>
+                                        </form>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+            {% else %}
+            <div class="alert alert-info">Статей пока нет. Создайте первую или дождитесь seed при деплое.</div>
             {% endif %}
         </div>
 

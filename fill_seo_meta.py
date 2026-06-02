@@ -12,21 +12,23 @@ import sys
 
 from app import app
 from extensions import db
-from models import Category, Product, DeviceModel
-from seo_utils import generate_category_seo, generate_product_seo, generate_device_model_seo, device_model_slug
+from models import Category, Product, DeviceModel, BlogPost
+from seo_utils import generate_category_seo, generate_product_seo, generate_device_model_seo, device_model_slug, CATEGORY_HOME
 
 
 def _should_set(current: str | None, force: bool) -> bool:
     return force or not (current or '').strip()
 
 
-def fill_seo(force: bool = False) -> tuple[int, int, int]:
+def fill_seo(force: bool = False) -> tuple[int, int, int, int]:
     categories_updated = 0
     products_updated = 0
     models_updated = 0
+    blog_updated = 0
 
     for category in Category.query.order_by(Category.id).all():
         seo = generate_category_seo(category)
+        home = CATEGORY_HOME.get(category.slug or '', {})
         changed = False
         if _should_set(category.meta_description, force):
             category.meta_description = seo['meta_description']
@@ -36,6 +38,9 @@ def fill_seo(force: bool = False) -> tuple[int, int, int]:
             changed = True
         if _should_set(category.description, force) and seo.get('seo_text'):
             category.description = seo['seo_text']
+            changed = True
+        if home.get('image') and _should_set(category.image, force):
+            category.image = home['image']
             changed = True
         if changed:
             categories_updated += 1
@@ -77,8 +82,19 @@ def fill_seo(force: bool = False) -> tuple[int, int, int]:
         if changed:
             models_updated += 1
 
+    for post in BlogPost.query.order_by(BlogPost.id).all():
+        changed = False
+        if _should_set(post.meta_description, force) and post.excerpt:
+            post.meta_description = (post.excerpt or '')[:300]
+            changed = True
+        if _should_set(post.meta_keywords, force) and post.title:
+            post.meta_keywords = post.meta_keywords or f'{post.title}, IQOS, TEREA, ILUMA, LIL STORE, блог'
+            changed = True
+        if changed:
+            blog_updated += 1
+
     db.session.commit()
-    return categories_updated, products_updated, models_updated
+    return categories_updated, products_updated, models_updated, blog_updated
 
 
 def main() -> int:
@@ -87,10 +103,11 @@ def main() -> int:
     args = parser.parse_args()
 
     with app.app_context():
-        cats, prods, models = fill_seo(force=args.force)
+        cats, prods, models, blog = fill_seo(force=args.force)
         print(f'Updated categories: {cats}')
         print(f'Updated products: {prods}')
         print(f'Updated device models: {models}')
+        print(f'Updated blog posts: {blog}')
         total = Category.query.count()
         filled_c = Category.query.filter(Category.meta_description.isnot(None)).count()
         filled_p = Product.query.filter(Product.meta_description.isnot(None)).count()

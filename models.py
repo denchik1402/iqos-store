@@ -41,6 +41,7 @@ class BlogPost(db.Model):
     meta_description = db.Column(db.String(300))
     meta_keywords = db.Column(db.String(300))
     cover_icon = db.Column(db.String(50), default='fa-book-open')
+    cover_image = db.Column(db.String(300))
     reading_minutes = db.Column(db.Integer, default=5)
     is_published = db.Column(db.Boolean, default=True)
     created_at = db.Column(db.DateTime, default=datetime.utcnow)

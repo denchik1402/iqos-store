@@ -57,6 +57,7 @@ app.config['SQLALCHEMY_DATABASE_URI'] = f'sqlite:///{os.path.join(os.path.dirnam
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['UPLOAD_FOLDER'] = 'static/images/products'
 app.config['BANNERS_FOLDER'] = 'static/images/banners'
+app.config['BLOG_FOLDER'] = 'static/images/blog'
 app.config['WTF_CSRF_ENABLED'] = True
 app.config['WTF_CSRF_CHECK_DEFAULT'] = True
 # Для HTTPS: сессия должна передаваться по Secure
@@ -124,7 +125,7 @@ def _set_sqlite_pragma(dbapi_connection, connection_record):
         cursor.close()
 
 from models import Product, Category, Review, Order, OrderItem, TelegramUser, BotSetting, PromoCode, Banner, HomeBlock, DeviceModel, BlogPost
-from seo_utils import normalize_device_model_name, generate_device_model_seo
+from seo_utils import normalize_device_model_name, generate_device_model_seo, make_url_slug
 from product_name_utils import normalize_product_name, normalize_description_brands
 
 _telegram_bot_url_cache = None
@@ -320,13 +321,27 @@ def inject_cart():
 import bleach
 
 ALLOWED_TAGS_HTML = ['p', 'br', 'strong', 'em', 'u', 'b', 'i', 'a', 'ul', 'ol', 'li', 'h2', 'h3', 'h4', 'hr', 'span', 'div', 'blockquote']
-ALLOWED_ATTRS_HTML = {'a': ['href', 'title'], 'span': ['class'], 'div': ['class']}
+ALLOWED_ATTRS_HTML = {'a': ['href', 'title', 'target', 'rel'], 'span': ['class'], 'div': ['class']}
+ALLOWED_TAGS_BLOG = ALLOWED_TAGS_HTML + ['table', 'thead', 'tbody', 'tr', 'th', 'td', 'img']
+ALLOWED_ATTRS_BLOG = {
+    **ALLOWED_ATTRS_HTML,
+    'img': ['src', 'alt', 'class', 'loading', 'width', 'height'],
+    'table': ['class'],
+    'th': ['class', 'colspan', 'rowspan'],
+    'td': ['class', 'colspan', 'rowspan'],
+}
 
 
 def _sanitize_product_html(value):
     if value is None or value == '':
         return ''
     return bleach.clean(str(value), tags=ALLOWED_TAGS_HTML, attributes=ALLOWED_ATTRS_HTML, strip=True)
+
+
+def _sanitize_blog_html(value):
+    if value is None or value == '':
+        return ''
+    return bleach.clean(str(value), tags=ALLOWED_TAGS_BLOG, attributes=ALLOWED_ATTRS_BLOG, strip=True)
 
 
 def _build_product_description(intro, specs_text):
@@ -389,6 +404,59 @@ def sanitize_html(value):
     if value is None or value == '':
         return ''
     return _sanitize_product_html(value)
+
+
+@app.template_filter('sanitize_blog_html')
+def sanitize_blog_html(value):
+    """Санитизация HTML статей блога (таблицы, изображения)."""
+    if value is None or value == '':
+        return ''
+    return _sanitize_blog_html(value)
+
+
+def _blog_cover_static_path(cover_image):
+    """Путь в static для обложки блога (blog/... или products/...)."""
+    if not cover_image:
+        return None
+    path = cover_image.strip().lstrip('/')
+    if path.startswith('images/'):
+        return path
+    if path.startswith('products/'):
+        return f'images/{path}'
+    if path.startswith('blog/'):
+        return f'images/{path}'
+    return f'images/blog/{path}'
+
+
+@app.template_filter('blog_cover_url')
+def blog_cover_url(cover_image):
+    """URL обложки статьи блога."""
+    static_path = _blog_cover_static_path(cover_image)
+    if not static_path:
+        return None
+    return url_for('static', filename=static_path)
+
+
+@app.template_filter('category_home')
+def category_home_filter(slug):
+    """Данные карточки категории на главной (фото, анонс, alt)."""
+    from seo_utils import CATEGORY_HOME
+    return CATEGORY_HOME.get(slug or '', {})
+
+
+@app.template_filter('category_image_url')
+def category_image_url(category):
+    """URL изображения категории."""
+    from seo_utils import CATEGORY_HOME
+    if not category:
+        return None
+    filename = (category.image or '').strip()
+    if not filename:
+        home = CATEGORY_HOME.get(category.slug or '', {})
+        filename = home.get('image', '')
+    if not filename:
+        return None
+    return url_for('static', filename=f'images/categories/{filename}')
 
 
 @app.template_filter('format_price')
@@ -1241,6 +1309,7 @@ def admin():
     banners = Banner.query.order_by(Banner.sort_order, Banner.id).all()
     home_blocks = HomeBlock.query.order_by(HomeBlock.position).all()
     products_for_link = Product.query.order_by(Product.name).limit(200).all()
+    blog_posts = BlogPost.query.order_by(BlogPost.created_at.desc()).all()
 
     # Что сейчас в карусели на главной (для отображения в админке)
     class CarouselSlideInfo:
@@ -1276,6 +1345,7 @@ def admin():
         carousel_slides=carousel_slides,
         device_models=_query_device_models(),
         device_model_counts=_device_model_product_counts(),
+        blog_posts=blog_posts,
         admin_role=_get_admin_role(),
         admin_can_delete_orders=_admin_can_delete_orders(),
     )
@@ -1451,6 +1521,68 @@ def _save_banner_image(file, prefix='banner'):
     os.makedirs(os.path.dirname(upload_path), exist_ok=True)
     file.save(upload_path)
     return filename
+
+
+def _save_blog_image(file, prefix='blog'):
+    """Сохраняет изображение блога, возвращает относительный путь blog/... или None."""
+    if not file or not file.filename:
+        return None
+    ext = file.filename.rsplit('.', 1)[-1].lower() if '.' in file.filename else 'jpg'
+    if ext not in ('jpg', 'jpeg', 'png', 'gif', 'webp'):
+        return None
+    import time
+    sub = 'covers' if prefix == 'cover' else 'posts'
+    filename = f"{prefix}_{int(time.time())}_{abs(hash(file.filename)) % 10000}.{ext}"
+    folder = app.config.get('BLOG_FOLDER', 'static/images/blog')
+    rel_path = f'blog/{sub}/{filename}'
+    upload_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), folder, sub, filename)
+    os.makedirs(os.path.dirname(upload_path), exist_ok=True)
+    file.save(upload_path)
+    return rel_path
+
+
+def _unique_blog_slug(base_slug, exclude_id=None):
+    """Уникальный slug для статьи блога."""
+    slug = make_url_slug(base_slug)[:120] or 'post'
+    candidate = slug
+    n = 2
+    while True:
+        q = BlogPost.query.filter_by(slug=candidate)
+        if exclude_id:
+            q = q.filter(BlogPost.id != exclude_id)
+        if not q.first():
+            return candidate
+        candidate = f'{slug}-{n}'[:120]
+        n += 1
+
+
+def _apply_blog_post_form(post, form, files):
+    """Заполняет BlogPost из формы админки."""
+    title = form.get('title', '').strip()
+    if not title:
+        raise ValueError('Заголовок обязателен')
+    post.title = title
+    slug_raw = form.get('slug', '').strip()
+    post.slug = _unique_blog_slug(slug_raw or title, exclude_id=post.id if post.id else None)
+    post.excerpt = form.get('excerpt', '').strip() or None
+    content = form.get('content', '').strip()
+    if not content:
+        raise ValueError('Текст статьи обязателен')
+    post.content = _sanitize_blog_html(content)
+    post.meta_description = form.get('meta_description', '').strip() or None
+    post.meta_keywords = form.get('meta_keywords', '').strip() or None
+    post.cover_icon = form.get('cover_icon', '').strip() or 'fa-book-open'
+    post.reading_minutes = max(1, int(form.get('reading_minutes', 5) or 5))
+    post.is_published = form.get('is_published') == '1'
+    cover_path = form.get('cover_image_path', '').strip()
+    if cover_path:
+        post.cover_image = cover_path.lstrip('/')
+    cover_file = files.get('cover_image')
+    if cover_file and cover_file.filename:
+        saved = _save_blog_image(cover_file, 'cover')
+        if saved:
+            post.cover_image = saved
+    post.updated_at = datetime.utcnow()
 
 
 @app.route('/admin/product/add', methods=['GET', 'POST'])
@@ -2076,6 +2208,72 @@ def admin_banner_delete(banner_id):
     db.session.commit()
     _invalidate_cache()
     return redirect(url_for('admin', tab='banners'))
+
+
+@app.route('/admin/blog/add', methods=['GET', 'POST'])
+def admin_blog_add():
+    """Добавление статьи блога"""
+    login = _admin_or_login('admin_blog_edit.html')
+    if login is not None:
+        return login
+    if request.method == 'POST':
+        try:
+            post = BlogPost(created_at=datetime.utcnow())
+            _apply_blog_post_form(post, request.form, request.files)
+            db.session.add(post)
+            db.session.commit()
+            flash('Статья опубликована.' if post.is_published else 'Черновик сохранён.', 'success')
+            return redirect(url_for('admin', tab='blog'))
+        except (ValueError, TypeError) as e:
+            flash(str(e), 'danger')
+        except (PermissionError, OSError) as e:
+            logger.exception("Admin blog add: %s", e)
+            flash('Ошибка сохранения изображения. Проверьте права на static/images/blog.', 'danger')
+    return render_template('admin_blog_edit.html', post=None)
+
+
+@app.route('/admin/blog/<int:post_id>/edit', methods=['GET', 'POST'])
+def admin_blog_edit(post_id):
+    """Редактирование статьи блога"""
+    login = _admin_or_login('admin_blog_edit.html')
+    if login is not None:
+        return login
+    post = db.get_or_404(BlogPost, post_id)
+    if request.method == 'POST':
+        try:
+            _apply_blog_post_form(post, request.form, request.files)
+            db.session.commit()
+            flash('Статья сохранена.', 'success')
+            return redirect(url_for('admin', tab='blog'))
+        except (ValueError, TypeError) as e:
+            flash(str(e), 'danger')
+        except (PermissionError, OSError) as e:
+            logger.exception("Admin blog edit: %s", e)
+            flash('Ошибка сохранения изображения. Проверьте права на static/images/blog.', 'danger')
+    return render_template('admin_blog_edit.html', post=post)
+
+
+@app.route('/admin/blog/<int:post_id>/delete', methods=['POST'])
+def admin_blog_delete(post_id):
+    if not _admin_key_valid():
+        return "Доступ запрещён", 403
+    post = db.get_or_404(BlogPost, post_id)
+    db.session.delete(post)
+    db.session.commit()
+    flash('Статья удалена.', 'success')
+    return redirect(url_for('admin', tab='blog'))
+
+
+@app.route('/admin/blog/upload-image', methods=['POST'])
+def admin_blog_upload_image():
+    """Загрузка изображения для вставки в текст статьи (Quill)."""
+    if not _admin_key_valid():
+        return jsonify({'error': 'Доступ запрещён'}), 403
+    img_file = request.files.get('image')
+    saved = _save_blog_image(img_file, 'post')
+    if not saved:
+        return jsonify({'error': 'Недопустимый формат (JPG, PNG, GIF, WebP)'}), 400
+    return jsonify({'url': url_for('static', filename=f'images/{saved}')})
 
 
 @app.route('/admin/homeblock/add', methods=['GET', 'POST'])
