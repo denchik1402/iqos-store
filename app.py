@@ -125,6 +125,7 @@ def _set_sqlite_pragma(dbapi_connection, connection_record):
 
 from models import Product, Category, Review, Order, OrderItem, TelegramUser, BotSetting, PromoCode, Banner, HomeBlock, DeviceModel
 from seo_utils import normalize_device_model_name, generate_device_model_seo
+from product_name_utils import normalize_product_name, normalize_description_brands
 
 _telegram_bot_url_cache = None
 
@@ -1375,7 +1376,7 @@ def admin_product_add():
     if request.method == 'POST':
         try:
             cat_id = int(request.form.get('category_id'))
-            name = request.form.get('name', '').strip()
+            name = normalize_product_name(request.form.get('name', '').strip())
             price = float(request.form.get('price', 0))
             if name and cat_id:
                 slug = name.lower().replace(' ', '-')[:200]
@@ -1391,7 +1392,9 @@ def admin_product_add():
                 img_alt = (request.form.get('image_alt') or '').strip() or None
                 desc_intro = request.form.get('description_intro', '')
                 desc_specs = request.form.get('specifications', '')
-                description = _build_product_description(desc_intro, desc_specs)
+                description = normalize_description_brands(
+                    _build_product_description(desc_intro, desc_specs)
+                )
                 product = Product(name=name, slug=slug, price=price, cost=cost, category_id=cat_id, model=model_val, color=color_val, description=description, meta_description=meta_desc, meta_keywords=meta_kw, image_alt=img_alt)
                 db.session.add(product)
                 db.session.flush()
@@ -1418,7 +1421,7 @@ def admin_product_edit(product_id):
     if request.method == 'POST':
         try:
             product.price = float(request.form.get('price', product.price))
-            product.name = request.form.get('name', product.name) or product.name
+            product.name = normalize_product_name(request.form.get('name', product.name) or product.name)
             old_val = request.form.get('old_price')
             product.old_price = float(old_val) if old_val and str(old_val).strip() else None
             cost_val = request.form.get('cost')
@@ -1435,7 +1438,9 @@ def admin_product_edit(product_id):
             product.image_alt = img_alt
             desc_intro = request.form.get('description_intro', '')
             desc_specs = request.form.get('specifications', '')
-            product.description = _build_product_description(desc_intro, desc_specs)
+            product.description = normalize_description_brands(
+                _build_product_description(desc_intro, desc_specs)
+            )
             img_file = request.files.get('image')
             if img_file and img_file.filename:
                 new_img = _save_uploaded_image(img_file, product_id)

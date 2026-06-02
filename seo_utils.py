@@ -246,7 +246,7 @@ def _is_terea(product, category) -> bool:
 def _is_lil(product, category) -> bool:
     if category and category.slug == 'lil':
         return True
-    return 'lil solid' in (product.name or '').lower()
+    return 'lil solid' in (product.name or '').lower() or (product.model or '').startswith('LIL')
 
 
 def _is_exclusive(product, category) -> bool:
