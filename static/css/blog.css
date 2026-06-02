@@ -167,6 +167,7 @@
     font-size: 1.05rem;
     line-height: 1.75;
     color: var(--text);
+    overflow-x: hidden;
 }
 .article-content h2 {
     font-size: 1.35rem;
@@ -186,6 +187,22 @@
     border-radius: 12px;
     margin: 1.25rem 0;
     display: block;
+    transform-origin: center center;
+    transition: transform 1s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+.article-content p:has(> img),
+.article-content figure {
+    overflow: hidden;
+    border-radius: 12px;
+    margin: 1.25rem 0;
+}
+.article-content p:has(> img) img,
+.article-content figure img {
+    margin: 0;
+    width: 100%;
+}
+.article-content img:hover {
+    transform: scale(1.5);
 }
 
 .blog-lead {
@@ -334,7 +351,8 @@
     .card-side-media img,
     .blog-card-media img,
     .home-category-media img,
-    .article-hero-media img {
+    .article-hero-media img,
+    .article-content img {
         transition: none;
     }
     .article-hero:hover .article-hero-media img {
