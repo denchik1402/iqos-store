@@ -406,6 +406,26 @@ def product_alt_filter(product):
         return ''
     return (product.image_alt or product.name or '').strip() or ''
 
+
+def _static_url(filename):
+    return url_for('static', filename=filename)
+
+
+@app.template_global()
+def optimized_image(folder, filename):
+    """WebP-варианты для шаблонов (400w / 800w / 1200w)."""
+    from image_utils import build_optimized_image
+    if not filename:
+        return {'has_variants': False, 'src': None, 'src_800': None, 'srcset_webp': '', 'srcset_fallback': '', 'original_url': None}
+    return build_optimized_image(app.static_folder, folder, filename, _static_url)
+
+
+@app.template_global()
+def has_image_variants(filename, folder='products'):
+    """Есть ли оптимизированные WebP-варианты для файла."""
+    from image_utils import has_image_variants as _has
+    return _has(app.static_folder, folder, filename) if filename else False
+
 @app.template_filter('product_url')
 def product_url_filter(product):
     """URL страницы товара (ЧПУ)"""

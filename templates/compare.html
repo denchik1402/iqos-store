@@ -37,12 +37,10 @@
                     <button type="button" class="btn btn-sm btn-outline-danger compare-btn compare-btn-remove position-absolute top-0 end-0 m-1" data-product-id="{{ product.id }}" title="Убрать из сравнения"><i class="fas fa-times"></i></button>
                     <a href="{{ product|product_url }}" class="text-decoration-none text-dark d-block pt-3">
                         <div class="mb-2">
-                            {% set first_img = product.all_images[0] if product.all_images else product.image %}
-                            {% if first_img %}
-                            <img src="{{ url_for('static', filename='images/products/' + first_img) }}" alt="{{ product|product_alt }}" class="img-fluid">
-                            {% else %}
-                            <img src="https://via.placeholder.com/160" alt="{{ product|product_alt }}" class="img-fluid">
-                            {% endif %}
+                            {% set sizes = '160px' %}
+                            {% set width = 160 %}
+                            {% set height = 160 %}
+                            {% include 'includes/product_card_image.html' %}
                         </div>
                         <strong>{{ product.name }}</strong>
                     </a>

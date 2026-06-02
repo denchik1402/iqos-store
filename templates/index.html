@@ -5,6 +5,23 @@
 {% block meta_keywords %}IQOS, TEREA, ILUMA, стики, нагревательные устройства, купить IQOS, доставка IQOS{% endblock %}
 {% block og_title %}LIL STORE — IQOS и стики TEREA{% endblock %}
 {% block og_description %}Оригинальные устройства IQOS и стики TEREA. Бронь на сайте, доставка 1–2 дня.{% endblock %}
+{% block extra_head %}
+{% if promo_slides %}
+{% set _fs = promo_slides[0] %}
+{% if _fs.__class__.__name__ == 'Banner' %}
+{% set _fi = _fs.image %}
+{% set _ff = 'banners' if _fi and not _fi.startswith('products/') else 'products' %}
+{% set _fn = _fi.split('products/', 1)[1] if _fi and _fi.startswith('products/') else _fi %}
+{% else %}
+{% set _fn = _fs.all_images[0] if _fs.all_images else _fs.image %}
+{% set _ff = 'products' %}
+{% endif %}
+{% if _fn %}
+{% set _fo = optimized_image(_ff, _fn) %}
+<link rel="preload" as="image" href="{{ _fo.src_800 if _fo.has_variants else _fo.src }}"{% if _fo.has_variants %} type="image/webp"{% endif %} fetchpriority="high">
+{% endif %}
+{% endif %}
+{% endblock %}
 {% block schema_ld %}
 <script type="application/ld+json">
 {
@@ -86,10 +103,26 @@
             {% set slide_badge = 'hit' if slide.id in hit_product_ids else 'promo' %}
             {% set slide_product = slide %}
             {% endif %}
+            {% if slide.__class__.__name__ == 'Banner' and slide_img and not slide_img.startswith('products/') %}
+            {% set slide_folder = 'banners' %}
+            {% set slide_filename = slide_img %}
+            {% else %}
+            {% set slide_folder = 'products' %}
+            {% set slide_filename = slide_img.split('products/', 1)[1] if slide_img and slide_img.startswith('products/') else slide_img %}
+            {% endif %}
             <div class="carousel-item {% if loop.first %}active{% endif %}">
                 <div class="promo-slide-inner {{ slide_bg }}{% if not slide_img and slide_badge == 'telegram' %} promo-slide-telegram-only{% endif %}">
                     {% if slide_img %}
-                    <div class="promo-slide-bg" style="background-image: url('{{ url_for('static', filename=img_path + slide_img) }}');" role="img" aria-label="{{ slide_title }}"></div>
+                    <div class="promo-slide-bg">
+                        {% set folder = slide_folder %}
+                        {% set filename = slide_filename %}
+                        {% set alt = slide_title %}
+                        {% set img_class = 'promo-slide-img' %}
+                        {% set prefer_800 = true %}
+                        {% set sizes = '(max-width: 768px) 66vw, 50vw' %}
+                        {% set eager = loop.first %}
+                        {% include 'includes/responsive_image.html' %}
+                    </div>
                     <a href="{{ slide_link }}" class="promo-slide-bg-link" aria-label="{{ slide_title }}"{% if slide_link_rel %} rel="{{ slide_link_rel }}"{% endif %}></a>
                     {% elif slide_badge != 'telegram' %}
                     <div class="promo-slide-bg promo-slide-bg-placeholder">
@@ -168,12 +201,8 @@
                 {% include 'includes/favorite_btn.html' %}
                 <a href="{{ product|product_url }}" class="product-card-link text-decoration-none text-dark">
                     <div class="product-card-img-wrap">
-                        {% set first_img = product.all_images[0] if product.all_images else product.image %}
-                        {% if first_img %}
-                        <img src="{{ url_for('static', filename='images/products/' + first_img) }}" class="img-fluid" alt="{{ product|product_alt }}" loading="lazy">
-                        {% else %}
-                        <img src="https://via.placeholder.com/400" class="img-fluid" alt="{{ product|product_alt }}" loading="lazy">
-                        {% endif %}
+                        {% set eager = loop.index <= 4 %}
+                        {% include 'includes/product_card_image.html' %}
                     </div>
                     <h5 class="product-title">{{ product.name }}</h5>
                     <div class="product-price mb-2">
@@ -215,12 +244,8 @@
                 {% include 'includes/favorite_btn.html' %}
                 <a href="{{ product|product_url }}" class="product-card-link text-decoration-none text-dark">
                     <div class="product-card-img-wrap">
-                        {% set first_img = product.all_images[0] if product.all_images else product.image %}
-                        {% if first_img %}
-                        <img src="{{ url_for('static', filename='images/products/' + first_img) }}" class="img-fluid" alt="{{ product|product_alt }}" loading="lazy">
-            {% else %}
-                        <img src="https://via.placeholder.com/400" class="img-fluid" alt="{{ product|product_alt }}" loading="lazy">
-            {% endif %}
+                        {% set eager = false %}
+                        {% include 'includes/product_card_image.html' %}
                     </div>
             <h5 class="product-title">{{ product.name }}</h5>
                     <div class="product-price mb-2">{{ product.price|format_price }} ₽</div>
@@ -255,7 +280,12 @@
         {% for blk in home_blocks %}
         <div class="block {% if blk.position == 1 %}block-left{% endif %}">
             <div class="block-img-container">
-                <img src="{{ url_for('static', filename='images/banners/' + blk.image) }}" alt="{{ blk.title }}" loading="lazy">
+                {% set folder = 'banners' %}
+                {% set filename = blk.image %}
+                {% set alt = blk.title %}
+                {% set sizes = '600px' if blk.position == 1 else '400px' %}
+                {% set prefer_800 = blk.position == 1 %}
+                {% include 'includes/responsive_image.html' %}
             </div>
             <h4>{{ blk.title }}</h4>
             {% if blk.description %}<p>{{ blk.description }}</p>{% endif %}
@@ -265,21 +295,46 @@
         {% else %}
         <div class="block block-left">
             <div class="block-img-container">
-                <img src="{% if _img1 %}{{ url_for('static', filename='images/products/' + _img1) }}{% else %}https://via.placeholder.com/600x400/1a1a2e/fff?text=IQOS{% endif %}" alt="{{ _bg[0].name if _bg and _bg|length > 0 else 'О нашем магазине' }}" loading="lazy">
+                {% if _img1 %}
+                {% set folder = 'products' %}
+                {% set filename = _img1 %}
+                {% set alt = _bg[0].name if _bg and _bg|length > 0 else 'О нашем магазине' %}
+                {% set sizes = '600px' %}
+                {% set prefer_800 = true %}
+                {% include 'includes/responsive_image.html' %}
+                {% else %}
+                <img src="https://via.placeholder.com/600x400/1a1a2e/fff?text=IQOS" alt="О нашем магазине" loading="lazy" decoding="async">
+                {% endif %}
             </div>
             <h4>О нашем магазине</h4>
             <p>Мы радуем наших покупателей качественной оригинальной продукцией и приятным сервисом более 5 лет и продолжаем это делать с огромным удовольствием</p>
         </div>
         <div class="block">
             <div class="block-img-container">
-                <img src="{% if _img2 %}{{ url_for('static', filename='images/products/' + _img2) }}{% else %}https://via.placeholder.com/400x200/16213e/fff?text=IQOS{% endif %}" alt="{{ _bg[1].name if _bg and _bg|length > 1 else 'Наша миссия' }}" loading="lazy">
+                {% if _img2 %}
+                {% set folder = 'products' %}
+                {% set filename = _img2 %}
+                {% set alt = _bg[1].name if _bg and _bg|length > 1 else 'Наша миссия' %}
+                {% set sizes = '400px' %}
+                {% include 'includes/responsive_image.html' %}
+                {% else %}
+                <img src="https://via.placeholder.com/400x200/16213e/fff?text=IQOS" alt="Наша миссия" loading="lazy" decoding="async">
+                {% endif %}
             </div>
             <h4>Наша миссия</h4>
             <p>Предоставить нашим клиентам лучший опыт покупки</p>
         </div>
         <div class="block">
             <div class="block-img-container">
-                <img src="{% if _img3 %}{{ url_for('static', filename='images/products/' + _img3) }}{% else %}https://via.placeholder.com/400x200/0f3460/fff?text=IQOS{% endif %}" alt="{{ _bg[2].name if _bg and _bg|length > 2 else 'Наша цель' }}" loading="lazy">
+                {% if _img3 %}
+                {% set folder = 'products' %}
+                {% set filename = _img3 %}
+                {% set alt = _bg[2].name if _bg and _bg|length > 2 else 'Наша цель' %}
+                {% set sizes = '400px' %}
+                {% include 'includes/responsive_image.html' %}
+                {% else %}
+                <img src="https://via.placeholder.com/400x200/0f3460/fff?text=IQOS" alt="Наша цель" loading="lazy" decoding="async">
+                {% endif %}
             </div>
             <h4>Наша цель</h4>
             <p>Стать вашим надёжным партнёром и проводником</p>

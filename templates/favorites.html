@@ -37,12 +37,7 @@
             <button type="button" class="favorite-btn active favorite-btn-remove position-absolute top-0 end-0 m-2" data-product-id="{{ product.id }}" title="Убрать из избранного"><i class="far fa-heart d-none"></i><i class="fas fa-heart text-danger"></i></button>
                 <a href="{{ product|product_url }}" class="product-card-link text-decoration-none text-dark">
                 <div class="product-card-img-wrap">
-                    {% set first_img = product.all_images[0] if product.all_images else product.image %}
-                    {% if first_img %}
-                    <img src="{{ url_for('static', filename='images/products/' + first_img) }}" class="img-fluid" alt="{{ product|product_alt }}" loading="lazy">
-                    {% else %}
-                    <img src="https://via.placeholder.com/400" class="img-fluid" alt="{{ product|product_alt }}" loading="lazy">
-                    {% endif %}
+                    {% include 'includes/product_card_image.html' %}
                 </div>
                 <h5 class="product-title">{{ product.name }}</h5>
                 <div class="product-price mb-2">

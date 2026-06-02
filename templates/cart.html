@@ -15,11 +15,13 @@
                 <div class="row align-items-center g-2">
                     <div class="col-4 col-md-2">
                         {% set img = item.product.all_images[0] if item.product.all_images else item.product.image %}
-                        {% if img %}
-                        <img src="{{ url_for('static', filename='images/products/' + img) }}" class="img-fluid rounded" alt="{{ item.product|product_alt }}" loading="lazy">
-                        {% else %}
-                        <img src="https://via.placeholder.com/80" class="img-fluid rounded" alt="{{ item.product|product_alt }}">
-                        {% endif %}
+                        {% set product = item.product %}
+                        {% set first_img = img %}
+                        {% set img_class = 'img-fluid rounded' %}
+                        {% set width = 120 %}
+                        {% set height = 120 %}
+                        {% set sizes = '120px' %}
+                        {% include 'includes/product_card_image.html' %}
                     </div>
                     <div class="col-8 col-md-4">
                         <h5 class="mb-0">{{ item.product.name }}</h5>
@@ -94,12 +96,7 @@
                     {% if product.is_hit %}<span class="badge bg-danger position-absolute top-0 start-0 m-2 product-badge-hit">Хит</span>{% endif %}
                     <a href="{{ product|product_url }}" class="product-card-link text-decoration-none text-dark">
                         <div class="product-card-img-wrap">
-                            {% set first_img = product.all_images[0] if product.all_images else product.image %}
-                            {% if first_img %}
-                            <img src="{{ url_for('static', filename='images/products/' + first_img) }}" class="img-fluid" alt="{{ product|product_alt }}" loading="lazy">
-                            {% else %}
-                            <img src="https://via.placeholder.com/400" class="img-fluid" alt="{{ product|product_alt }}" loading="lazy">
-                            {% endif %}
+                            {% include 'includes/product_card_image.html' %}
                         </div>
                         <h5 class="product-title">{{ product.name }}</h5>
                         <div class="product-price mb-2">{{ product.price|format_price }} ₽</div>
@@ -140,12 +137,7 @@
                     {% if product.is_hit %}<span class="badge bg-danger position-absolute top-0 start-0 m-2 product-badge-hit">Хит</span>{% endif %}
                     <a href="{{ product|product_url }}" class="product-card-link text-decoration-none text-dark">
                         <div class="product-card-img-wrap">
-                            {% set first_img = product.all_images[0] if product.all_images else product.image %}
-                            {% if first_img %}
-                            <img src="{{ url_for('static', filename='images/products/' + first_img) }}" class="img-fluid" alt="{{ product|product_alt }}" loading="lazy">
-                            {% else %}
-                            <img src="https://via.placeholder.com/400" class="img-fluid" alt="{{ product|product_alt }}" loading="lazy">
-                            {% endif %}
+                            {% include 'includes/product_card_image.html' %}
                         </div>
                         <h5 class="product-title">{{ product.name }}</h5>
                         <div class="product-price mb-2">{{ product.price|format_price }} ₽</div>

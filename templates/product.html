@@ -85,7 +85,15 @@
             <div class="product-gallery-main mb-2">
                 {% set main_img = product.all_images[0] if product.all_images else none %}
                 {% if main_img %}
-                    <img id="productMainImage" src="{{ url_for('static', filename='images/products/' + main_img) }}" class="img-fluid rounded" alt="{{ product|product_alt }}">
+                    {% set filename = main_img %}
+                    {% set folder = 'products' %}
+                    {% set alt = product|product_alt %}
+                    {% set img_class = 'img-fluid rounded' %}
+                    {% set img_id = 'productMainImage' %}
+                    {% set prefer_800 = true %}
+                    {% set eager = true %}
+                    {% set sizes = '(max-width: 768px) 100vw, 50vw' %}
+                    {% include 'includes/responsive_image.html' %}
                 {% else %}
                     <img id="productMainImage" src="https://via.placeholder.com/400" class="img-fluid rounded" alt="{{ product|product_alt }}">
                 {% endif %}
@@ -93,8 +101,16 @@
             {% if product.all_images|length > 1 %}
             <div class="product-gallery-thumbs d-flex gap-2 flex-wrap">
                 {% for img in product.all_images %}
-                <div class="product-thumb {% if loop.first %}active{% endif %}" data-src="{{ url_for('static', filename='images/products/' + img) }}">
-                    <img src="{{ url_for('static', filename='images/products/' + img) }}" class="img-fluid rounded" alt="{{ product|product_alt }}" loading="lazy">
+                {% set _thumb = optimized_image('products', img) %}
+                <div class="product-thumb {% if loop.first %}active{% endif %}" data-src="{{ _thumb.src_800 if _thumb.has_variants else _thumb.original_url }}">
+                    {% set filename = img %}
+                    {% set folder = 'products' %}
+                    {% set alt = product|product_alt %}
+                    {% set img_class = 'img-fluid rounded' %}
+                    {% set sizes = '80px' %}
+                    {% set width = 80 %}
+                    {% set height = 80 %}
+                    {% include 'includes/responsive_image.html' %}
                 </div>
                 {% endfor %}
             </div>
@@ -272,12 +288,7 @@
                     {% include 'includes/favorite_btn.html' %}
                     <a href="{{ product|product_url }}" class="product-card-link text-decoration-none text-dark">
                         <div class="product-card-img-wrap">
-                            {% set first_img = product.all_images[0] if product.all_images else product.image %}
-                            {% if first_img %}
-                            <img src="{{ url_for('static', filename='images/products/' + first_img) }}" class="img-fluid" alt="{{ product|product_alt }}" loading="lazy">
-                            {% else %}
-                            <img src="https://via.placeholder.com/400" class="img-fluid" alt="{{ product|product_alt }}" loading="lazy">
-                            {% endif %}
+                            {% include 'includes/product_card_image.html' %}
                         </div>
                         <h5 class="product-title">{{ product.name }}</h5>
                         <div class="product-price mb-2">{{ product.price|format_price }} ₽</div>
