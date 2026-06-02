@@ -67,6 +67,16 @@
                     </div>
                 </div>
                 <div class="mb-3">
+                    <label class="form-label fw-bold">Описание товара</label>
+                    <textarea name="description_intro" class="form-control" rows="5" placeholder="Краткий текст о товаре. Можно использовать &lt;b&gt;жирный&lt;/b&gt;.">{{ description_intro|default('', true) }}</textarea>
+                    <small class="text-muted">Отображается на странице товара над блоком «Характеристики».</small>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label fw-bold">Характеристики</label>
+                    <textarea name="specifications" class="form-control font-monospace" rows="6" placeholder="Размеры: 130 × 25 × 15 мм&#10;Вес: 45 г&#10;Сеансов: до 25&#10;Цвет: Синий">{{ specifications|default('', true) }}</textarea>
+                    <small class="text-muted">Одна характеристика на строку: <code>Название: значение</code></small>
+                </div>
+                <div class="mb-3">
                     <label class="form-label fw-bold">Meta Description (SEO)</label>
                     <input type="text" name="meta_description" class="form-control" maxlength="300" placeholder="Краткое описание для поисковиков (до 300 символов)">
                 </div>

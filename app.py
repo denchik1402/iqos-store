@@ -315,12 +315,50 @@ import bleach
 ALLOWED_TAGS_HTML = ['p', 'br', 'strong', 'em', 'u', 'b', 'i', 'a', 'ul', 'ol', 'li', 'h2', 'h3', 'h4', 'hr', 'span', 'div', 'blockquote']
 ALLOWED_ATTRS_HTML = {'a': ['href', 'title'], 'span': ['class'], 'div': ['class']}
 
+
+def _sanitize_product_html(value):
+    if value is None or value == '':
+        return ''
+    return bleach.clean(str(value), tags=ALLOWED_TAGS_HTML, attributes=ALLOWED_ATTRS_HTML, strip=True)
+
+
+def _build_product_description(intro, specs_text):
+    """Собирает description из вступления и строк «Ключ: значение»."""
+    intro = _sanitize_product_html((intro or '').strip())
+    lines = [ln.strip() for ln in (specs_text or '').splitlines() if ln.strip()]
+    spec_items = []
+    for line in lines:
+        if ':' not in line:
+            continue
+        key, val = line.split(':', 1)
+        key, val = key.strip(), val.strip()
+        if key and val:
+            spec_items.append(f'• <b>{bleach.clean(key, tags=[], strip=True)}:</b> {bleach.clean(val, tags=[], strip=True)}')
+    parts = []
+    if intro:
+        parts.append(intro)
+    if spec_items:
+        parts.append('<b>Характеристики:</b>\n' + '\n'.join(spec_items))
+    return '\n\n'.join(parts) if parts else None
+
+
+def _parse_product_description_for_form(description):
+    """Разбивает description на поля формы админки."""
+    if not description:
+        return '', ''
+    tmp = Product()
+    tmp.description = description
+    intro = tmp.get_intro_text()
+    specs = '\n'.join(f'{k}: {v}' for k, v in tmp.get_characteristics())
+    return intro, specs
+
+
 @app.template_filter('sanitize_html')
 def sanitize_html(value):
     """Санитизация HTML для защиты от XSS (intro, description)."""
     if value is None or value == '':
         return ''
-    return bleach.clean(str(value), tags=ALLOWED_TAGS_HTML, attributes=ALLOWED_ATTRS_HTML, strip=True)
+    return _sanitize_product_html(value)
 
 
 @app.template_filter('format_price')
@@ -1282,7 +1320,10 @@ def admin_product_add():
                 meta_desc = (request.form.get('meta_description') or '').strip() or None
                 meta_kw = (request.form.get('meta_keywords') or '').strip() or None
                 img_alt = (request.form.get('image_alt') or '').strip() or None
-                product = Product(name=name, slug=slug, price=price, cost=cost, category_id=cat_id, model=model_val, color=color_val, meta_description=meta_desc, meta_keywords=meta_kw, image_alt=img_alt)
+                desc_intro = request.form.get('description_intro', '')
+                desc_specs = request.form.get('specifications', '')
+                description = _build_product_description(desc_intro, desc_specs)
+                product = Product(name=name, slug=slug, price=price, cost=cost, category_id=cat_id, model=model_val, color=color_val, description=description, meta_description=meta_desc, meta_keywords=meta_kw, image_alt=img_alt)
                 db.session.add(product)
                 db.session.flush()
                 img_file = request.files.get('image')
@@ -1323,6 +1364,9 @@ def admin_product_edit(product_id):
             product.meta_description = meta_desc
             product.meta_keywords = meta_kw
             product.image_alt = img_alt
+            desc_intro = request.form.get('description_intro', '')
+            desc_specs = request.form.get('specifications', '')
+            product.description = _build_product_description(desc_intro, desc_specs)
             img_file = request.files.get('image')
             if img_file and img_file.filename:
                 new_img = _save_uploaded_image(img_file, product_id)
@@ -1333,7 +1377,8 @@ def admin_product_edit(product_id):
             return redirect(url_for('admin', tab='products'))
         except ValueError as e:
             logger.warning("Admin product edit: %s", e)
-    return render_template('admin_product_edit.html', product=product)
+    desc_intro, desc_specs = _parse_product_description_for_form(product.description)
+    return render_template('admin_product_edit.html', product=product, description_intro=desc_intro, specifications=desc_specs)
 
 
 @app.route('/admin/category/<int:category_id>/edit', methods=['GET', 'POST'])
