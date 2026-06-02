@@ -348,14 +348,27 @@ def _wrap_blog_article_images(html: str) -> str:
     """Оборачивает inline-картинки для hover-zoom в тексте статьи."""
     if not html or '<img' not in html:
         return html
-    if 'article-img-zoom' in html:
-        return html
-    return re.sub(
-        r'<img\b[^>]*>',
-        lambda m: f'<span class="article-img-zoom">{m.group(0)}</span>',
+    html = re.sub(
+        r'<span class="article-img-zoom">\s*(<img\b[^>]*>)\s*</span>',
+        r'<div class="article-img-zoom">\1</div>',
         html,
         flags=re.IGNORECASE,
     )
+    html = re.sub(
+        r'<p(?:\s[^>]*)?>\s*(<img\b[^>]*>)\s*</p>',
+        r'<div class="article-img-zoom">\1</div>',
+        html,
+        flags=re.IGNORECASE | re.DOTALL,
+    )
+
+    def _wrap_img(match: re.Match) -> str:
+        start = match.start()
+        before = html[max(0, start - 100):start]
+        if re.search(r'class="article-img-zoom"[^>]*>\s*$', before):
+            return match.group(0)
+        return f'<div class="article-img-zoom">{match.group(0)}</div>'
+
+    return re.sub(r'<img\b[^>]*>', _wrap_img, html, flags=re.IGNORECASE)
 
 
 def _build_product_description(intro, specs_text):

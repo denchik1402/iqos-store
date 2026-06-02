@@ -150,8 +150,43 @@
     min-height: 270px;
     padding: 1rem 1.25rem;
 }
-.article-hero:hover .article-hero-media img {
-    transform: scale(1.2);
+/* Единый hover-zoom: шапка статьи и inline-картинки (×1.4 за 0.85s) */
+.article-img-zoom {
+    overflow: hidden;
+    line-height: 0;
+}
+.article-hero-media.article-img-zoom {
+    border-radius: 0;
+}
+.article-content .article-img-zoom {
+    display: block;
+    border-radius: 12px;
+    margin: 1.25rem 0;
+    max-width: 100%;
+}
+.article-img-zoom img {
+    transform-origin: center center;
+    transition: transform 0.85s cubic-bezier(0.25, 0.46, 0.45, 0.94) !important;
+    will-change: transform;
+}
+.article-hero-media.article-img-zoom img {
+    max-width: 88%;
+    max-height: 88%;
+    width: auto;
+    height: auto;
+    object-fit: contain;
+    display: block;
+}
+.article-content .article-img-zoom img {
+    width: 100%;
+    max-width: 100%;
+    height: auto;
+    margin: 0;
+    border-radius: 0;
+    display: block;
+}
+.article-img-zoom:hover img {
+    transform: scale(1.4) !important;
 }
 [data-theme="dark"] .article-hero {
     background: linear-gradient(135deg, #1a1d24 0%, #16213e 100%);
@@ -188,32 +223,9 @@
     margin: 1.25rem 0;
     display: block;
 }
-/* Inline-картинки в тексте (обёртка добавляется при рендере) */
-.article-content .article-img-zoom {
-    display: block;
-    overflow: hidden;
-    border-radius: 12px;
-    margin: 1.25rem 0;
-    line-height: 0;
-    max-width: 100%;
-}
-.article-content p:has(> .article-img-zoom),
-.article-content .blog-lead p:has(> .article-img-zoom),
-.article-content .blog-callout p:has(> .article-img-zoom) {
-    margin-bottom: 0;
-}
 .article-content .article-img-zoom img {
-    width: 100%;
-    max-width: 100%;
-    height: auto;
-    margin: 0;
     border-radius: 0;
-    display: block;
-    transform-origin: center center;
-    transition: transform 0.85s cubic-bezier(0.25, 0.46, 0.45, 0.94) !important;
-}
-.article-content .article-img-zoom:hover img {
-    transform: scale(1.4) !important;
+    margin: 0;
 }
 
 .blog-lead {
@@ -362,11 +374,7 @@
     .card-side-media img,
     .blog-card-media img,
     .home-category-media img,
-    .article-hero-media img,
-    .article-content .article-img-zoom img {
-        transition: none;
-    }
-    .article-hero:hover .article-hero-media img {
-        transform: none;
+    .article-img-zoom img {
+        transition: none !important;
     }
 }
