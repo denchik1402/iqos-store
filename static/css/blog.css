@@ -222,6 +222,15 @@
     text-align: center;
 }
 
+.home-category-card,
+.blog-card-link {
+    transition: none;
+}
+.home-category-card:active,
+.blog-card-link:active {
+    transform: none;
+}
+
 .home-category-card-inner {
     background: var(--bg-card, #fff);
     border: 1px solid var(--border, #e8e8e8);
