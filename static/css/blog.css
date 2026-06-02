@@ -62,7 +62,7 @@
 /* Миниатюры карточек (категории, блог): ×1.4 — длительность пропорциональна масштабу */
 .home-category-media.card-side-media img,
 .blog-card-media.card-side-media img {
-    transition: transform 1.05s cubic-bezier(0.22, 1, 0.36, 1) !important;
+    transition: transform 1.58s cubic-bezier(0.22, 1, 0.36, 1) !important;
 }
 .blog-card-media {
     flex: 0 0 38%;
@@ -190,7 +190,7 @@
     border-radius: 0;
     display: block;
     transform-origin: center center;
-    transition: transform 2.4s cubic-bezier(0.22, 1, 0.36, 1) !important;
+    transition: transform 3.6s cubic-bezier(0.22, 1, 0.36, 1) !important;
     will-change: transform;
 }
 .article-content .article-img-zoom:hover img {
