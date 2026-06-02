@@ -70,12 +70,12 @@
   "name": "Каталог по категориям LIL STORE",
   "itemListElement": [
     {% for cat in nav_categories %}
-    {% set ch = cat.slug|category_home %}
+    {% set home = cat.slug|category_home %}
     {
       "@type": "ListItem",
       "position": {{ loop.index }},
       "name": {{ cat.name|tojson }},
-      "description": {{ (cat.meta_description or ch.teaser or cat.name)|tojson }},
+      "description": {{ (cat.meta_description or home.get('teaser') or cat.name)|tojson }},
       "url": "{{ request.url_root.rstrip('/') }}{{ url_for('catalog', category_slug=cat.slug) }}"
       {% if category_image_url(cat) %},"image": "{{ request.url_root.rstrip('/') }}{{ category_image_url(cat) }}"{% endif %}
     }{% if not loop.last %},{% endif %}
@@ -215,17 +215,17 @@
     <h2 class="mb-4 fw-bold">Каталог по категориям</h2>
     <div class="row g-3">
         {% for cat in nav_categories %}
-        {% set ch = cat.slug|category_home %}
+        {% set home = cat.slug|category_home %}
         <div class="col-md-4">
-            <a href="{{ url_for('catalog', category_slug=cat.slug) }}" class="home-category-card text-decoration-none h-100 d-block" title="{{ cat.meta_description or ch.teaser or cat.name }}">
-                <div class="home-category-card-inner h-100{% if ch.image or cat.image %} has-image{% endif %}">
+            <a href="{{ url_for('catalog', category_slug=cat.slug) }}" class="home-category-card text-decoration-none h-100 d-block" title="{{ cat.meta_description or home.get('teaser', '') or cat.name }}">
+                <div class="home-category-card-inner h-100{% if home.get('image') or cat.image %} has-image{% endif %}">
                     <div class="home-category-content">
                         <h3 class="h5 mb-2 text-dark">{{ cat.name }}</h3>
-                        <p class="text-muted small mb-3">{{ ch.teaser if ch and ch.teaser else (cat.meta_description[:120] + '…' if cat.meta_description and cat.meta_description|length > 120 else cat.meta_description or 'Смотреть товары') }}</p>
+                        <p class="text-muted small mb-3">{{ home.get('teaser') or (cat.meta_description[:120] + '…' if cat.meta_description and cat.meta_description|length > 120 else cat.meta_description or 'Смотреть товары') }}</p>
                         <span class="home-category-link">Перейти в категорию <i class="fas fa-arrow-right ms-1"></i></span>
                     </div>
-                    {% if ch.image or cat.image %}
-                    <div class="home-category-media" style="background-image: url('{{ category_image_url(cat) }}');" role="img" aria-label="{{ ch.image_alt if ch and ch.image_alt else cat.name }}"></div>
+                    {% if home.get('image') or cat.image %}
+                    <div class="home-category-media" style="background-image: url('{{ category_image_url(cat) }}');" role="img" aria-label="{{ home.get('image_alt', cat.name) }}"></div>
                     {% endif %}
                 </div>
             </a>
