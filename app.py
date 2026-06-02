@@ -277,11 +277,15 @@ def inject_site_contacts():
 
 def _get_yandex_metrika_id():
     """ID счётчика Яндекс.Метрики (только цифры). Пусто — счётчик не подключается."""
+    if hasattr(_get_yandex_metrika_id, '_cached'):
+        return _get_yandex_metrika_id._cached
     raw = _get_site_setting('YANDEX_METRIKA_ID', '')
     if not raw:
+        _get_yandex_metrika_id._cached = None
         return None
     digits = ''.join(c for c in str(raw).strip() if c.isdigit())
-    return int(digits) if digits else None
+    _get_yandex_metrika_id._cached = int(digits) if digits else None
+    return _get_yandex_metrika_id._cached
 
 
 @app.context_processor
@@ -509,16 +513,9 @@ def index():
         if banner_ids:
             fresh = {b.id: b for b in Banner.query.filter(Banner.id.in_(banner_ids)).options(joinedload(Banner.product)).all()}
             promo_slides = [fresh[b.id] if isinstance(b, Banner) else b for b in promo_slides]
-        # Учитываем показы (impressions) — один commit вместо N
-        try:
-            for b in promo_slides:
-                if isinstance(b, Banner):
-                    b.impressions = (b.impressions or 0) + 1
-            db.session.commit()
-        except Exception:
-            db.session.rollback()
 
     hit_product_ids = {p.id for p in (hit_products or [])}
+    banner_impression_ids = [b.id for b in promo_slides if isinstance(b, Banner)]
     
     return render_template('index.html',
                          new_products=new_products,
@@ -528,7 +525,8 @@ def index():
                          hit_product_ids=hit_product_ids,
                          recent_reviews=recent_reviews,
                          promo_slides=promo_slides,
-                         home_blocks=home_blocks)
+                         home_blocks=home_blocks,
+                         banner_impression_ids=banner_impression_ids)
 
 @app.route('/catalog/<string:category_slug>')
 @app.route('/catalog')
@@ -989,6 +987,32 @@ def cart_count():
     """API для получения количества товаров в корзине"""
     count = len(session.get('cart', {}))
     return jsonify({'count': count})
+
+
+@app.route('/api/banner-impressions', methods=['POST'])
+def api_banner_impressions():
+    """Учёт показов баннеров — вызывается с главной после загрузки страницы."""
+    payload = request.get_json(silent=True) or {}
+    raw_ids = payload.get('ids') or []
+    ids = []
+    for x in raw_ids:
+        try:
+            ids.append(int(x))
+        except (TypeError, ValueError):
+            continue
+    ids = ids[:20]
+    if not ids:
+        return jsonify({'ok': True, 'updated': 0})
+    try:
+        banners = Banner.query.filter(Banner.id.in_(ids)).all()
+        for b in banners:
+            b.impressions = (b.impressions or 0) + 1
+        db.session.commit()
+        return jsonify({'ok': True, 'updated': len(banners)})
+    except Exception as e:
+        db.session.rollback()
+        logger.warning("banner-impressions: %s", e)
+        return jsonify({'ok': False}), 500
 
 
 @csrf.exempt

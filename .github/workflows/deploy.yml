@@ -48,8 +48,10 @@ jobs:
             chown -R lilstore:lilstore /home/lilstore/my_shop/static/images/products
             find /home/lilstore/my_shop/static/images/banners -type d -exec chmod 755 {} \;
             find /home/lilstore/my_shop/static/images/products -type d -exec chmod 755 {} \;
-            echo "=== 6b. nginx + healthcheck ==="
+            echo "=== 6b. nginx + gunicorn unit + healthcheck ==="
             cp /home/lilstore/my_shop/deploy/nginx-lilstore.conf /etc/nginx/sites-available/lilstore
+            cp /home/lilstore/my_shop/deploy/lilstore.service /etc/systemd/system/lilstore.service
+            systemctl daemon-reload
             nginx -t
             systemctl reload nginx
             cp /home/lilstore/my_shop/deploy/healthcheck_lilstore.sh /usr/local/bin/healthcheck_lilstore.sh

@@ -8,7 +8,7 @@ User=lilstore
 Group=lilstore
 WorkingDirectory=/home/lilstore/my_shop
 Environment="PATH=/home/lilstore/my_shop/venv/bin"
-ExecStart=/home/lilstore/my_shop/venv/bin/gunicorn --workers 2 --bind 127.0.0.1:8000 --timeout 120 app:app
+ExecStart=/home/lilstore/my_shop/venv/bin/gunicorn --workers 3 --preload --bind 127.0.0.1:8000 --timeout 120 --max-requests 1000 --max-requests-jitter 50 app:app
 ExecReload=/bin/kill -s HUP $MAINPID
 Restart=always
 RestartSec=5
