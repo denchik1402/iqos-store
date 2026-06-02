@@ -20,7 +20,8 @@ jobs:
             set -o pipefail
             # Деплой под root — без sudo (SSH_USER=root в секретах GitHub)
             echo "=== 1. chown lilstore ==="
-            chown -R lilstore:lilstore /home/lilstore/my_shop
+            find /home/lilstore/my_shop -xtype l -delete 2>/dev/null || true
+            chown -hR lilstore:lilstore /home/lilstore/my_shop
             echo "=== 2. git pull ==="
             sudo -u lilstore bash -c 'cd /home/lilstore/my_shop && git config --global --add safe.directory /home/lilstore/my_shop && git fetch origin main && git reset --hard origin/main && git clean -fd alembic/versions/'
             echo "=== 3. pip install ==="
