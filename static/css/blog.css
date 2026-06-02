@@ -150,7 +150,7 @@
     min-height: 270px;
     padding: 1rem 1.25rem;
 }
-/* Единый hover-zoom: шапка статьи и inline-картинки (×1.25, медленно ~1.75s) */
+/* Единый hover-zoom: шапка статьи и inline-картинки (×1.4, ~1.75s) */
 .article-img-zoom {
     overflow: hidden;
     line-height: 0;
@@ -186,7 +186,7 @@
     display: block;
 }
 .article-img-zoom:hover img {
-    transform: scale(1.25) !important;
+    transform: scale(1.4) !important;
 }
 [data-theme="dark"] .article-hero {
     background: linear-gradient(135deg, #1a1d24 0%, #16213e 100%);

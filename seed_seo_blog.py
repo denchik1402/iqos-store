@@ -577,19 +577,18 @@ def seed_blog_posts() -> tuple[int, int]:
         existing = BlogPost.query.filter_by(slug=data['slug']).first()
         if existing:
             changed = False
-            for field in (
-                'cover_image', 'cover_icon', 'excerpt', 'meta_description',
-                'meta_keywords', 'reading_minutes', 'title',
-            ):
-                val = data.get(field)
-                if val is not None and getattr(existing, field) != val:
-                    setattr(existing, field, val)
-                    changed = True
+            # Не перезаписываем поля, изменённые в админке — только заполняем пустые
             if not (existing.meta_description or '').strip() and data.get('meta_description'):
                 existing.meta_description = data['meta_description']
                 changed = True
             if not (existing.meta_keywords or '').strip() and data.get('meta_keywords'):
                 existing.meta_keywords = data['meta_keywords']
+                changed = True
+            if not (existing.cover_image or '').strip() and data.get('cover_image'):
+                existing.cover_image = data['cover_image']
+                changed = True
+            if not (existing.excerpt or '').strip() and data.get('excerpt'):
+                existing.excerpt = data['excerpt']
                 changed = True
             if changed:
                 existing.updated_at = now
