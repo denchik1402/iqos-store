@@ -57,13 +57,12 @@
     height: auto;
     object-fit: contain;
     transform-origin: center center;
-    transition: transform 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94) !important;
     will-change: transform;
 }
-/* Категории и блог: ×1.4 за 0.85s */
-.home-category-media img,
-.blog-card-media img {
-    transition: transform 0.85s cubic-bezier(0.25, 0.46, 0.45, 0.94) !important;
+/* Миниатюры карточек (категории, блог): ×1.4 — длительность пропорциональна масштабу */
+.home-category-media.card-side-media img,
+.blog-card-media.card-side-media img {
+    transition: transform 1.05s cubic-bezier(0.22, 1, 0.36, 1) !important;
 }
 .blog-card-media {
     flex: 0 0 38%;
@@ -71,7 +70,7 @@
     min-height: 148px;
     padding: 0.65rem 0.85rem;
 }
-/* Зум миниатюры: ×1.4 за 0.85s */
+/* Зум миниатюры карточек: ×1.4 за ~1.05s */
 .blog-card:hover .blog-card-media img,
 .blog-card-link:hover .blog-card-media img,
 .blog-card-media:hover img {
@@ -130,15 +129,18 @@
     border: 1px solid var(--border, #e8e8e8);
     display: flex;
     align-items: stretch;
-    max-height: 630px;
-    min-height: 270px;
+    max-height: 320px;
+    min-height: 0;
+}
+.article-hero--with-cover {
+    min-height: 220px;
 }
 .article-hero--with-cover .article-hero-text {
     flex: 1 1 58%;
     min-width: 0;
 }
 .article-hero-text {
-    padding: 2rem 2.25rem;
+    padding: 1.5rem 2rem;
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -147,10 +149,11 @@
 .article-hero-media {
     flex: 0 0 42%;
     max-width: 42%;
-    min-height: 270px;
-    padding: 1rem 1.25rem;
+    min-height: 0;
+    max-height: 320px;
+    padding: 0.75rem 1rem;
 }
-/* Единый hover-zoom: шапка статьи и inline-картинки (×1.4, ~1.75s) */
+/* Hover-zoom: обложка в шапке статьи */
 .article-img-zoom {
     overflow: hidden;
     line-height: 0;
@@ -158,24 +161,26 @@
 .article-hero-media.article-img-zoom {
     border-radius: 0;
 }
+.article-hero-media.article-img-zoom img {
+    max-width: 88%;
+    max-height: 260px;
+    width: auto;
+    height: auto;
+    object-fit: contain;
+    display: block;
+    transform-origin: center center;
+    transition: transform 1.75s cubic-bezier(0.22, 1, 0.36, 1) !important;
+    will-change: transform;
+}
+.article-hero-media.article-img-zoom:hover img {
+    transform: scale(1.4) !important;
+}
+/* Inline-картинки в тексте: ×1.3, медленнее */
 .article-content .article-img-zoom {
     display: block;
     border-radius: 12px;
     margin: 1.25rem 0;
     max-width: 100%;
-}
-.article-img-zoom img {
-    transform-origin: center center;
-    transition: transform 1.75s cubic-bezier(0.22, 1, 0.36, 1) !important;
-    will-change: transform;
-}
-.article-hero-media.article-img-zoom img {
-    max-width: 88%;
-    max-height: 88%;
-    width: auto;
-    height: auto;
-    object-fit: contain;
-    display: block;
 }
 .article-content .article-img-zoom img {
     width: 100%;
@@ -184,9 +189,12 @@
     margin: 0;
     border-radius: 0;
     display: block;
+    transform-origin: center center;
+    transition: transform 2.4s cubic-bezier(0.22, 1, 0.36, 1) !important;
+    will-change: transform;
 }
-.article-img-zoom:hover img {
-    transform: scale(1.4) !important;
+.article-content .article-img-zoom:hover img {
+    transform: scale(1.3) !important;
 }
 [data-theme="dark"] .article-hero {
     background: linear-gradient(135deg, #1a1d24 0%, #16213e 100%);
@@ -303,7 +311,7 @@
     min-height: 168px;
     padding: 0.75rem 1rem;
 }
-/* Зум изображения категории: ×1.4 за 0.85s */
+/* Зум карточек категорий: ×1.4 за ~1.05s */
 .home-category-card:hover .home-category-media img,
 .home-category-card:hover .card-side-media img,
 .home-category-card-inner:hover .home-category-media img,
@@ -371,10 +379,10 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
-    .card-side-media img,
-    .blog-card-media img,
-    .home-category-media img,
-    .article-img-zoom img {
+    .home-category-media.card-side-media img,
+    .blog-card-media.card-side-media img,
+    .article-hero-media.article-img-zoom img,
+    .article-content .article-img-zoom img {
         transition: none !important;
     }
 }
