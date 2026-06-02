@@ -13,6 +13,15 @@ CITY_RU = 'Москва'
 CITY_EN = 'Moscow'
 DELIVERY = 'доставка 1–2 дня'
 
+
+def make_url_slug(text: str, max_len: int = 100) -> str:
+    """ЧПУ-slug из названия (категория, модель, статья)."""
+    s = (text or '').lower().strip()
+    s = s.replace('ё', 'е')
+    s = re.sub(r'[^\w\s-]', '', s, flags=re.UNICODE)
+    s = re.sub(r'[\s_]+', '-', s).strip('-')
+    return (s[:max_len] if s else 'item')
+
 COLOR_RU_EN = {
     'чёрный': 'Black', 'черный': 'Black', 'чёрный титан': 'Black Titanium',
     'зелёный': 'Green', 'зеленый': 'Green', 'зелёный кобальт': 'Green Cobalt',
@@ -90,6 +99,16 @@ CATEGORY_SEO = {
             'купить IQOS ILUMA, buy IQOS ILUMA, нагреватель IQOS, IQOS без лезвия, '
             'SMARTCORE, LIL STORE, Москва, original IQOS'
         ),
+        'seo_text': (
+            '<p><strong>IQOS ILUMA</strong> — линейка нагревателей нового поколения без лезвия и без необходимости '
+            'чистки. Технология SMARTCORE INDUCTION™ нагревает табак изнутри стика TEREA, сохраняя вкус и снижая '
+            'запах по сравнению с обычным курением.</p>'
+            '<p>В LIL STORE представлены три форм-фактора: компактный <strong>Iluma i One</strong>, сбалансированный '
+            '<strong>Iluma i Standart</strong> и премиальный <strong>Iluma i Prime</strong> с увеличенной автономностью. '
+            'Все устройства — оригинальная продукция с гарантией производителя.</p>'
+            '<p>Оформите бронь на сайте — менеджер свяжется для подтверждения. Доставка по Москве и России 1–2 дня, '
+            'оплата при получении. Актуальные цвета и наличие — в каталоге ниже.</p>'
+        ),
     },
     'terea-sticks': {
         'meta_description': (
@@ -102,6 +121,16 @@ CATEGORY_SEO = {
             'купить TEREA, buy TEREA sticks, Terea Purple Wave, Terea Amber, '
             'Terea Pearl, IQOS ILUMA sticks, LIL STORE, Москва, original TEREA'
         ),
+        'seo_text': (
+            '<p><strong>TEREA</strong> — стики, разработанные специально для IQOS ILUMA. В отличие от HEETS, '
+            'они содержат металлический нагреваемый элемент внутри и не требуют лезвия в устройстве. '
+            'В блоке 20 стиков, срок годности и оригинальная упаковка PMI.</p>'
+            '<p>В ассортименте LIL STORE — классические табачные вкусы (Amber, Silver, Yellow), '
+            'освежающие ментоловые (Blue, Turquoise, Zing Wave) и линейка Pearl с капсулами '
+            '(Purple Wave, Sun Pearl, Twilight Pearl и др.). Все позиции — оригинал Terea KZ.</p>'
+            '<p>Выберите вкус в каталоге и оформите бронь. Доставка 1–2 дня по России. '
+            'Не уверены, какой вкус подойдёт? Напишите в Telegram @iluma_prime_bot — подскажем.</p>'
+        ),
     },
     'lil': {
         'meta_description': (
@@ -113,6 +142,15 @@ CATEGORY_SEO = {
             'LIL SOLID, LIL SOLID DUAL, LIL SOLID 3.0, LIL SOLID 4.0, LIL device, '
             'купить LIL SOLID, buy LIL SOLID, нагреватель LIL, LIL tobacco heating, '
             'LIL STORE, Москва, original LIL'
+        ),
+        'seo_text': (
+            '<p><strong>LIL SOLID</strong> — доступная линейка нагревателей табака от PMI. '
+            'Устройства совместимы со стиками HEETS и аналогами, подходят тем, кто ищет '
+            'компактный и надёжный формат без премиальной цены ILUMA.</p>'
+            '<p>В каталоге — <strong>LIL SOLID 3.0</strong> (компактный корпус, два режима нагрева), '
+            '<strong>LIL SOLID DUAL</strong> (с зарядным кейсом) и новинка <strong>LIL SOLID 4.0</strong> '
+            'с обновлённым дизайном. Все цвета в наличии — чёрный, синий, зелёный, золотой и лимитированные.</p>'
+            '<p>Бронь на сайте, доставка 1–2 дня, оплата при получении. Оригинальная продукция, работаем с 2020 года.</p>'
         ),
     },
     'exclusive': {
@@ -204,6 +242,10 @@ def normalize_device_model_name(name: str) -> str:
     """LIL в названии модели — только заглавными."""
     name = ' '.join((name or '').split())
     return re.sub(r'\blil\s+solid\b', 'LIL SOLID', name, flags=re.IGNORECASE)
+
+
+def device_model_slug(name: str) -> str:
+    return make_url_slug(normalize_device_model_name(name) if name else '')
 
 
 def _truncate(text: str, max_len: int) -> str:
@@ -336,6 +378,7 @@ def generate_category_seo(category) -> dict[str, str]:
         return {
             'meta_description': _truncate(preset['meta_description'], 300),
             'meta_keywords': _truncate(preset['meta_keywords'], 300),
+            'seo_text': preset.get('seo_text', ''),
         }
     name = category.name or 'Каталог'
     return {
@@ -350,6 +393,7 @@ def generate_category_seo(category) -> dict[str, str]:
             ]),
             300,
         ),
+        'seo_text': '',
     }
 
 
@@ -361,6 +405,7 @@ def generate_device_model_seo(device_model) -> dict[str, str]:
             'image_alt': _truncate(preset['image_alt'], 200),
             'meta_description': _truncate(preset['meta_description'], 300),
             'meta_keywords': _truncate(preset['meta_keywords'], 300),
+            'seo_text': preset.get('seo_text', ''),
         }
     return {
         'image_alt': _truncate(f'{name} — устройство, фото {SITE}', 200),
@@ -373,6 +418,10 @@ def generate_device_model_seo(device_model) -> dict[str, str]:
                 name, f'купить {name}', f'buy {name}', 'IQOS', 'LIL', 'ILUMA', SITE, CITY_RU, CITY_EN,
             ]),
             300,
+        ),
+        'seo_text': (
+            f'<p>Купить <strong>{name}</strong> в {SITE}, {CITY_RU}. Оригинальная продукция, '
+            f'бронь на сайте, {DELIVERY}. Актуальные цвета и наличие — в каталоге ниже.</p>'
         ),
     }
 

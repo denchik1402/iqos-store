@@ -22,11 +22,29 @@ class DeviceModel(db.Model):
     """Справочник моделей устройств (фильтр каталога, выбор в карточке товара)"""
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(100), unique=True, nullable=False)
+    slug = db.Column(db.String(100), unique=True, nullable=True)
     sort_order = db.Column(db.Integer, default=0)
     image_alt = db.Column(db.String(200))
     meta_description = db.Column(db.String(300))
     meta_keywords = db.Column(db.String(300))
+    seo_text = db.Column(db.Text)
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
+
+
+class BlogPost(db.Model):
+    """Статья блога / гайд для SEO"""
+    id = db.Column(db.Integer, primary_key=True)
+    slug = db.Column(db.String(120), unique=True, nullable=False)
+    title = db.Column(db.String(200), nullable=False)
+    excerpt = db.Column(db.String(400))
+    content = db.Column(db.Text, nullable=False)
+    meta_description = db.Column(db.String(300))
+    meta_keywords = db.Column(db.String(300))
+    cover_icon = db.Column(db.String(50), default='fa-book-open')
+    reading_minutes = db.Column(db.Integer, default=5)
+    is_published = db.Column(db.Boolean, default=True)
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+    updated_at = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
 
 class BotSetting(db.Model):
     """Настройки бота (ключ-значение), в т.ч. chat_id для уведомлений"""

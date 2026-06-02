@@ -123,7 +123,7 @@ def _set_sqlite_pragma(dbapi_connection, connection_record):
         cursor.execute("PRAGMA temp_store=MEMORY")
         cursor.close()
 
-from models import Product, Category, Review, Order, OrderItem, TelegramUser, BotSetting, PromoCode, Banner, HomeBlock, DeviceModel
+from models import Product, Category, Review, Order, OrderItem, TelegramUser, BotSetting, PromoCode, Banner, HomeBlock, DeviceModel, BlogPost
 from seo_utils import normalize_device_model_name, generate_device_model_seo
 from product_name_utils import normalize_product_name, normalize_description_brands
 
@@ -546,17 +546,38 @@ def index():
                          recent_reviews=recent_reviews,
                          promo_slides=promo_slides,
                          home_blocks=home_blocks,
-                         banner_impression_ids=banner_impression_ids)
+                         banner_impression_ids=banner_impression_ids,
+                         blog_posts=BlogPost.query.filter_by(is_published=True)
+                         .order_by(BlogPost.created_at.desc()).limit(3).all())
 
 @app.route('/catalog/<string:category_slug>')
 @app.route('/catalog')
 def catalog(category_slug=None):
-    """Страница каталога с фильтрами"""
+    """Страница каталога с фильтрами (категория или модель устройства по ЧПУ-slug)."""
+    category = None
+    device_model_filter = None
     if category_slug:
-        category = Category.query.filter_by(slug=category_slug).first_or_404()
+        category = Category.query.filter_by(slug=category_slug).first()
+        if not category:
+            device_model_filter = DeviceModel.query.filter_by(slug=category_slug).first_or_404()
+
+    model_q = request.args.get('model', '').strip()
+    has_secondary_filters = any(
+        request.args.get(k) for k in (
+            'color', 'on_sale', 'exclusive', 'hit', 'in_stock', 'sort', 'view', 'price_min', 'price_max',
+        )
+    )
+    if not category_slug and model_q and not has_secondary_filters and request.args.get('page', 1, type=int) == 1:
+        dm_redirect = DeviceModel.query.filter(db.func.lower(DeviceModel.name) == model_q.lower()).first()
+        if dm_redirect and dm_redirect.slug:
+            extra = {k: v for k, v in request.args.items() if k not in ('model', 'page')}
+            return redirect(url_for('catalog', category_slug=dm_redirect.slug, **extra), 301)
+
+    if device_model_filter:
+        q = Product.query.filter(db.func.lower(Product.model) == device_model_filter.name.lower())
+    elif category:
         q = Product.query.filter_by(category_id=category.id)
     else:
-        category = None
         q = Product.query
     
     # Фильтр: только в наличии
@@ -567,9 +588,9 @@ def catalog(category_slug=None):
     if request.args.get('on_sale') == '1':
         q = q.filter(Product.old_price.isnot(None), Product.old_price > 0)
     
-    # Фильтр: модель (без учёта регистра)
-    model_filter = request.args.get('model', '').strip()
-    if model_filter:
+    # Фильтр: модель (без учёта регистра); при ЧПУ /catalog/<model-slug> уже применён выше
+    model_filter = device_model_filter.name if device_model_filter else request.args.get('model', '').strip()
+    if model_filter and not device_model_filter:
         q = q.filter(db.func.lower(Product.model) == model_filter.lower())
     
     # Фильтр: цвет (без учёта регистра)
@@ -650,11 +671,15 @@ def catalog(category_slug=None):
     if color_filter and color_filter not in filter_colors:
         filter_colors = [color_filter] + filter_colors
 
-    device_model_filter = None
-    if model_filter:
+    if not device_model_filter and model_filter:
         device_model_filter = DeviceModel.query.filter(
             db.func.lower(DeviceModel.name) == model_filter.lower()
         ).first()
+
+    filter_device_models = []
+    for m in _query_device_models():
+        if m.name in available_models or (model_filter and m.name.lower() == model_filter.lower()):
+            filter_device_models.append(m)
     
     # Текущие значения фильтров для UI
     filters = {
@@ -679,7 +704,8 @@ def catalog(category_slug=None):
                          filter_colors=filter_colors,
                          price_range_min=price_range_min,
                          price_range_max=price_range_max,
-                         device_model_filter=device_model_filter)
+                         device_model_filter=device_model_filter,
+                         filter_device_models=filter_device_models)
 
 @app.route('/product/<int:product_id>')
 def product_redirect_id(product_id):
@@ -996,6 +1022,23 @@ def contacts():
 def faq():
     """Часто задаваемые вопросы"""
     return render_template('faq.html')
+
+
+@app.route('/blog')
+def blog_index():
+    """Блог и гайды"""
+    posts = BlogPost.query.filter_by(is_published=True).order_by(BlogPost.created_at.desc()).all()
+    return render_template('blog.html', posts=posts)
+
+
+@app.route('/blog/<slug>')
+def blog_post(slug):
+    """Статья блога"""
+    post = BlogPost.query.filter_by(slug=slug, is_published=True).first_or_404()
+    others = BlogPost.query.filter(BlogPost.is_published == True, BlogPost.id != post.id)\
+        .order_by(BlogPost.created_at.desc()).limit(3).all()
+    return render_template('blog_post.html', post=post, other_posts=others)
+
 
 @app.route('/privacy')
 def privacy():
@@ -2198,11 +2241,23 @@ def sitemap():
             {'loc': base + url_for('contacts'), 'changefreq': 'monthly', 'priority': '0.5', 'lastmod': lastmod_default},
             {'loc': base + url_for('delivery'), 'changefreq': 'monthly', 'priority': '0.5', 'lastmod': lastmod_default},
             {'loc': base + url_for('faq'), 'changefreq': 'monthly', 'priority': '0.6', 'lastmod': lastmod_default},
+            {'loc': base + url_for('blog_index'), 'changefreq': 'weekly', 'priority': '0.7', 'lastmod': lastmod_default},
             {'loc': base + url_for('privacy'), 'changefreq': 'yearly', 'priority': '0.3', 'lastmod': lastmod_default},
         ]
         for cat in Category.query.all():
             cat_lastmod = _lastmod(getattr(cat, 'updated_at', None) or cat.created_at)
             pages.append({'loc': base + url_for('catalog', category_slug=cat.slug), 'changefreq': 'weekly', 'priority': '0.8', 'lastmod': cat_lastmod})
+        for dm in DeviceModel.query.filter(DeviceModel.slug.isnot(None)).all():
+            pages.append({
+                'loc': base + url_for('catalog', category_slug=dm.slug),
+                'changefreq': 'weekly', 'priority': '0.75', 'lastmod': lastmod_default,
+            })
+        for post in BlogPost.query.filter_by(is_published=True).all():
+            p_lm = _lastmod(getattr(post, 'updated_at', None) or post.created_at)
+            pages.append({
+                'loc': base + url_for('blog_post', slug=post.slug),
+                'changefreq': 'monthly', 'priority': '0.65', 'lastmod': p_lm,
+            })
         for p in Product.query.filter_by(in_stock=True).all():
             p_lastmod = _lastmod(getattr(p, 'updated_at', None) or p.created_at)
             pages.append({'loc': base + url_for('product', product_slug=p.get_url_slug()), 'changefreq': 'weekly', 'priority': '0.7', 'lastmod': p_lastmod})

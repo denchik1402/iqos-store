@@ -66,6 +66,7 @@
 
 {% block extra_css %}
 <link rel="stylesheet" href="{{ url_for('static', filename='css/index.css') }}?v=2">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/blog.css') }}">
 {% endblock %}
 
 {% block content %}
@@ -186,6 +187,31 @@
         </div>
     </div>
 </div>
+
+{% if nav_categories %}
+<section class="home-categories mb-5" aria-label="Категории товаров">
+    <h2 class="mb-4 fw-bold">Каталог по категориям</h2>
+    <div class="row g-3">
+        {% for cat in nav_categories %}
+        <div class="col-md-4">
+            <a href="{{ url_for('catalog', category_slug=cat.slug) }}" class="home-category-card text-decoration-none h-100 d-block">
+                <div class="home-category-card-inner h-100">
+                    <div class="home-category-icon">
+                        {% if cat.slug == 'iqos-iluma' %}<i class="fas fa-mobile-alt"></i>
+                        {% elif cat.slug == 'terea-sticks' %}<i class="fas fa-box-open"></i>
+                        {% elif cat.slug == 'lil' %}<i class="fas fa-bolt"></i>
+                        {% else %}<i class="fas fa-th-large"></i>{% endif %}
+                    </div>
+                    <h3 class="h5 mb-2 text-dark">{{ cat.name }}</h3>
+                    <p class="text-muted small mb-3">{% if cat.slug == 'iqos-iluma' %}Устройства IQOS ILUMA — One, Standart, Prime{% elif cat.slug == 'terea-sticks' %}Оригинальные стики TEREA для ILUMA{% elif cat.slug == 'lil' %}LIL SOLID 3.0, DUAL и 4.0{% else %}Смотреть товары{% endif %}</p>
+                    <span class="home-category-link">Перейти в категорию <i class="fas fa-arrow-right ms-1"></i></span>
+                </div>
+            </a>
+        </div>
+        {% endfor %}
+    </div>
+</section>
+{% endif %}
 
 <!-- Хит продаж — карусель (скролл по 1 карточке) -->
 {% if hit_products %}
@@ -342,6 +368,32 @@
         {% endif %}
     </div>
 </div>
+
+{% if blog_posts %}
+<section class="home-blog mb-5" aria-label="Полезные статьи">
+    <div class="d-flex flex-wrap align-items-end justify-content-between gap-2 mb-4">
+        <h2 class="mb-0 fw-bold">Полезные статьи</h2>
+        <a href="{{ url_for('blog_index') }}" class="btn btn-outline-primary btn-sm">Все статьи</a>
+    </div>
+    <div class="row g-4">
+        {% for post in blog_posts %}
+        <div class="col-md-6 col-lg-4">
+            <article class="blog-card h-100">
+                <a href="{{ url_for('blog_post', slug=post.slug) }}" class="blog-card-link text-decoration-none">
+                    <div class="blog-card-icon"><i class="fas {{ post.cover_icon or 'fa-book-open' }}"></i></div>
+                    <div class="blog-card-body">
+                        <div class="blog-card-meta">{{ post.reading_minutes or 5 }} мин чтения</div>
+                        <h3 class="blog-card-title h5">{{ post.title }}</h3>
+                        <p class="blog-card-excerpt">{{ post.excerpt }}</p>
+                        <span class="blog-card-read">Читать <i class="fas fa-arrow-right ms-1"></i></span>
+                    </div>
+                </a>
+            </article>
+        </div>
+        {% endfor %}
+    </div>
+</section>
+{% endif %}
 
 <!-- Почему нам доверяют — карусель (скролл по 1 карточке) -->
 <h2 class="mb-4 mt-5 fw-bold">Почему нам доверяют</h2>

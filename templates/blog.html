@@ -1,0 +1,54 @@
+{% extends "base.html" %}
+
+{% block title %}Блог и гайды — IQOS, TEREA, ILUMA | LIL STORE{% endblock %}
+{% block meta_description %}Полезные статьи о IQOS ILUMA, стиках TEREA и LIL SOLID: как выбрать устройство, отличия TEREA от HEETS, советы по покупке. LIL STORE.{% endblock %}
+{% block meta_keywords %}блог IQOS, гайд ILUMA, TEREA vs HEETS, как выбрать IQOS, LIL STORE{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/blog.css') }}">
+{% endblock %}
+
+{% block schema_ld %}
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[
+  {"@type":"ListItem","position":1,"name":"Главная","item":"{{ request.url_root.rstrip('/') }}/"},
+  {"@type":"ListItem","position":2,"name":"Блог","item":"{{ request.url_root.rstrip('/') }}{{ url_for('blog_index') }}"}
+]}
+</script>
+{% endblock %}
+
+{% block content %}
+<div class="blog-hero">
+    <h1>Блог и гайды</h1>
+    <p>Помогаем разобраться в устройствах IQOS ILUMA, стиках TEREA и линейке LIL — без лишней воды, по делу.</p>
+</div>
+
+{% if posts %}
+<div class="row g-4">
+    {% for post in posts %}
+    <div class="col-md-6">
+        <article class="blog-card">
+            <a href="{{ url_for('blog_post', slug=post.slug) }}" class="blog-card-link">
+                <div class="blog-card-icon"><i class="fas {{ post.cover_icon or 'fa-book-open' }}"></i></div>
+                <div class="blog-card-body">
+                    <div class="blog-card-meta"><i class="far fa-clock me-1"></i>{{ post.reading_minutes or 5 }} мин чтения</div>
+                    <h2 class="blog-card-title h4">{{ post.title }}</h2>
+                    <p class="blog-card-excerpt">{{ post.excerpt }}</p>
+                    <span class="blog-card-read">Читать статью <i class="fas fa-arrow-right ms-1"></i></span>
+                </div>
+            </a>
+        </article>
+    </div>
+    {% endfor %}
+</div>
+{% else %}
+<p class="alert alert-info">Статьи скоро появятся.</p>
+{% endif %}
+
+<div class="article-cta mt-5">
+    <h2 class="h5 mb-2">Готовы выбрать товар?</h2>
+    <p class="text-muted mb-3">Оригинальная продукция, бронь на сайте, доставка 1–2 дня.</p>
+    <a href="{{ url_for('catalog') }}" class="btn btn-primary me-2">Перейти в каталог</a>
+    <a href="https://t.me/iluma_prime_bot" class="btn btn-outline-primary" target="_blank" rel="noopener">Telegram-бот</a>
+</div>
+{% endblock %}

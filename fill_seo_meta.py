@@ -13,7 +13,7 @@ import sys
 from app import app
 from extensions import db
 from models import Category, Product, DeviceModel
-from seo_utils import generate_category_seo, generate_product_seo, generate_device_model_seo
+from seo_utils import generate_category_seo, generate_product_seo, generate_device_model_seo, device_model_slug
 
 
 def _should_set(current: str | None, force: bool) -> bool:
@@ -33,6 +33,9 @@ def fill_seo(force: bool = False) -> tuple[int, int, int]:
             changed = True
         if _should_set(category.meta_keywords, force):
             category.meta_keywords = seo['meta_keywords']
+            changed = True
+        if _should_set(category.description, force) and seo.get('seo_text'):
+            category.description = seo['seo_text']
             changed = True
         if changed:
             categories_updated += 1
@@ -58,11 +61,18 @@ def fill_seo(force: bool = False) -> tuple[int, int, int]:
         if _should_set(device_model.image_alt, force):
             device_model.image_alt = seo['image_alt']
             changed = True
+        slug = device_model_slug(device_model.name)
+        if slug and (force or not device_model.slug):
+            device_model.slug = slug
+            changed = True
         if _should_set(device_model.meta_description, force):
             device_model.meta_description = seo['meta_description']
             changed = True
         if _should_set(device_model.meta_keywords, force):
             device_model.meta_keywords = seo['meta_keywords']
+            changed = True
+        if _should_set(device_model.seo_text, force) and seo.get('seo_text'):
+            device_model.seo_text = seo['seo_text']
             changed = True
         if changed:
             models_updated += 1

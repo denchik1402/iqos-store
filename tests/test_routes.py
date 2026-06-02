@@ -22,6 +22,18 @@ def test_catalog_404(client, app_ctx):
     assert r.status_code == 404
 
 
+def test_blog(client, app_ctx):
+    """Блог — 200."""
+    r = client.get('/blog')
+    assert r.status_code == 200
+
+
+def test_catalog_model_slug(client, app_ctx):
+    """ЧПУ модели устройства — 200 или 404 если slug ещё не создан."""
+    r = client.get('/catalog/iqos-iluma-i-one')
+    assert r.status_code in (200, 404)
+
+
 def test_search_empty(client, app_ctx):
     """Поиск без запроса — 200."""
     r = client.get('/search')

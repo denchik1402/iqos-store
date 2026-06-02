@@ -1,6 +1,6 @@
 {% extends "base.html" %}
 
-{% block canonical_url %}{{ request.url_root.rstrip('/') }}{% if category %}{{ url_for('catalog', category_slug=category.slug) }}{% else %}{{ url_for('catalog') }}{% endif %}{% endblock %}
+{% block canonical_url %}{% if device_model_filter and device_model_filter.slug %}{{ request.url_root.rstrip('/') }}{{ url_for('catalog', category_slug=device_model_filter.slug) }}{% else %}{{ request.url_root.rstrip('/') }}{% if category %}{{ url_for('catalog', category_slug=category.slug) }}{% else %}{{ url_for('catalog') }}{% endif %}{% endif %}{% endblock %}
 {% block meta_robots %}
 {% if request.args %}
 noindex, follow
@@ -48,7 +48,8 @@ index, follow
   "itemListElement": [
     {"@type": "ListItem", "position": 1, "name": "Главная", "item": {{ (_base + '/')|tojson }}},
     {"@type": "ListItem", "position": 2, "name": "Каталог", "item": {{ (_base + url_for('catalog'))|tojson }}}{% if category %},
-    {"@type": "ListItem", "position": 3, "name": {{ category.name|tojson }}, "item": {{ (_base + url_for('catalog', category_slug=category.slug))|tojson }}}{% endif %}
+    {"@type": "ListItem", "position": 3, "name": {{ category.name|tojson }}, "item": {{ (_base + url_for('catalog', category_slug=category.slug))|tojson }}}{% elif device_model_filter %},
+    {"@type": "ListItem", "position": 3, "name": {{ device_model_filter.name|tojson }}, "item": {{ (_base + url_for('catalog', category_slug=device_model_filter.slug))|tojson }}}{% endif %}
   ]
 }
 </script>
@@ -287,6 +288,9 @@ index, follow
 [data-theme="dark"] .form-select { background: var(--bg-input); border-color: var(--border); color: var(--text); }
 [data-theme="dark"] .catalog-toolbar-actions .btn-outline-secondary { border-color: var(--border); color: var(--text); }
 [data-theme="dark"] .catalog-toolbar-actions .btn-outline-secondary:hover { background: var(--bg-input); color: var(--text); border-color: var(--text-muted); }
+.catalog-seo-intro { font-size: 0.95rem; line-height: 1.65; }
+.catalog-seo-intro p:last-child { margin-bottom: 0; }
+[data-theme="dark"] .catalog-seo-intro { color: var(--text-muted) !important; }
 </style>
 
 <!-- Хлебные крошки -->
@@ -296,6 +300,8 @@ index, follow
         <li class="breadcrumb-item"><a href="/catalog">Каталог</a></li>
         {% if category %}
         <li class="breadcrumb-item active">{{ category.name }}</li>
+        {% elif device_model_filter %}
+        <li class="breadcrumb-item active">{{ device_model_filter.name }}</li>
         {% endif %}
     </ol>
 </nav>
@@ -307,7 +313,9 @@ index, follow
         {% set q_filter = dict(q) %}
         {% set _ = q_filter.pop('page', None) %}
         {% macro catalog_url(params, with_category=true) %}
-            {%- if category and with_category -%}
+            {%- if device_model_filter and device_model_filter.slug -%}
+                {{ url_for('catalog', category_slug=device_model_filter.slug, **params) }}
+            {%- elif category and with_category -%}
                 {{ url_for('catalog', category_slug=category.slug, **params) }}
             {%- else -%}
                 {{ url_for('catalog', **params) }}
@@ -360,7 +368,7 @@ index, follow
             </div>
             
             <!-- Модель (показываем только если есть товары с моделью в категории) -->
-            {% if filter_models or filters.model %}
+            {% if filter_device_models or filters.model %}
             <div class="filter-section">
                 <div class="filter-title" data-bs-toggle="collapse" data-bs-target="#filterModel" aria-expanded="false">
                     Модель <span class="chevron">▼</span>
@@ -371,11 +379,11 @@ index, follow
                     <a href="{{ catalog_url(q_no_model) }}" class="filter-option {% if not filters.model %}active{% endif %}">
                         <span class="filter-check"></span> Любая
                     </a>
-                    {% for m in filter_models %}
+                    {% for dm in filter_device_models %}
                     {% set qm = dict(q_filter) %}
-                    {% set _ = qm.update({'model': m}) %}
-                    <a href="{{ catalog_url(qm) }}" class="filter-option {% if filters.model == m %}active{% endif %}">
-                        <span class="filter-check"></span> {{ m|upper }}
+                    {% set _ = qm.pop('model', None) %}
+                    <a href="{% if dm.slug %}{{ url_for('catalog', category_slug=dm.slug, **qm) }}{% else %}{{ catalog_url(dict(qm, model=dm.name)) }}{% endif %}" class="filter-option {% if filters.model == dm.name %}active{% endif %}">
+                        <span class="filter-check"></span> {{ dm.name|upper }}
                     </a>
                     {% endfor %}
                 </div>
@@ -441,7 +449,7 @@ index, follow
     <!-- Список товаров -->
     <div class="col-md-9">
         <div class="d-flex flex-wrap align-items-center justify-content-between gap-2 mb-4">
-            <h1 class="mb-0">{% if category %}{{ category.name }}{% else %}Все товары{% endif %}</h1>
+            <h1 class="mb-0">{% if device_model_filter %}{{ device_model_filter.name }}{% elif category %}{{ category.name }}{% else %}Все товары{% endif %}</h1>
             <div class="d-flex align-items-center gap-2 catalog-toolbar-actions">
                 <button type="button" class="btn btn-outline-secondary btn-sm" id="catalogShareBtn" title="Копировать ссылку с фильтрами">
                     <i class="fas fa-share-alt me-1"></i>Поделиться
@@ -473,7 +481,9 @@ index, follow
             </div>
         </div>
         {% if category and category.description %}
-        <div class="category-description text-muted mb-4">{{ category.description }}</div>
+        <div class="catalog-seo-intro text-muted mb-4">{{ category.description|safe }}</div>
+        {% elif device_model_filter and device_model_filter.seo_text %}
+        <div class="catalog-seo-intro text-muted mb-4">{{ device_model_filter.seo_text|safe }}</div>
         {% endif %}
         
         {% if products %}
