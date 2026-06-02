@@ -170,7 +170,7 @@ def google_site_verification_file():
 
 
 def _send_favicon_svg():
-    """Фавиконка 120×120 SVG в корне сайта (200 OK, без редиректа — требование Яндекса/Google)."""
+    """Фавиконка SVG в корне сайта (200 OK, без редиректа)."""
     return send_from_directory(app.root_path, 'favicon.svg', mimetype='image/svg+xml')
 
 
@@ -179,10 +179,14 @@ def favicon_svg():
     return _send_favicon_svg()
 
 
+@app.route('/favicon.png')
+def favicon_png():
+    return send_from_directory(app.root_path, 'favicon.png', mimetype='image/png')
+
+
 @app.route('/favicon.ico')
 def favicon_ico():
-    """Запросы к /favicon.ico — тот же SVG, без редиректа."""
-    return _send_favicon_svg()
+    return send_from_directory(app.root_path, 'favicon.ico', mimetype='image/x-icon')
 
 
 @app.route('/version')
@@ -308,6 +312,8 @@ def inject_seo_defaults():
         'seo_canonical_url': clean_url,
         'seo_og_url': clean_url,
         'seo_favicon_url': base + '/favicon.svg',
+        'seo_favicon_png_url': base + '/favicon.png',
+        'seo_favicon_ico_url': base + '/favicon.ico',
     }
 
 @app.context_processor
@@ -2283,6 +2289,7 @@ def admin_blog_add():
             _apply_blog_post_form(post, request.form, request.files)
             db.session.add(post)
             db.session.commit()
+            _invalidate_cache('sitemap_xml')
             flash('Статья опубликована.' if post.is_published else 'Черновик сохранён.', 'success')
             return redirect(url_for('admin', tab='blog'))
         except (ValueError, TypeError) as e:
@@ -2304,6 +2311,7 @@ def admin_blog_edit(post_id):
         try:
             _apply_blog_post_form(post, request.form, request.files)
             db.session.commit()
+            _invalidate_cache('sitemap_xml')
             flash('Статья сохранена.', 'success')
             return redirect(url_for('admin', tab='blog'))
         except (ValueError, TypeError) as e:
@@ -2321,6 +2329,7 @@ def admin_blog_delete(post_id):
     post = db.get_or_404(BlogPost, post_id)
     db.session.delete(post)
     db.session.commit()
+    _invalidate_cache('sitemap_xml')
     flash('Статья удалена.', 'success')
     return redirect(url_for('admin', tab='blog'))
 

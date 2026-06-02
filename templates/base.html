@@ -45,8 +45,10 @@
     </script>
     {% block schema_ld %}{% endblock %}
     <link rel="sitemap" type="application/xml" href="{{ url_for('sitemap') }}">
+    <link rel="icon" href="{{ seo_favicon_ico_url }}" sizes="any">
+    <link rel="icon" href="{{ seo_favicon_png_url }}" type="image/png" sizes="120x120">
     <link rel="icon" href="{{ seo_favicon_url }}" type="image/svg+xml">
-    <link rel="apple-touch-icon" href="{{ seo_favicon_url }}">
+    <link rel="apple-touch-icon" href="{{ seo_favicon_png_url }}">
 
     <link rel="preload" href="{{ url_for('static', filename='vendor/bootstrap/bootstrap.min.css') }}" as="style">
     <link rel="stylesheet" href="{{ url_for('static', filename='vendor/bootstrap/bootstrap.min.css') }}">
