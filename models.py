@@ -17,6 +17,14 @@ class Category(db.Model):
     
     products = db.relationship('Product', backref='category', lazy=True)
 
+
+class DeviceModel(db.Model):
+    """Справочник моделей устройств (фильтр каталога, выбор в карточке товара)"""
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(100), unique=True, nullable=False)
+    sort_order = db.Column(db.Integer, default=0)
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+
 class BotSetting(db.Model):
     """Настройки бота (ключ-значение), в т.ч. chat_id для уведомлений"""
     id = db.Column(db.Integer, primary_key=True)

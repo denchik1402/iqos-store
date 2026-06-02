@@ -123,7 +123,7 @@ def _set_sqlite_pragma(dbapi_connection, connection_record):
         cursor.execute("PRAGMA temp_store=MEMORY")
         cursor.close()
 
-from models import Product, Category, Review, Order, OrderItem, TelegramUser, BotSetting, PromoCode, Banner, HomeBlock
+from models import Product, Category, Review, Order, OrderItem, TelegramUser, BotSetting, PromoCode, Banner, HomeBlock, DeviceModel
 
 _telegram_bot_url_cache = None
 
@@ -604,14 +604,8 @@ def catalog(category_slug=None):
     if view_mode not in ('grid', 'list'):
         view_mode = 'grid'
     
-    # Модели устройств для фильтра (фиксированный порядок)
-    DEVICE_MODELS = [
-        'IQOS Iluma i One',
-        'IQOS Iluma i Standart',
-        'IQOS Iluma i Prime',
-        'lil SOLID DUAL',
-        'lil SOLID 3.0',
-    ]
+    # Модели устройств для фильтра (порядок из справочника)
+    catalog_model_names = [m.name for m in _query_device_models()]
     filter_colors_fixed = ['Серый', 'Зеленый', 'Синий', 'Бежевый', 'Красный', 'Черный', 'Оранжевый', 'Фиолетовый', 'Желтый', 'Смешанный']
     
     # Показывать только те фильтры, по которым есть товары в текущей категории
@@ -622,7 +616,13 @@ def catalog(category_slug=None):
     available_colors = [r[0] for r in base_q.filter(
         Product.color.isnot(None), Product.color != ''
     ).with_entities(Product.color).distinct().all()]
-    filter_models = [m for m in DEVICE_MODELS if m in available_models]
+    if catalog_model_names:
+        filter_models = [m for m in catalog_model_names if m in available_models]
+        for m in available_models:
+            if m not in filter_models:
+                filter_models.append(m)
+    else:
+        filter_models = sorted(available_models)
     filter_colors = [c for c in filter_colors_fixed if c in available_colors]
     # Показывать выбранный фильтр даже если он даёт 0 результатов (чтобы пользователь видел, что выбрано)
     if model_filter and model_filter not in filter_models:
@@ -1178,6 +1178,8 @@ def admin():
         top_products_by_views=top_products_by_views, banner_stats=banner_stats,
         banners=banners, home_blocks=home_blocks, products_for_link=products_for_link,
         carousel_slides=carousel_slides,
+        device_models=_query_device_models(),
+        device_model_counts=_device_model_product_counts(),
         admin_role=_get_admin_role(),
         admin_can_delete_orders=_admin_can_delete_orders(),
     )
@@ -1258,6 +1260,30 @@ def _admin_or_login(template, **kwargs):
     if request.method == 'POST' and request.form.get('key'):
         error = 'Неверный ключ'
     return render_template('admin_login.html', next_url=request.path, error=error)
+
+
+def _query_device_models():
+    """Модели устройств из справочника, отсортированные для каталога и админки."""
+    return DeviceModel.query.order_by(DeviceModel.sort_order, DeviceModel.name).all()
+
+
+def _device_model_product_counts():
+    """Количество товаров по названию модели."""
+    rows = db.session.query(Product.model, db.func.count(Product.id)).filter(
+        Product.model.isnot(None), Product.model != ''
+    ).group_by(Product.model).all()
+    return {name: count for name, count in rows}
+
+
+def _count_products_for_device_model(name):
+    if not name:
+        return 0
+    return Product.query.filter(db.func.lower(Product.model) == name.lower()).count()
+
+
+def _next_device_model_sort_order():
+    max_order = db.session.query(db.func.max(DeviceModel.sort_order)).scalar()
+    return (max_order or 0) + 10
 
 
 @app.route('/admin/login', methods=['GET', 'POST'])
@@ -1360,7 +1386,7 @@ def admin_product_add():
                 return redirect(url_for('admin', tab='products'))
         except (ValueError, TypeError) as e:
             logger.warning("Admin product add: %s", e)
-    return render_template('admin_product_add.html', categories=categories)
+    return render_template('admin_product_add.html', categories=categories, device_models=_query_device_models())
 
 
 @app.route('/admin/product/<int:product_id>/edit', methods=['GET', 'POST'])
@@ -1402,7 +1428,7 @@ def admin_product_edit(product_id):
         except ValueError as e:
             logger.warning("Admin product edit: %s", e)
     desc_intro, desc_specs = _parse_product_description_for_form(product.description)
-    return render_template('admin_product_edit.html', product=product, description_intro=desc_intro, specifications=desc_specs)
+    return render_template('admin_product_edit.html', product=product, description_intro=desc_intro, specifications=desc_specs, device_models=_query_device_models())
 
 
 @app.route('/admin/category/add', methods=['GET', 'POST'])
@@ -1492,6 +1518,96 @@ def admin_category_delete(category_id):
     _invalidate_cache('nav_categories', 'sitemap_xml')
     flash(f'Категория «{name}» удалена.', 'success')
     return redirect(url_for('admin', tab='categories'))
+
+
+@app.route('/admin/device-model/add', methods=['GET', 'POST'])
+def admin_device_model_add():
+    """Добавление модели устройства"""
+    login = _admin_or_login('admin_device_model_add.html')
+    if login is not None:
+        return login
+    if request.method == 'POST':
+        name = (request.form.get('name') or '').strip()
+        if not name:
+            flash('Укажите название модели.', 'danger')
+            return render_template('admin_device_model_add.html', default_sort_order=_next_device_model_sort_order())
+        existing = DeviceModel.query.filter(db.func.lower(DeviceModel.name) == name.lower()).first()
+        if existing:
+            flash(f'Модель «{existing.name}» уже существует.', 'danger')
+            return render_template('admin_device_model_add.html', default_sort_order=_next_device_model_sort_order())
+        try:
+            sort_raw = (request.form.get('sort_order') or '').strip()
+            sort_order = int(sort_raw) if sort_raw else _next_device_model_sort_order()
+            device_model = DeviceModel(name=name, sort_order=sort_order)
+            db.session.add(device_model)
+            db.session.commit()
+            flash(f'Модель «{name}» создана.', 'success')
+            return redirect(url_for('admin', tab='models'))
+        except Exception as e:
+            db.session.rollback()
+            logger.warning("Admin device model add: %s", e)
+            flash('Не удалось создать модель.', 'danger')
+    return render_template('admin_device_model_add.html', default_sort_order=_next_device_model_sort_order())
+
+
+@app.route('/admin/device-model/<int:model_id>/edit', methods=['GET', 'POST'])
+def admin_device_model_edit(model_id):
+    """Редактирование модели устройства"""
+    login = _admin_or_login('admin_device_model_edit.html')
+    if login is not None:
+        return login
+    device_model = db.get_or_404(DeviceModel, model_id)
+    product_count = _count_products_for_device_model(device_model.name)
+    if request.method == 'POST':
+        name = (request.form.get('name') or '').strip()
+        if not name:
+            flash('Укажите название модели.', 'danger')
+            return render_template('admin_device_model_edit.html', device_model=device_model, product_count=product_count)
+        duplicate = DeviceModel.query.filter(
+            db.func.lower(DeviceModel.name) == name.lower(),
+            DeviceModel.id != device_model.id,
+        ).first()
+        if duplicate:
+            flash(f'Модель «{duplicate.name}» уже существует.', 'danger')
+            return render_template('admin_device_model_edit.html', device_model=device_model, product_count=product_count)
+        try:
+            old_name = device_model.name
+            sort_raw = (request.form.get('sort_order') or '').strip()
+            device_model.name = name
+            device_model.sort_order = int(sort_raw) if sort_raw else device_model.sort_order or 0
+            if old_name != name:
+                Product.query.filter(db.func.lower(Product.model) == old_name.lower()).update(
+                    {'model': name}, synchronize_session=False
+                )
+            db.session.commit()
+            flash('Модель сохранена.', 'success')
+            return redirect(url_for('admin', tab='models'))
+        except Exception as e:
+            db.session.rollback()
+            logger.warning("Admin device model edit: %s", e)
+            flash('Не удалось сохранить модель.', 'danger')
+    return render_template('admin_device_model_edit.html', device_model=device_model, product_count=product_count)
+
+
+@app.route('/admin/device-model/<int:model_id>/delete', methods=['POST'])
+def admin_device_model_delete(model_id):
+    """Удаление модели устройства (только если нет товаров с этой моделью)"""
+    if not _admin_key_valid():
+        return "Доступ запрещён", 403
+    device_model = db.get_or_404(DeviceModel, model_id)
+    count = _count_products_for_device_model(device_model.name)
+    if count:
+        flash(
+            f'Нельзя удалить «{device_model.name}»: модель указана у {count} товар(ов). '
+            'Сначала измените модель у товаров или удалите их.',
+            'danger',
+        )
+        return redirect(url_for('admin', tab='models'))
+    name = device_model.name
+    db.session.delete(device_model)
+    db.session.commit()
+    flash(f'Модель «{name}» удалена.', 'success')
+    return redirect(url_for('admin', tab='models'))
 
 
 @app.route('/admin/product/<int:product_id>/remove-from-carousel', methods=['POST'])

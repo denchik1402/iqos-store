@@ -40,11 +40,9 @@
                         <label class="form-label fw-bold">Модель устройства</label>
                         <select name="model" class="form-select">
                             <option value="">— не указана —</option>
-                            <option value="IQOS Iluma i One">IQOS Iluma i One</option>
-                            <option value="IQOS Iluma i Standart">IQOS Iluma i Standart</option>
-                            <option value="IQOS Iluma i Prime">IQOS Iluma i Prime</option>
-                            <option value="lil SOLID DUAL">lil SOLID DUAL</option>
-                            <option value="lil SOLID 3.0">lil SOLID 3.0</option>
+                            {% for dm in device_models %}
+                            <option value="{{ dm.name }}">{{ dm.name }}</option>
+                            {% endfor %}
                         </select>
                     </div>
                     <div class="col-md-6 mb-3">

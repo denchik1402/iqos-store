@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+
+{% block title %}Добавить модель{% endblock %}
+
+{% block content %}
+<div class="admin-panel">
+    <nav class="admin-breadcrumb mb-4">
+        <a href="{{ url_for('admin', tab='models') }}">← Модели устройств</a>
+    </nav>
+
+    <div class="card shadow-sm">
+        <div class="card-header bg-success text-white">
+            <h5 class="mb-0">➕ Новая модель устройства</h5>
+        </div>
+        <div class="card-body">
+            <form method="post">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                <div class="mb-3">
+                    <label class="form-label fw-bold">Название *</label>
+                    <input type="text" name="name" class="form-control" required maxlength="100"
+                           placeholder="Например: IQOS Iluma i One">
+                    <small class="text-muted">Должно совпадать с полем «Модель» у товаров и отображаться в фильтре каталога.</small>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label fw-bold">Порядок сортировки</label>
+                    <input type="number" name="sort_order" class="form-control" value="{{ default_sort_order }}" min="0" step="1">
+                    <small class="text-muted">Меньшее число — выше в списке фильтров.</small>
+                </div>
+                <hr>
+                <button type="submit" class="btn btn-success">➕ Создать</button>
+                <a href="{{ url_for('admin', tab='models') }}" class="btn btn-outline-secondary">Отмена</a>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

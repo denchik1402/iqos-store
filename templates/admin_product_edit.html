@@ -54,10 +54,10 @@
                                 <label class="form-label fw-bold">Модель устройства</label>
                                 <select name="model" class="form-select">
                                     <option value="">— не указана —</option>
-                                    {% for m in ['IQOS Iluma i One','IQOS Iluma i Standart','IQOS Iluma i Prime','lil SOLID DUAL','lil SOLID 3.0'] %}
-                                    <option value="{{ m }}" {% if product.model == m %}selected{% endif %}>{{ m }}</option>
+                                    {% for dm in device_models %}
+                                    <option value="{{ dm.name }}" {% if product.model == dm.name %}selected{% endif %}>{{ dm.name }}</option>
                                     {% endfor %}
-                                    {% if product.model and product.model not in ['IQOS Iluma i One','IQOS Iluma i Standart','IQOS Iluma i Prime','lil SOLID DUAL','lil SOLID 3.0'] %}
+                                    {% if product.model and product.model not in device_models|map(attribute='name')|list %}
                                     <option value="{{ product.model }}" selected>{{ product.model }}</option>
                                     {% endif %}
                                 </select>

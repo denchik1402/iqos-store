@@ -38,6 +38,12 @@
             </a>
         </li>
         <li class="nav-item" role="presentation">
+            <a class="nav-link {% if tab == 'models' %}active{% endif %}" 
+               href="{{ url_for('admin', tab='models') }}" role="tab">
+                📱 Модели
+            </a>
+        </li>
+        <li class="nav-item" role="presentation">
             <a class="nav-link {% if tab == 'reviews' %}active{% endif %}" 
                href="{{ url_for('admin', tab='reviews') }}" role="tab">
                 💬 Отзывы {% if pending_reviews_count %}<span class="badge bg-warning text-dark">{{ pending_reviews_count }}</span>{% endif %}
@@ -235,6 +241,50 @@
                 </div>
             </div>
             <p class="text-muted small mt-2 mb-0">Удаление доступно только для пустых категорий (без товаров).</p>
+        </div>
+
+        {# Вкладка: Модели устройств #}
+        <div class="tab-pane {% if tab == 'models' %}show active{% endif %}" role="tabpanel">
+            <div class="mb-3 d-flex flex-wrap align-items-center gap-2">
+                <a href="{{ url_for('admin_device_model_add') }}" class="btn btn-success">➕ Добавить модель</a>
+            </div>
+            <div class="card shadow-sm">
+                <div class="card-body p-0">
+                    <div class="table-responsive">
+                        <table class="table table-hover mb-0">
+                            <thead class="table-light">
+                                <tr>
+                                    <th>Модель</th>
+                                    <th>Товаров</th>
+                                    <th>Порядок</th>
+                                    <th style="width: 160px;">Действия</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for m in device_models %}
+                                <tr>
+                                    <td><strong>{{ m.name }}</strong></td>
+                                    <td>{{ device_model_counts.get(m.name, 0) }}</td>
+                                    <td>{{ m.sort_order or 0 }}</td>
+                                    <td class="text-nowrap">
+                                        <a href="{{ url_for('admin_device_model_edit', model_id=m.id) }}" class="btn btn-sm btn-primary" title="Редактировать">✏️</a>
+                                        <form method="post" action="{{ url_for('admin_device_model_delete', model_id=m.id) }}" class="d-inline" onsubmit="return confirm('Удалить модель «{{ m.name }}»?');">
+                                            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                                            <button type="submit" class="btn btn-sm btn-outline-danger" title="Удалить" {% if device_model_counts.get(m.name, 0) %}disabled{% endif %}>🗑</button>
+                                        </form>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+            {% if not device_models %}
+            <div class="alert alert-info mt-3">Моделей пока нет. Добавьте первую — она появится в фильтре каталога и при редактировании товаров.</div>
+            {% else %}
+            <p class="text-muted small mt-2 mb-0">Удаление доступно только для моделей без привязанных товаров. При переименовании модель обновится у всех связанных товаров.</p>
+            {% endif %}
         </div>
 
         {# Вкладка: Отзывы #}
