@@ -60,10 +60,10 @@
     transition: transform 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94) !important;
     will-change: transform;
 }
-/* Категории и блог: ×1.5 за 1s — тот же темп, что ×1.2 за 0.4s у товаров */
+/* Категории и блог: ×1.4 за 0.85s */
 .home-category-media img,
 .blog-card-media img {
-    transition: transform 1s cubic-bezier(0.25, 0.46, 0.45, 0.94) !important;
+    transition: transform 0.85s cubic-bezier(0.25, 0.46, 0.45, 0.94) !important;
 }
 .blog-card-media {
     flex: 0 0 38%;
@@ -71,11 +71,11 @@
     min-height: 148px;
     padding: 0.65rem 0.85rem;
 }
-/* Зум миниатюры: ×1.5 за 1s (темп как у товаров ×1.2 / 0.4s) */
+/* Зум миниатюры: ×1.4 за 0.85s */
 .blog-card:hover .blog-card-media img,
 .blog-card-link:hover .blog-card-media img,
 .blog-card-media:hover img {
-    transform: scale(1.5) !important;
+    transform: scale(1.4) !important;
 }
 .blog-card-icon {
     flex: 0 0 56px;
@@ -280,12 +280,12 @@
     min-height: 168px;
     padding: 0.75rem 1rem;
 }
-/* Зум изображения категории: ×1.5 за 1s */
+/* Зум изображения категории: ×1.4 за 0.85s */
 .home-category-card:hover .home-category-media img,
 .home-category-card:hover .card-side-media img,
 .home-category-card-inner:hover .home-category-media img,
 .home-category-media:hover img {
-    transform: scale(1.5) !important;
+    transform: scale(1.4) !important;
 }
 .home-category-card:hover .home-category-card-inner {
     box-shadow: 0 12px 28px rgba(13, 110, 253, 0.1);
