@@ -46,7 +46,29 @@ def has_image_variants(static_folder, folder, rel_filename):
 def build_optimized_image(static_folder, folder, rel_filename, url_for_static):
     """Данные для шаблона: src, srcset, has_variants."""
     prefix = f'images/{folder}/'
+    if not rel_filename:
+        return {
+            'has_variants': False,
+            'original_url': None,
+            'src': None,
+            'src_800': None,
+            'srcset_webp': '',
+            'srcset_fallback': '',
+        }
+
+    original_path = os.path.join(static_folder, 'images', folder, rel_filename.replace('/', os.sep))
     original_url = url_for_static(prefix + rel_filename)
+
+    if not os.path.isfile(original_path):
+        return {
+            'has_variants': False,
+            'original_url': original_url,
+            'src': original_url,
+            'src_800': original_url,
+            'srcset_webp': '',
+            'srcset_fallback': '',
+        }
+
     if not has_image_variants(static_folder, folder, rel_filename):
         return {
             'has_variants': False,

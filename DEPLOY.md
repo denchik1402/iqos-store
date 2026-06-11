@@ -221,7 +221,10 @@ SITE_PHONE = '+7 (993) 596-82-25'
 SITE_ADDRESS = 'Москва, Ленинградское шоссе, 16А'
 SITE_CITY = 'Москва'
 YANDEX_METRIKA_ID = '109480691'
+TELEGRAM_RUN_POLLING = False   # обязательно на отдельном сервере iqos
 ```
+
+**Единый Telegram-бот (три витрины):** интерактивный бот (`lilstore-bot.service`, polling) запускается **только на сервере my_shop**. На сервере АЙКОС СТОР — только gunicorn + тот же `TELEGRAM_BOT_TOKEN` для уведомлений о заказах (`telegram_notify`). Не включайте `lilstore-bot` на втором сервере — будет 409 Conflict. Подробно: `../MULTI_STORE_GUIDE.md`.
 
 **Яндекс.Метрика:** в [metrika.yandex.ru](https://metrika.yandex.ru) создайте счётчик для `https://lilstore.ru`, скопируйте номер (цифры) в `YANDEX_METRIKA_ID`. После деплоя в Вебмастере нажмите «Проверить счётчик». Цель `order_completed` срабатывает на странице успешного заказа — при желании создайте её в настройках счётчика.
 
@@ -264,18 +267,28 @@ sudo systemctl reload nginx
 
 ### 3.9. Настройте автозапуск (systemd)
 
+**Если АЙКОС СТОР на отдельном сервере** — только сайт, без бота:
+
+```bash
+sudo cp /home/lilstore/iqos-store/deploy/lilstore.service /etc/systemd/system/
+sudo systemctl daemon-reload
+sudo systemctl enable lilstore
+sudo systemctl start lilstore
+```
+
+**Если всё на одном сервере с my_shop** — бот один (`lilstore-bot` из `my_shop`), для iqos не дублируйте:
+
 ```bash
 sudo cp /home/lilstore/my_shop/deploy/lilstore.service /etc/systemd/system/
-sudo cp /home/lilstore/my_shop/deploy/lilstore-bot.service /etc/systemd/system/
+# lilstore-bot.service — только один раз, из my_shop
 sudo systemctl daemon-reload
-sudo systemctl enable lilstore lilstore-bot
-sudo systemctl start lilstore lilstore-bot
+sudo systemctl enable lilstore
+sudo systemctl start lilstore
 ```
 
 Проверьте:
 ```bash
 sudo systemctl status lilstore
-sudo systemctl status lilstore-bot
 ```
 
 ### 3.10. Откройте порты (firewall)

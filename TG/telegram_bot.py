@@ -190,7 +190,7 @@ async def cmd_start(update: Update, context: ContextTypes.DEFAULT_TYPE):
         context.user_data.pop('checkout_data', None)
 
     text = (
-        "🛍 <b>LIL STORE</b>\n\n"
+        "🛍 <b>АЙКОС СТОР</b>\n\n"
         "Привет! Выбери раздел:"
     )
     reply_markup = _build_main_menu_keyboard(role)
@@ -981,7 +981,7 @@ async def handle_callback(update: Update, context: ContextTypes.DEFAULT_TYPE):
         context.user_data.pop('awaiting_checkout', None)
         context.user_data.pop('awaiting_question', None)
         role = get_user_role(user_id)
-        text = "🛍 <b>LIL STORE</b>\n\nПривет! Выбери раздел:"
+        text = "🛍 <b>АЙКОС СТОР</b>\n\nПривет! Выбери раздел:"
         await _safe_edit_message(query, text, _build_main_menu_keyboard(role))
         return
 
@@ -1425,7 +1425,7 @@ async def handle_bot_mentioned(update: Update, context: ContextTypes.DEFAULT_TYP
         return
     get_or_create_user(user.id, (user.username or '').strip(), user.first_name or 'друг')
     role = get_user_role(user.id)
-    text = "🛍 <b>LIL STORE</b>\n\nПривет! Выбери раздел:"
+    text = "🛍 <b>АЙКОС СТОР</b>\n\nПривет! Выбери раздел:"
     await update.message.reply_text(text, reply_markup=_build_main_menu_keyboard(role), parse_mode='HTML')
 
 
@@ -1608,6 +1608,18 @@ async def handle_text_message(update: Update, context: ContextTypes.DEFAULT_TYPE
 # ==================== MAIN ====================
 
 def main():
+    try:
+        import config as _cfg
+        if getattr(_cfg, 'TELEGRAM_RUN_POLLING', True) is False:
+            print(
+                "TELEGRAM_RUN_POLLING=False — polling отключён для этого проекта.\n"
+                "Интерактивный бот запускайте только на основном сервере (my_shop / lilstore-bot.service).\n"
+                "Уведомления о заказах с сайта работают через telegram_notify без polling."
+            )
+            sys.exit(0)
+    except ImportError:
+        pass
+
     token, chat_id, _, _ = get_config()
     if not token:
         print("Ошибка: задайте TELEGRAM_BOT_TOKEN в config.py")

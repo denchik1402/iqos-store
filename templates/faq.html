@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 
-{% block title %}Часто задаваемые вопросы — LIL STORE{% endblock %}
-{% block meta_description %}Ответы на частые вопросы о заказе, доставке, оплате и гарантии в LIL STORE. IQOS и стики TEREA.{% endblock %}
+{% block title %}Часто задаваемые вопросы — АЙКОС СТОР{% endblock %}
+{% block meta_description %}Ответы на частые вопросы о заказе, доставке, оплате и гарантии в АЙКОС СТОР. IQOS и стики TEREA.{% endblock %}
 {% block schema_ld %}
 <script type="application/ld+json">
 {"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Главная","item":"{{ request.url_root.rstrip('/') }}/"},{"@type":"ListItem","position":2,"name":"FAQ","item":"{{ request.url_root.rstrip('/') }}{{ url_for('faq') }}"}]}
@@ -72,6 +72,7 @@
 {% endblock %}
 
 {% block content %}
+<div class="content-page">
 <h1 class="mb-4">Часто задаваемые вопросы</h1>
 
 <div class="accordion" id="faqAccordion">
@@ -169,5 +170,6 @@
 
 <div class="mt-4 p-3 rounded" style="background: var(--bg-input); border: 1px solid var(--border);">
     <p class="mb-0">Не нашли ответ на свой вопрос? <a href="{{ url_for('contacts') }}">Свяжитесь с нами</a> — мы с радостью поможем.</p>
+</div>
 </div>
 {% endblock %}

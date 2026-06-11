@@ -505,6 +505,14 @@ def format_price(value):
     return "{:,.0f}".format(float(value)).replace(",", " ")
 
 
+@app.template_filter('season_badge')
+def season_badge_filter(product):
+    """Бейдж плитки Season: limited / new / hit / None."""
+    if product is None:
+        return None
+    return _season_product_badge(product)
+
+
 @app.template_filter('product_alt')
 def product_alt_filter(product):
     """Alt-текст для изображения товара (image_alt или name)"""
@@ -568,6 +576,67 @@ def banner_click(banner_id):
     return _redirect_noindex(target if target.startswith('/') else '/' + target)
 
 
+def _is_season_auto_product(product):
+    """Авто-подбор для «Коллекция Season»: limited и LIL SOLID 4.0."""
+    if getattr(product, 'season_excluded', False):
+        return False
+    name = (product.name or '').lower()
+    if 'limited' in name:
+        return True
+    model = (product.model or '')
+    if 'lil solid 4' in name or model == 'LIL SOLID 4.0':
+        return True
+    return False
+
+
+def _season_product_badge(product):
+    """Бейдж для плитки Season: limited / new / hit."""
+    name = (product.name or '').lower()
+    if 'limited' in name or 'seletti' in name or 'anniversary' in name:
+        return 'limited'
+    model = (product.model or '')
+    if 'lil solid 4' in name or model == 'LIL SOLID 4.0':
+        return 'new'
+    if product.is_hit:
+        return 'hit'
+    return None
+
+
+def _get_season_products(limit=9):
+    """Товары для сетки «Коллекция Season»: закреплённые + авто (limited, LIL SOLID 4.0)."""
+    pinned = Product.query.filter_by(is_season=True).order_by(
+        Product.season_sort_order.asc(), Product.id.asc()
+    ).all()
+    result = []
+    seen = set()
+    for p in pinned:
+        if p.id not in seen and not getattr(p, 'season_excluded', False):
+            result.append(p)
+            seen.add(p.id)
+        if len(result) >= limit:
+            return result[:limit]
+    auto_pool = Product.query.order_by(Product.created_at.desc(), Product.id.desc()).all()
+    for p in auto_pool:
+        if len(result) >= limit:
+            break
+        if p.id in seen:
+            continue
+        if _is_season_auto_product(p):
+            result.append(p)
+            seen.add(p.id)
+    return result[:limit]
+
+
+def _get_category_products(category_slug, limit=12):
+    """Товары одной категории для ленты на главной."""
+    cat = Category.query.filter_by(slug=category_slug).first()
+    if not cat:
+        return []
+    return Product.query.filter_by(category_id=cat.id).order_by(
+        Product.views.desc(), Product.created_at.desc(), Product.id.desc()
+    ).limit(limit).all()
+
+
 def _get_index_cached_data():
     """Данные главной (кэш 2 мин). Баннеры и A/B — отдельно, т.к. зависят от сессии."""
     data = cache.get('index_data')
@@ -586,10 +655,18 @@ def _get_index_cached_data():
     recent_reviews = Review.query.filter_by(status='approved')\
         .order_by(Review.created_at.desc()).limit(10).all()
     home_blocks = HomeBlock.query.filter_by(is_active=True).order_by(HomeBlock.position).limit(3).all()
+    season_products = _get_season_products(9)
+    iluma_products = _get_category_products('iqos-iluma', 12)
+    lil_products = _get_category_products('lil', 12)
+    sticks_products = _get_category_products('terea-sticks', 12)
     data = {
         'new_products': new_products, 'popular_products': popular_products,
         'promo_products': promo_products, 'hit_products': hit_products,
         'recent_reviews': recent_reviews, 'home_blocks': home_blocks,
+        'season_products': season_products,
+        'iluma_products': iluma_products,
+        'lil_products': lil_products,
+        'sticks_products': sticks_products,
     }
     cache.set('index_data', data, timeout=120)
     return data
@@ -601,9 +678,12 @@ def index():
     new_products = data['new_products']
     popular_products = data['popular_products']
     promo_products = data['promo_products']
-    hit_products = data['hit_products']
     recent_reviews = data['recent_reviews']
     home_blocks = data['home_blocks']
+    season_products = data['season_products']
+    iluma_products = data['iluma_products']
+    lil_products = data['lil_products']
+    sticks_products = data['sticks_products']
     
     # Слайды для карусели: баннеры (или товары, если баннеров нет). A/B: один вариант на группу.
     promo_slides_db = cache.get('index_banners')
@@ -640,18 +720,19 @@ def index():
             fresh = {b.id: b for b in Banner.query.filter(Banner.id.in_(banner_ids)).options(joinedload(Banner.product)).all()}
             promo_slides = [fresh[b.id] if isinstance(b, Banner) else b for b in promo_slides]
 
-    hit_product_ids = {p.id for p in (hit_products or [])}
     banner_impression_ids = [b.id for b in promo_slides if isinstance(b, Banner)]
     
     return render_template('index.html',
                          new_products=new_products,
                          popular_products=popular_products,
                          promo_products=promo_products,
-                         hit_products=hit_products,
-                         hit_product_ids=hit_product_ids,
                          recent_reviews=recent_reviews,
                          promo_slides=promo_slides,
                          home_blocks=home_blocks,
+                         season_products=season_products,
+                         iluma_products=iluma_products,
+                         lil_products=lil_products,
+                         sticks_products=sticks_products,
                          banner_impression_ids=banner_impression_ids,
                          blog_posts=_query_published_blog_posts(limit=3))
 
@@ -1399,6 +1480,18 @@ def admin():
             promo_prods = Product.query.order_by(Product.created_at.desc()).limit(5).all()
         carousel_slides = [CarouselSlideInfo('product', p.name, p, i) for i, p in enumerate(promo_prods[:5])]
 
+    season_on_home = _get_season_products(9)
+    season_manage_products = []
+    for p in Product.query.order_by(Product.name).all():
+        if p.is_season or getattr(p, 'season_excluded', False):
+            season_manage_products.append(p)
+        elif _is_season_auto_product(p) or (
+            'limited' in (p.name or '').lower()
+            or 'lil solid 4' in (p.name or '').lower()
+            or (p.model or '') == 'LIL SOLID 4.0'
+        ):
+            season_manage_products.append(p)
+
     return render_template('admin.html',
         orders=orders, reviews=pending, products=products, categories=categories, promo_codes=promo_codes, tab=tab,
         date_from=date_from, date_to=date_to,
@@ -1410,6 +1503,8 @@ def admin():
         top_products_by_views=top_products_by_views, banner_stats=banner_stats,
         banners=banners, home_blocks=home_blocks, products_for_link=products_for_link,
         carousel_slides=carousel_slides,
+        season_on_home=season_on_home,
+        season_manage_products=season_manage_products,
         device_models=_query_device_models(),
         device_model_counts=_device_model_product_counts(),
         blog_posts=blog_posts,
@@ -1716,6 +1811,12 @@ def admin_product_edit(product_id):
             product.color = request.form.get('color') or None
             product.is_exclusive = request.form.get('is_exclusive') == 'on'
             product.is_hit = request.form.get('is_hit') == 'on'
+            product.is_season = request.form.get('is_season') == 'on'
+            product.season_excluded = request.form.get('season_excluded') == 'on'
+            try:
+                product.season_sort_order = int(request.form.get('season_sort_order') or 0)
+            except (TypeError, ValueError):
+                product.season_sort_order = product.season_sort_order or 0
             meta_desc = (request.form.get('meta_description') or '').strip() or None
             meta_kw = (request.form.get('meta_keywords') or '').strip() or None
             img_alt = (request.form.get('image_alt') or '').strip() or None
@@ -2433,6 +2534,58 @@ def admin_homeblock_delete(block_id):
     return redirect(url_for('admin', tab='banners'))
 
 
+@app.route('/admin/season/toggle/<int:product_id>', methods=['POST'])
+def admin_season_toggle(product_id):
+    """Закрепить / открепить / исключить товар из блока Season."""
+    if not _admin_key_valid():
+        return "Доступ запрещён", 403
+    product = db.get_or_404(Product, product_id)
+    action = request.form.get('action', 'pin')
+    if action == 'pin':
+        product.is_season = True
+        product.season_excluded = False
+        if not product.season_sort_order:
+            from sqlalchemy import func
+            max_order = db.session.query(func.max(Product.season_sort_order)).filter(
+                Product.is_season == True
+            ).scalar() or 0
+            product.season_sort_order = max_order + 1
+    elif action == 'unpin':
+        product.is_season = False
+    elif action == 'exclude':
+        product.is_season = False
+        product.season_excluded = True
+    elif action == 'include':
+        product.season_excluded = False
+    db.session.commit()
+    _invalidate_cache()
+    return redirect(url_for('admin', tab='banners'))
+
+
+@app.route('/admin/season/move/<int:product_id>/<direction>', methods=['POST'])
+def admin_season_move(product_id, direction):
+    """Изменить порядок закреплённых товаров Season."""
+    if not _admin_key_valid():
+        return "Доступ запрещён", 403
+    if direction not in ('up', 'down'):
+        return redirect(url_for('admin', tab='banners'))
+    pinned = Product.query.filter_by(is_season=True).order_by(
+        Product.season_sort_order.asc(), Product.id.asc()
+    ).all()
+    ids = [p.id for p in pinned]
+    if product_id not in ids:
+        return redirect(url_for('admin', tab='banners'))
+    idx = ids.index(product_id)
+    swap_idx = idx - 1 if direction == 'up' else idx + 1
+    if swap_idx < 0 or swap_idx >= len(pinned):
+        return redirect(url_for('admin', tab='banners'))
+    a, b = pinned[idx], pinned[swap_idx]
+    a.season_sort_order, b.season_sort_order = b.season_sort_order, a.season_sort_order
+    db.session.commit()
+    _invalidate_cache()
+    return redirect(url_for('admin', tab='banners'))
+
+
 @app.route('/sw.js')
 def service_worker():
     """Service Worker для PWA (должен быть в корне для scope /)"""
@@ -2444,8 +2597,8 @@ def manifest():
     """PWA manifest — установка как приложение"""
     base = request.url_root.rstrip('/')
     return jsonify({
-        'name': 'LIL STORE',
-        'short_name': 'LIL STORE',
+        'name': 'АЙКОС СТОР',
+        'short_name': 'АЙКОС СТОР',
         'description': 'IQOS и стики TEREA. Оригинальная продукция, доставка 1–2 дня.',
         'start_url': base + '/',
         'display': 'standalone',
@@ -2644,6 +2797,25 @@ def migrate_telegram_and_cost():
             db.session.rollback()
             if 'duplicate column name' not in str(e).lower():
                 print(f"[Migrate] product.cost: {e}")
+        db.create_all()
+
+
+def migrate_product_season():
+    """Миграция: is_season, season_sort_order, season_excluded"""
+    with app.app_context():
+        from sqlalchemy import text
+        for col, ctype in [
+            ('is_season', 'BOOLEAN'),
+            ('season_sort_order', 'INTEGER'),
+            ('season_excluded', 'BOOLEAN'),
+        ]:
+            try:
+                db.session.execute(text(f'ALTER TABLE product ADD COLUMN {col} {ctype}'))
+                db.session.commit()
+            except Exception as e:
+                db.session.rollback()
+                if 'duplicate column name' not in str(e).lower():
+                    print(f"[Migrate] product.{col}: {e}")
         db.create_all()
 
 

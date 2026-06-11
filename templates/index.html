@@ -1,10 +1,14 @@
 {% extends "base.html" %}
 
-{% block title %}LIL STORE — IQOS и стики TEREA. Оригинальная продукция{% endblock %}
-{% block meta_description %}LIL STORE — магазин оригинальных устройств IQOS и стиков TEREA. Бронь на сайте, доставка 1–2 дня по России. Работаем с 2020 года.{% endblock %}
-{% block meta_keywords %}IQOS, TEREA, ILUMA, стики, нагревательные устройства, купить IQOS, доставка IQOS{% endblock %}
-{% block og_title %}LIL STORE — IQOS и стики TEREA{% endblock %}
-{% block og_description %}Оригинальные устройства IQOS и стики TEREA. Бронь на сайте, доставка 1–2 дня.{% endblock %}
+{% block title %}АЙКОС СТОР — Премиальная коллекция IQOS & TEREA{% endblock %}
+{% block meta_description %}АЙКОС СТОР — эксклюзивная коллекция оригинальных устройств IQOS и стиков TEREA. Премиальный сервис, бронь на сайте, доставка 1–2 дня.{% endblock %}
+{% block meta_keywords %}IQOS, TEREA, ILUMA, премиум IQOS, купить IQOS, устройства и стики{% endblock %}
+{% block og_title %}АЙКОС СТОР — Премиальная коллекция{% endblock %}
+{% block og_description %}Эксклюзивные устройства IQOS и стики TEREA. Премиальный опыт покупки.{% endblock %}
+
+{% block body_class %}{% endblock %}
+{% block main_class %}lux-main{% endblock %}
+
 {% block extra_head %}
 {% if promo_slides %}
 {% set _fs = promo_slides[0] %}
@@ -22,14 +26,15 @@
 {% endif %}
 {% endif %}
 {% endblock %}
+
 {% block schema_ld %}
 <script type="application/ld+json">
 {
   "@context": "https://schema.org",
   "@type": "Organization",
-  "name": "LIL STORE",
+  "name": "АЙКОС СТОР",
   "url": "{{ request.url_root.rstrip('/') }}",
-  "description": "Магазин оригинальных устройств IQOS и стиков TEREA. Бронь на сайте, доставка 1–2 дня.",
+  "description": "Премиальный магазин оригинальных устройств IQOS и стиков TEREA.",
   "telephone": "{{ site_phone }}",
   "sameAs": ["https://t.me/iluma_prime_bot"],
   "address": {
@@ -40,420 +45,276 @@
   }
 }
 </script>
-<script type="application/ld+json">
-{
-  "@context": "https://schema.org",
-  "@type": "LocalBusiness",
-  "name": "LIL STORE",
-  "image": "{{ request.url_root.rstrip('/') }}{{ url_for('static', filename='LOGO3.png') }}",
-  "telephone": "{{ site_phone }}",
-  "url": "{{ request.url_root.rstrip('/') }}",
-  "address": {
-    "@type": "PostalAddress",
-    "addressCountry": "RU",
-    "addressLocality": "{{ site_city }}",
-    "streetAddress": "Ленинградское шоссе, 16А"
-  },
-  "areaServed": {"@type": "City", "name": "{{ site_city }}"},
-  "priceRange": "$$",
-  "openingHoursSpecification": [
-    {"@type": "OpeningHoursSpecification", "dayOfWeek": ["Monday","Tuesday","Wednesday","Thursday","Friday"], "opens": "09:00", "closes": "21:00"},
-    {"@type": "OpeningHoursSpecification", "dayOfWeek": ["Saturday","Sunday"], "opens": "10:00", "closes": "20:00"}
-  ]
-}
-</script>
-{% if nav_categories %}
-<script type="application/ld+json">
-{
-  "@context": "https://schema.org",
-  "@type": "ItemList",
-  "name": "Каталог по категориям LIL STORE",
-  "itemListElement": [
-    {% for cat in nav_categories %}
-    {% set home = cat.slug|category_home %}
-    {
-      "@type": "ListItem",
-      "position": {{ loop.index }},
-      "name": {{ cat.name|tojson }},
-      "description": {{ (cat.meta_description or home.get('teaser') or cat.name)|tojson }},
-      "url": "{{ request.url_root.rstrip('/') }}{{ url_for('catalog', category_slug=cat.slug) }}"
-      {% if cat|category_image_url %},"image": "{{ request.url_root.rstrip('/') }}{{ cat|category_image_url }}"{% endif %}
-    }{% if not loop.last %},{% endif %}
-    {% endfor %}
-  ]
-}
-</script>
-{% endif %}
 {% endblock %}
 
 {% block extra_css %}
-<link rel="stylesheet" href="{{ url_for('static', filename='css/index.css') }}?v=2">
-<link rel="stylesheet" href="{{ url_for('static', filename='css/blog.css') }}?v=18">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/index.css') }}?v=14">
 {% endblock %}
 
 {% block content %}
-<!-- Карусель баннеров -->
-{% if promo_slides %}
-<div class="promo-carousel-wrapper mb-4">
-    <div id="promoCarousel" class="carousel slide carousel-fade promo-carousel" data-bs-ride="carousel" data-bs-interval="5000">
-        <div class="carousel-indicators promo-carousel-indicators">
-            {% for slide in promo_slides %}
-            <button type="button" data-bs-target="#promoCarousel" data-bs-slide-to="{{ loop.index0 }}" {% if loop.first %}class="active"{% endif %}></button>
-            {% endfor %}
+<!-- ═══ HERO ═══ -->
+<section class="lux-hero" aria-label="Главный экран">
+    <div class="lux-hero-media">
+        <video class="lux-hero-video" autoplay muted loop playsinline poster="https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=1920&q=80">
+            <source src="https://assets.mixkit.co/videos/preview/mixkit-abstract-background-with-smoke-989-large.mp4" type="video/mp4">
+        </video>
+        <div class="lux-hero-overlay"></div>
+        <div class="lux-hero-grain"></div>
+    </div>
+
+    <div class="lux-hero-content">
+        <p class="lux-hero-eyebrow">Айкос Стор · Exclusive</p>
+        <h1 class="lux-hero-title">
+            <span>IQOS</span>
+            <span class="lux-serif">Beyond Ordinary</span>
+        </h1>
+        <p class="lux-hero-desc">Премиальная коллекция оригинальных устройств и стиков. Тактильный люкс, без компромиссов — только подлинная продукция с доставкой за 1–2 дня.</p>
+        <div class="lux-hero-actions">
+            <a href="{{ url_for('catalog') }}" class="btn-lux-primary">Открыть коллекцию</a>
+            {% if telegram_bot_url %}
+            <a href="{{ telegram_bot_url }}" target="_blank" rel="noopener" class="btn-lux-ghost">Telegram Bot</a>
+            {% endif %}
         </div>
-        <div class="carousel-inner rounded-3 overflow-hidden shadow">
-            {% for slide in promo_slides %}
-            {% if slide.__class__.__name__ == 'Banner' %}
-            {% set slide_img = slide.image %}
-            {% set slide_link = url_for('banner_click', banner_id=slide.id) %}
-            {% set slide_link_rel = 'nofollow' %}
-            {% set slide_title = slide.title %}
-            {% set slide_subtitle = slide.subtitle or '' %}
-            {% set slide_btn = slide.button_text or 'Купить сейчас' %}
-            {% set img_path = 'images/' if slide.image.startswith('products/') else 'images/banners/' %}
-            {% set slide_bg = '' %}
-            {% set slide_badge = slide.badge_type or ('new' if slide.product_id else '') %}
-            {% set slide_product = slide.product if slide.product_id else none %}
-            {% else %}
-            {% set slide_img = slide.all_images[0] if slide.all_images else slide.image %}
-            {% set slide_link = slide|product_url %}
-            {% set slide_link_rel = '' %}
-            {% set slide_title = slide.name %}
-            {% set slide_subtitle = '' %}
-            {% set slide_btn = 'Купить сейчас' %}
-            {% set img_path = 'images/products/' %}
-            {% set slide_bg = '' %}
-            {% set slide_badge = 'hit' if slide.id in hit_product_ids else 'promo' %}
-            {% set slide_product = slide %}
+    </div>
+
+    <div class="lux-hero-scroll" aria-hidden="true">
+        <span>Scroll</span>
+        <div class="lux-hero-scroll-line"></div>
+    </div>
+</section>
+
+<!-- ═══ MARQUEE ═══ -->
+<div class="lux-marquee-wrap" aria-hidden="true">
+    <div class="lux-marquee-track">
+        <span class="lux-marquee-item"><strong>100% Original</strong> · IQOS · TEREA · ILUMA</span>
+        <span class="lux-marquee-item">Доставка <strong>1–2 дня</strong> по России</span>
+        <span class="lux-marquee-item"><strong>IQOS ILUMA</strong> · LIL · TEREA</span>
+        <span class="lux-marquee-item">Скидка <strong>500 ₽</strong> за отзыв</span>
+        <span class="lux-marquee-item">Premium <strong>Experience</strong></span>
+        <span class="lux-marquee-item">Единый <strong>Telegram</strong> Bot</span>
+    </div>
+</div>
+
+<!-- ═══ TRUST ═══ -->
+<section class="lux-section lux-reveal">
+    <div class="lux-trust">
+        <div class="lux-trust-item" data-parallax-speed="0.06">
+            <div class="lux-trust-icon"><i class="fas fa-shipping-fast"></i></div>
+            <h5>Экспресс-доставка</h5>
+            <p>Отправка в день заказа. Курьер по городу или транспортная компания по всей России.</p>
+        </div>
+        <div class="lux-trust-item" data-parallax-speed="0.04">
+            <div class="lux-trust-icon"><i class="fas fa-gem"></i></div>
+            <h5>Подлинность</h5>
+            <p>Только оригинальная продукция IQOS с официальной гарантией качества.</p>
+        </div>
+        <div class="lux-trust-item" data-parallax-speed="0.08">
+            <div class="lux-trust-icon"><i class="fas fa-crown"></i></div>
+            <h5>VIP-сервис</h5>
+            <p>Персональная поддержка через единый Telegram-бот и закрытые распродажи.</p>
+        </div>
+    </div>
+</section>
+
+<!-- ═══ SEASON COLLECTION GRID ═══ -->
+{% if season_products %}
+<section class="lux-section lux-section--season" aria-label="Коллекция Season">
+    <header class="lux-section-header lux-reveal">
+        <div>
+            <span class="lux-section-label">Curated Selection</span>
+            <h2 class="lux-section-title">Коллекция <em>Season</em></h2>
+        </div>
+        <a href="{{ url_for('catalog') }}" class="btn-lux-ghost">Весь каталог →</a>
+    </header>
+
+    <div class="lux-product-grid lux-reveal">
+        {% for product in season_products %}
+        {% set season_badge = product|season_badge %}
+        <article class="lux-tile lux-tile--season{% if loop.first %} lux-tile--featured{% endif %}">
+            {% if season_badge == 'limited' %}
+            <span class="lux-tile-badge lux-tile-badge--gold">Limited</span>
+            {% elif season_badge == 'new' %}
+            <span class="lux-tile-badge">New</span>
+            {% elif season_badge == 'hit' %}
+            <span class="lux-tile-badge lux-tile-badge--gold">Hit</span>
+            {% elif loop.first %}
+            <span class="lux-tile-badge">Featured</span>
             {% endif %}
-            {% if slide.__class__.__name__ == 'Banner' and slide_img and not slide_img.startswith('products/') %}
-            {% set slide_folder = 'banners' %}
-            {% set slide_filename = slide_img %}
-            {% else %}
-            {% set slide_folder = 'products' %}
-            {% set slide_filename = slide_img.split('products/', 1)[1] if slide_img and slide_img.startswith('products/') else slide_img %}
-            {% endif %}
-            <div class="carousel-item {% if loop.first %}active{% endif %}">
-                <div class="promo-slide-inner {{ slide_bg }}{% if not slide_img and slide_badge == 'telegram' %} promo-slide-telegram-only{% endif %}">
-                    {% if slide_img %}
-                    <div class="promo-slide-bg">
-                        {% set folder = slide_folder %}
-                        {% set filename = slide_filename %}
-                        {% set alt = slide_title %}
-                        {% set img_class = 'promo-slide-img' %}
-                        {% set prefer_800 = true %}
-                        {% set sizes = '(max-width: 768px) 66vw, 50vw' %}
-                        {% set eager = loop.first %}
-                        {% include 'includes/responsive_image.html' %}
-                    </div>
-                    <a href="{{ slide_link }}" class="promo-slide-bg-link" aria-label="{{ slide_title }}"{% if slide_link_rel %} rel="{{ slide_link_rel }}"{% endif %}></a>
-                    {% elif slide_badge != 'telegram' %}
-                    <div class="promo-slide-bg promo-slide-bg-placeholder">
-                        <i class="fab fa-telegram fa-5x opacity-50 me-3"></i>
-                        <span>{{ slide_title }}</span>
-                    </div>
-                    <a href="{{ slide_link }}" class="promo-slide-bg-link promo-slide-bg-link-placeholder" aria-label="{{ slide_title }}"{% if slide_link_rel %} rel="{{ slide_link_rel }}"{% endif %}></a>
+
+            {% include 'includes/favorite_btn.html' %}
+
+            <div class="lux-tile-media">
+                {% set img_class = 'lux-cover-img' %}
+                {% set eager = loop.first %}
+                {% include 'includes/product_card_image.html' %}
+            </div>
+            <div class="lux-tile-shade" aria-hidden="true"></div>
+
+            <div class="lux-tile-glass">
+                <a href="{{ product|product_url }}" class="lux-tile-name">{{ product.name }}</a>
+                <div class="lux-tile-price">
+                    {{ product.price|format_price }} ₽
+                    {% if product.old_price and product.old_price > product.price %}
+                    <span class="old-price">{{ product.old_price|format_price }} ₽</span>
                     {% endif %}
-                    {% if slide_badge %}<span class="promo-slide-badge promo-badge-{{ slide_badge }}">{{ {'telegram':'Telegram','promo':'Акция','bonus':'Бонус','hit':'Хит','new':'Новинка'}[slide_badge] }}</span>{% endif %}
-                    <div class="promo-slide-caption-wrap">
-                        <h2>{{ slide_title }}</h2>
-                        {% if slide_product %}
-                        <p class="promo-price mb-0">
-                            {{ slide_product.price|format_price }} ₽
-                            {% if slide_product.old_price and slide_product.old_price > 0 %}
-                            <span class="promo-old-price">{{ slide_product.old_price|format_price }} ₽</span>
-                            {% endif %}
-                        </p>
-                        {% elif slide_subtitle %}
-                        <p class="promo-price mb-0">{{ slide_subtitle|replace('\n', '<br>')|safe }}</p>
-                        {% endif %}
-                        <a href="{{ slide_link }}" class="btn promo-slide-btn btn-lg"{% if slide_link_rel %} rel="{{ slide_link_rel }}"{% endif %}>{{ slide_btn }}</a>
-                    </div>
-                    {% if not slide_img and slide_badge == 'telegram' %}<a href="{{ slide_link }}" class="promo-slide-bg-link" aria-label="{{ slide_title }}"{% if slide_link_rel %} rel="{{ slide_link_rel }}"{% endif %}></a>{% endif %}
+                </div>
+                <div class="lux-tile-actions">
+                    <a href="{{ product|product_url }}" class="lux-tile-link-detail">Подробнее →</a>
+                    {% include 'includes/add_to_cart_widget.html' %}
                 </div>
             </div>
-            {% endfor %}
-        </div>
-    </div>
-    <div class="promo-carousel-nav">
-        <button class="promo-nav-btn" type="button" data-bs-target="#promoCarousel" data-bs-slide="prev" aria-label="Назад"><span class="carousel-control-prev-icon"></span></button>
-        <button class="promo-nav-btn" type="button" data-bs-target="#promoCarousel" data-bs-slide="next" aria-label="Вперёд"><span class="carousel-control-next-icon"></span></button>
-    </div>
-</div>
-<div class="d-block d-md-none text-center my-3">
-    <a href="{{ url_for('catalog') }}" class="btn btn-primary btn-lg w-100 catalog-entry-btn">В каталог</a>
-</div>
-{% endif %}
-
-<!-- Преимущества (доставка, оригинал, скидка за отзыв) -->
-<div class="row text-center my-4 py-3">
-    <div class="col-md-4 mb-3 mb-md-0">
-        <div class="p-3 rounded-3 bg-white shadow-sm h-100">
-        <i class="fas fa-truck fa-3x text-primary mb-3"></i>
-            <h5 class="fw-bold">Быстрая доставка</h5>
-            <p class="text-muted mb-0">Отправка в день заказа по всей России</p>
-        </div>
-    </div>
-    <div class="col-md-4 mb-3 mb-md-0">
-        <div class="p-3 rounded-3 bg-white shadow-sm h-100">
-            <i class="fas fa-shield-alt fa-3x text-success mb-3"></i>
-            <h5 class="fw-bold">100% оригинал</h5>
-            <p class="text-muted mb-0">Гарантия подлинности всех товаров</p>
-        </div>
-    </div>
-    <div class="col-md-4">
-        <div class="p-3 rounded-3 bg-white shadow-sm h-100">
-            <i class="fas fa-gift fa-3x text-warning mb-3"></i>
-            <h5 class="fw-bold">Скидка 500 ₽</h5>
-            <p class="text-muted mb-0">За честный отзыв о покупке</p>
-        </div>
-    </div>
-</div>
-
-{% if nav_categories %}
-<section class="home-categories mb-5" aria-label="Каталог по категориям">
-    <h2 class="mb-4 fw-bold">Каталог по категориям</h2>
-    <div class="row g-3">
-        {% for cat in nav_categories %}
-        {% set home = cat.slug|category_home %}
-        {% set cat_fn = home.get('image') %}
-        {% set cat_img = cat|category_image_url %}
-        <div class="col-md-4">
-            <a href="{{ url_for('catalog', category_slug=cat.slug) }}" class="home-category-card text-decoration-none h-100 d-block" title="{{ cat.meta_description or home.get('teaser', '') or cat.name }}">
-                <div class="home-category-card-inner h-100{% if cat_img %} has-image{% endif %}">
-                    <div class="home-category-content">
-                        <h3 class="h5 mb-2 text-dark">{{ cat.name }}</h3>
-                        <p class="text-muted small mb-3">{{ home.get('teaser') or (cat.meta_description[:120] + '…' if cat.meta_description and cat.meta_description|length > 120 else cat.meta_description or 'Смотреть товары') }}</p>
-                        <span class="home-category-link">Перейти в категорию <i class="fas fa-arrow-right ms-1"></i></span>
-                    </div>
-                    {% if cat_fn %}
-                    {% set cimg = optimized_image('categories', cat_fn) %}
-                    <div class="home-category-media card-side-media">
-                        <img src="{{ cimg.src_800 if cimg.has_variants else cimg.src }}"
-                             {% if cimg.srcset_webp %}srcset="{{ cimg.srcset_webp }}" sizes="180px"{% endif %}
-                             alt="{{ home.get('image_alt', cat.name) }}" loading="lazy" decoding="async">
-                    </div>
-                    {% endif %}
-                </div>
-            </a>
-        </div>
+        </article>
         {% endfor %}
     </div>
 </section>
 {% endif %}
 
-<!-- Хит продаж — карусель (скролл по 1 карточке) -->
-{% if hit_products %}
-<h2 class="mb-4 fw-bold">Хит продаж</h2>
-<div class="carousel-nav-wrapper mb-5">
-<div class="psc-wrap" id="hitCarousel">
-    <div class="psc-viewport">
-    <div class="psc-track">
-        {% for product in hit_products %}
-        <div class="psc-item">
-            <div class="product-card position-relative h-100">
-                <span class="badge bg-danger position-absolute top-0 start-0 m-2 product-badge-hit">Хит</span>
-                {% include 'includes/favorite_btn.html' %}
-                <a href="{{ product|product_url }}" class="product-card-link text-decoration-none text-dark">
-                    <div class="product-card-img-wrap">
-                        {% set eager = loop.index <= 4 %}
-                        {% include 'includes/product_card_image.html' %}
-                    </div>
-                    <h5 class="product-title">{{ product.name }}</h5>
-                    <div class="product-price mb-2">
-                        {{ product.price|format_price }} ₽
-                        {% if product.old_price %}
-                        <span class="old-price">{{ product.old_price|format_price }} ₽</span>
-                        {% endif %}
-                    </div>
-                </a>
-                <div class="d-grid gap-2">
-                    <a href="{{ product|product_url }}" class="btn btn-outline-primary btn-sm">Подробнее</a>
-                    {% include 'includes/add_to_cart_widget.html' %}
-                </div>
-            </div>
+<!-- ═══ IQOS ILUMA STRIP ═══ -->
+{% if iluma_products %}
+<section class="lux-accessories" aria-label="Устройства IQOS ILUMA">
+    <header class="lux-section-header lux-reveal">
+        <div>
+            <span class="lux-section-label">IQOS ILUMA</span>
+            <h2 class="lux-section-title">Устройства <em>ILUMA</em></h2>
         </div>
-        {% endfor %}
+        <a href="{{ url_for('catalog', category_slug='iqos-iluma') }}" class="btn-lux-ghost">Вся категория →</a>
+    </header>
+
+    <div class="lux-strip lux-reveal">
+        <div class="lux-strip-viewport" id="ilumaStrip">
+            {% for product in iluma_products %}
+            {% include 'includes/lux_strip_card.html' %}
+            {% endfor %}
+        </div>
+        {% with nav_label='Устройства IQOS ILUMA' %}
+        {% include 'includes/lux_strip_nav.html' %}
+        {% endwith %}
     </div>
-    </div>
-    {% if hit_products|length > 1 %}
-    <button type="button" class="psc-prev" data-psc="hitCarousel" aria-label="Назад"><span class="carousel-control-prev-icon"></span></button>
-    <button type="button" class="psc-next" data-psc="hitCarousel" aria-label="Вперёд"><span class="carousel-control-next-icon"></span></button>
-    <div class="psc-indicators" id="hitCarouselIndicators"></div>
-    {% endif %}
-</div>
-</div>
+</section>
 {% endif %}
 
-<!-- Новинки — карусель (скролл по 1 карточке) -->
-{% if new_products %}
-<h2 class="mb-4 fw-bold">Новинки</h2>
-<div class="carousel-nav-wrapper mb-5">
-<div class="psc-wrap" id="newCarousel">
-    <div class="psc-viewport">
-    <div class="psc-track">
-    {% for product in new_products %}
-        <div class="psc-item">
-            <div class="product-card position-relative h-100">
-                {% include 'includes/compare_btn.html' %}
-                {% include 'includes/favorite_btn.html' %}
-                <a href="{{ product|product_url }}" class="product-card-link text-decoration-none text-dark">
-                    <div class="product-card-img-wrap">
-                        {% set eager = false %}
-                        {% include 'includes/product_card_image.html' %}
-                    </div>
-            <h5 class="product-title">{{ product.name }}</h5>
-                    <div class="product-price mb-2">{{ product.price|format_price }} ₽</div>
-                </a>
-                <div class="d-grid gap-2">
-                    <a href="{{ product|product_url }}" class="btn btn-outline-primary btn-sm">Подробнее</a>
-                    {% include 'includes/add_to_cart_widget.html' %}
-                </div>
-            </div>
+<!-- ═══ LIL STRIP ═══ -->
+{% if lil_products %}
+<section class="lux-accessories" aria-label="Устройства LIL">
+    <header class="lux-section-header lux-reveal">
+        <div>
+            <span class="lux-section-label">LIL SOLID</span>
+            <h2 class="lux-section-title">Устройства <em>LIL</em></h2>
         </div>
-        {% endfor %}
+        <a href="{{ url_for('catalog', category_slug='lil') }}" class="btn-lux-ghost">Вся категория →</a>
+    </header>
+    <div class="lux-strip lux-reveal">
+        <div class="lux-strip-viewport" id="lilStrip">
+            {% for product in lil_products %}
+            {% set eager = loop.index <= 4 %}
+            {% include 'includes/lux_strip_card.html' %}
+            {% endfor %}
         </div>
+        {% with nav_label='Устройства LIL' %}
+        {% include 'includes/lux_strip_nav.html' %}
+        {% endwith %}
     </div>
-    {% if new_products|length > 1 %}
-    <button type="button" class="psc-prev" data-psc="newCarousel" aria-label="Назад"><span class="carousel-control-prev-icon"></span></button>
-    <button type="button" class="psc-next" data-psc="newCarousel" aria-label="Вперёд"><span class="carousel-control-next-icon"></span></button>
-    <div class="psc-indicators" id="newCarouselIndicators"></div>
-    {% endif %}
-</div>
-</div>
+</section>
 {% endif %}
 
-<!-- Премиальные устройства по доступным ценам -->
-{% set _bg = (hit_products or new_products or []) if not home_blocks else [] %}
-{% set _img1 = _bg[0].all_images[0] if _bg and _bg[0].all_images else (_bg[0].image if _bg else '') %}
-{% set _img2 = _bg[1].all_images[0] if _bg|length > 1 and _bg[1].all_images else (_bg[1].image if _bg|length > 1 else '') %}
-{% set _img3 = _bg[2].all_images[0] if _bg|length > 2 and _bg[2].all_images else (_bg[2].image if _bg|length > 2 else '') %}
-<div class="premium-blocks-wrapper mb-5">
-    <h2 class="mb-4 fw-bold">Премиальные устройства по доступным ценам</h2>
-    <div class="premium-blocks">
-        {% if home_blocks %}
-        {% for blk in home_blocks %}
-        <div class="block {% if blk.position == 1 %}block-left{% endif %}">
-            <div class="block-img-container">
-                {% set folder = 'banners' %}
-                {% set filename = blk.image %}
-                {% set alt = blk.title %}
-                {% set sizes = '600px' if blk.position == 1 else '400px' %}
-                {% set prefer_800 = blk.position == 1 %}
-                {% include 'includes/responsive_image.html' %}
-            </div>
-            <h4>{{ blk.title }}</h4>
-            {% if blk.description %}<p>{{ blk.description }}</p>{% endif %}
-            {% if blk.button_text and blk.button_url %}<a href="{{ blk.button_url }}" class="btn btn-light btn-sm mt-2">{{ blk.button_text }}</a>{% endif %}
+<!-- ═══ TEREA STICKS STRIP ═══ -->
+{% if sticks_products %}
+<section class="lux-accessories" aria-label="Стики TEREA">
+    <header class="lux-section-header lux-reveal">
+        <div>
+            <span class="lux-section-label">TEREA Sticks</span>
+            <h2 class="lux-section-title">Стики <em>TEREA</em></h2>
+        </div>
+        <a href="{{ url_for('catalog', category_slug='terea-sticks') }}" class="btn-lux-ghost">Вся категория →</a>
+    </header>
+    <div class="lux-strip lux-reveal">
+        <div class="lux-strip-viewport" id="sticksStrip">
+            {% for product in sticks_products %}
+            {% set eager = loop.index <= 4 %}
+            {% include 'includes/lux_strip_card.html' %}
+            {% endfor %}
+        </div>
+        {% with nav_label='Стики TEREA' %}
+        {% include 'includes/lux_strip_nav.html' %}
+        {% endwith %}
     </div>
-    {% endfor %}
-        {% else %}
-        <div class="block block-left">
-            <div class="block-img-container">
-                {% if _img1 %}
-                {% set folder = 'products' %}
-                {% set filename = _img1 %}
-                {% set alt = _bg[0].name if _bg and _bg|length > 0 else 'О нашем магазине' %}
-                {% set sizes = '600px' %}
-                {% set prefer_800 = true %}
-                {% include 'includes/responsive_image.html' %}
-                {% else %}
-                <img src="https://via.placeholder.com/600x400/1a1a2e/fff?text=IQOS" alt="О нашем магазине" loading="lazy" decoding="async">
+</section>
+{% endif %}
+
+<!-- ═══ REVIEWS ═══ -->
+{% if recent_reviews %}
+<section class="lux-section lux-reviews-section lux-reviews" aria-label="Отзывы">
+    <header class="lux-section-header lux-reveal">
+        <div>
+            <span class="lux-section-label">Testimonials</span>
+            <h2 class="lux-section-title">Голос <em>клиентов</em></h2>
+        </div>
+    </header>
+    <div class="carousel-nav-wrapper carousel-nav-wrapper-reviews lux-reveal">
+        <div class="psc-wrap psc-reviews" id="reviewsCarousel">
+            <div class="psc-arrows-area">
+                <div class="psc-viewport psc-reviews-viewport">
+                    <div class="psc-track rsc-track">
+                        {% for review in recent_reviews %}
+                        <div class="rsc-item">
+                            <div class="review-card">
+                                <div class="rating">
+                                    {% for i in range(review.rating) %}★{% endfor %}
+                                    {% for i in range(5 - review.rating) %}☆{% endfor %}
+                                </div>
+                                <p>{{ review.text }}</p>
+                                <small>{{ review.customer_name }} · {{ review.created_at.strftime('%d.%m.%Y') }}</small>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+                {% if recent_reviews|length > 1 %}
+                <button type="button" class="psc-prev" data-psc="reviewsCarousel" aria-label="Назад"><span class="carousel-control-prev-icon"></span></button>
+                <button type="button" class="psc-next" data-psc="reviewsCarousel" aria-label="Вперёд"><span class="carousel-control-next-icon"></span></button>
                 {% endif %}
             </div>
-            <h4>О нашем магазине</h4>
-            <p>Мы радуем наших покупателей качественной оригинальной продукцией и приятным сервисом более 5 лет и продолжаем это делать с огромным удовольствием</p>
-        </div>
-        <div class="block">
-            <div class="block-img-container">
-                {% if _img2 %}
-                {% set folder = 'products' %}
-                {% set filename = _img2 %}
-                {% set alt = _bg[1].name if _bg and _bg|length > 1 else 'Наша миссия' %}
-                {% set sizes = '400px' %}
-                {% include 'includes/responsive_image.html' %}
-                {% else %}
-                <img src="https://via.placeholder.com/400x200/16213e/fff?text=IQOS" alt="Наша миссия" loading="lazy" decoding="async">
-                {% endif %}
+            {% if recent_reviews|length > 1 %}
+            <div class="psc-indicators" id="reviewsCarouselIndicators"></div>
+            {% endif %}
+            <div class="reviews-telegram-link">
+                Больше отзывов в Telegram: <a href="{{ telegram_bot_url or 'https://t.me/iluma_prime_bot' }}" target="_blank" rel="noopener">@iluma_prime_bot</a>
             </div>
-            <h4>Наша миссия</h4>
-            <p>Предоставить нашим клиентам лучший опыт покупки</p>
         </div>
-        <div class="block">
-            <div class="block-img-container">
-                {% if _img3 %}
-                {% set folder = 'products' %}
-                {% set filename = _img3 %}
-                {% set alt = _bg[2].name if _bg and _bg|length > 2 else 'Наша цель' %}
-                {% set sizes = '400px' %}
-                {% include 'includes/responsive_image.html' %}
-                {% else %}
-                <img src="https://via.placeholder.com/400x200/0f3460/fff?text=IQOS" alt="Наша цель" loading="lazy" decoding="async">
-                {% endif %}
-            </div>
-            <h4>Наша цель</h4>
-            <p>Стать вашим надёжным партнёром и проводником</p>
-        </div>
-        {% endif %}
     </div>
-</div>
+</section>
+{% endif %}
+
+<!-- ═══ VIP CLUB ═══ -->
+<section class="lux-vip lux-reveal" aria-label="Закрытые распродажи">
+    <div class="lux-vip-inner">
+        <div>
+            <span class="lux-section-label">Private Access</span>
+            <h2 class="lux-section-title">Закрытые <em>распродажи</em></h2>
+            <p class="lux-vip-desc">Подпишитесь на VIP-лист и получайте ранний доступ к лимитированным дропам, эксклюзивным ценам и персональным предложениям через единый Telegram-бот.</p>
+        </div>
+        <form class="lux-vip-form" id="luxVipForm" data-bot-url="{{ telegram_bot_url or 'https://t.me/iluma_prime_bot' }}">
+            <input type="email" name="email" placeholder="your@email.com" autocomplete="email" required aria-label="Email для VIP-подписки">
+            <button type="submit" class="btn-lux-primary">Получить доступ</button>
+        </form>
+    </div>
+</section>
 
 {% if blog_posts %}
-<section class="home-blog mb-5" aria-label="Полезные статьи">
-    <div class="d-flex flex-wrap align-items-end justify-content-between gap-2 mb-4">
-        <h2 class="mb-0 fw-bold">Полезные статьи</h2>
-        <a href="{{ url_for('blog_index') }}" class="btn btn-outline-primary btn-sm">Все статьи</a>
-    </div>
-    <div class="row g-4">
-        {% for post in blog_posts %}
-        <div class="col-md-6 col-lg-4">
-            {% with extra_class='h-100' %}
-            {% include 'includes/blog_card.html' %}
-            {% endwith %}
+<section class="lux-section lux-blog-section" aria-label="Блог">
+    <header class="lux-section-header lux-reveal">
+        <div>
+            <span class="lux-section-label">Journal</span>
+            <h2 class="lux-section-title">Полезные <em>статьи</em></h2>
         </div>
+        <a href="{{ url_for('blog_index') }}" class="btn-lux-ghost">Все статьи</a>
+    </header>
+    <div class="lux-blog-grid lux-reveal">
+        {% for post in blog_posts %}
+        {% include 'includes/blog_card_lux.html' %}
         {% endfor %}
     </div>
 </section>
-{% endif %}
-
-<!-- Почему нам доверяют — карусель (скролл по 1 карточке) -->
-<h2 class="mb-4 mt-5 fw-bold">Почему нам доверяют</h2>
-{% if recent_reviews %}
-<div class="carousel-nav-wrapper carousel-nav-wrapper-reviews mb-5">
-<div class="psc-wrap psc-reviews" id="reviewsCarousel">
-    <div class="psc-arrows-area">
-        <div class="psc-viewport psc-reviews-viewport">
-        <div class="psc-track rsc-track">
-    {% for review in recent_reviews %}
-            <div class="rsc-item">
-        <div class="review-card">
-                    <i class="fas fa-quote-left text-primary opacity-25 mb-2" style="font-size: 1.5rem;"></i>
-            <div class="rating">
-                {% for i in range(review.rating) %}★{% endfor %}
-                {% for i in range(5 - review.rating) %}☆{% endfor %}
-            </div>
-            <p class="mt-2">{{ review.text }}</p>
-            <small class="text-muted">
-                {{ review.customer_name }} • {{ review.created_at.strftime('%d.%m.%Y') }}
-            </small>
-        </div>
-    </div>
-    {% endfor %}
-</div>
-        </div>
-        {% if recent_reviews|length > 1 %}
-        <button type="button" class="psc-prev" data-psc="reviewsCarousel" aria-label="Назад"><span class="carousel-control-prev-icon"></span></button>
-        <button type="button" class="psc-next" data-psc="reviewsCarousel" aria-label="Вперёд"><span class="carousel-control-next-icon"></span></button>
-        {% endif %}
-    </div>
-    {% if recent_reviews|length > 1 %}
-    <div class="psc-indicators" id="reviewsCarouselIndicators"></div>
-    {% endif %}
-    <div class="reviews-telegram-link mt-2 small text-muted">
-        Больше отзывов в телеграм боте: <a href="{{ telegram_bot_url or 'https://t.me/iluma_prime_bot' }}" target="_blank" rel="noopener">@iluma_prime_bot</a>
-    </div>
-</div>
-</div>
 {% endif %}
 {% endblock %}
 
@@ -466,8 +327,6 @@
         if (!wrap) return;
         var viewport = wrap.querySelector('.psc-viewport');
         var track = wrap.querySelector('.psc-track');
-        var prevBtn = wrap.querySelector('.psc-prev');
-        var nextBtn = wrap.querySelector('.psc-next');
         var itemClass = track && track.classList.contains('rsc-track') ? 'rsc-item' : 'psc-item';
         var items = track ? track.querySelectorAll('.' + itemClass) : [];
         var originalCount = items.length;
@@ -493,16 +352,12 @@
 
         var visibleCount = getVisibleCount();
         for (var i = 0; i < visibleCount; i++) {
-            var clone = items[i].cloneNode(true);
-            clone.classList.add('psc-clone');
-            track.appendChild(clone);
+            track.appendChild(items[i].cloneNode(true));
         }
         items = track.querySelectorAll('.' + itemClass);
         var startPrepend = Math.max(0, originalCount - visibleCount);
         for (var j = originalCount - 1; j >= startPrepend; j--) {
-            var c = items[j].cloneNode(true);
-            c.classList.add('psc-clone');
-            track.insertBefore(c, track.firstChild);
+            track.insertBefore(items[j].cloneNode(true), track.firstChild);
         }
         items = track.querySelectorAll('.' + itemClass);
         var index = visibleCount;
@@ -510,14 +365,9 @@
         function update(noTransition) {
             var step = getScrollStep();
             var offset = index * step;
-            if (noTransition) {
-                track.style.transition = 'none';
-            }
+            if (noTransition) track.style.transition = 'none';
             track.style.transform = 'translateX(-' + offset + 'px)';
-            if (noTransition) {
-                track.offsetHeight;
-                track.style.transition = '';
-            }
+            if (noTransition) { track.offsetHeight; track.style.transition = ''; }
         }
         function onTransitionEnd(e) {
             if (!isTransitioning || (e && e.propertyName !== 'transform')) return;
@@ -531,17 +381,14 @@
 
         function getLogicalPage() {
             var maxPage = Math.max(0, originalCount - visibleCount);
-            if (index >= visibleCount && index <= visibleCount + maxPage) {
-                return index - visibleCount;
-            }
+            if (index >= visibleCount && index <= visibleCount + maxPage) return index - visibleCount;
             return 0;
         }
         function updateIndicators() {
             var ind = wrap.querySelector('.psc-indicators');
             if (!ind) return;
             var pg = getLogicalPage();
-            var btns = ind.querySelectorAll('button');
-            btns.forEach(function(b, i) { b.classList.toggle('active', i === pg); });
+            ind.querySelectorAll('button').forEach(function(b, i) { b.classList.toggle('active', i === pg); });
         }
         function doPrev() {
             if (isTransitioning) return;
@@ -549,9 +396,7 @@
             if (loop && index < visibleCount) {
                 index = Math.max(0, originalCount - visibleCount);
                 update(true);
-            } else if (index < 0) {
-                index = 0;
-            }
+            } else if (index < 0) index = 0;
             update();
             updateIndicators();
         }
@@ -568,8 +413,7 @@
         function goToPage(pg) {
             if (isTransitioning) return;
             var maxPage = Math.max(0, originalCount - visibleCount);
-            var p = Math.max(0, Math.min(pg, maxPage));
-            index = visibleCount + p;
+            index = visibleCount + Math.max(0, Math.min(pg, maxPage));
             update();
             updateIndicators();
         }
@@ -578,8 +422,7 @@
         var indicatorsEl = wrap.querySelector('.psc-indicators');
         if (indicatorsEl) {
             var maxPage = Math.max(0, originalCount - visibleCount);
-            var numPages = maxPage + 1;
-            for (var p = 0; p < numPages; p++) {
+            for (var p = 0; p < maxPage + 1; p++) {
                 var btn = document.createElement('button');
                 btn.type = 'button';
                 btn.setAttribute('aria-label', 'Слайд ' + (p + 1));
@@ -587,16 +430,10 @@
                 indicatorsEl.appendChild(btn);
             }
         }
-
         updateIndicators();
 
-        /* Свайп пальцем на мобильных */
-        var touchStartX = 0;
-        var touchEndX = 0;
-        var minSwipe = 50;
-        function onTouchStart(e) {
-            if (e.touches.length) touchStartX = e.touches[0].clientX;
-        }
+        var touchStartX = 0, touchEndX = 0, minSwipe = 50;
+        function onTouchStart(e) { if (e.touches.length) touchStartX = e.touches[0].clientX; }
         function onTouchEnd(e) {
             if (e.changedTouches.length) touchEndX = e.changedTouches[0].clientX;
             var delta = touchStartX - touchEndX;
@@ -607,7 +444,6 @@
             viewport.addEventListener('touchstart', onTouchStart, { passive: true });
             viewport.addEventListener('touchend', onTouchEnd, { passive: true });
         }
-
         window.addEventListener('resize', function() {
             visibleCount = getVisibleCount();
             var max = getMaxIndex();
@@ -630,15 +466,12 @@
         else c.doNext();
     }
     function init() {
-        ['hitCarousel', 'newCarousel', 'reviewsCarousel'].forEach(initScrollCarousel);
+        ['reviewsCarousel'].forEach(initScrollCarousel);
         document.addEventListener('mousedown', handleCarouselClick, true);
         document.addEventListener('touchstart', handleCarouselClick, { passive: false, capture: true });
     }
-    if (document.readyState === 'loading') {
-        document.addEventListener('DOMContentLoaded', init);
-    } else {
-        setTimeout(init, 0);
-    }
+    if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init);
+    else setTimeout(init, 0);
 })();
 </script>
 {% if banner_impression_ids %}
@@ -649,10 +482,7 @@
     function track() {
         fetch('{{ url_for("api_banner_impressions") }}', {
             method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'X-CSRFToken': document.querySelector('meta[name="csrf-token"]').content
-            },
+            headers: { 'Content-Type': 'application/json', 'X-CSRFToken': document.querySelector('meta[name="csrf-token"]').content },
             body: JSON.stringify({ids: ids}),
             keepalive: true
         }).catch(function() {});

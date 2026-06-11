@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 
-{% block title %}Контакты — LIL STORE{% endblock %}
-{% block meta_description %}Контакты LIL STORE: {{ site_address }}, телефон {{ site_phone }}, Telegram @iluma_prime_bot. IQOS и стики TEREA.{% endblock %}
+{% block title %}Контакты — АЙКОС СТОР{% endblock %}
+{% block meta_description %}Контакты АЙКОС СТОР: {{ site_address }}, телефон {{ site_phone }}, Telegram @iluma_prime_bot. IQOS и стики TEREA.{% endblock %}
 {% block schema_ld %}
 <script type="application/ld+json">
 {"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Главная","item":"{{ request.url_root.rstrip('/') }}/"},{"@type":"ListItem","position":2,"name":"Контакты","item":"{{ request.url_root.rstrip('/') }}{{ url_for('contacts') }}"}]}
@@ -10,7 +10,7 @@
 {
   "@context": "https://schema.org",
   "@type": "LocalBusiness",
-  "name": "LIL STORE",
+  "name": "АЙКОС СТОР",
   "telephone": "{{ site_phone }}",
   "url": "{{ request.url_root.rstrip('/') }}",
   "address": {
@@ -24,6 +24,7 @@
 {% endblock %}
 
 {% block content %}
+<div class="content-page">
 <h1 class="mb-4">Контакты</h1>
 
 <div class="row">
@@ -68,5 +69,6 @@
             </div>
         </form>
     </div>
+</div>
 </div>
 {% endblock %}

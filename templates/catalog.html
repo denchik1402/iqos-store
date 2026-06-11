@@ -18,11 +18,11 @@ index, follow
 {% endblock %}
 {% block title %}
     {% if device_model_filter %}
-        {{ device_model_filter.name }} — купить в LIL STORE
+        {{ device_model_filter.name }} — купить в АЙКОС СТОР
     {% elif category %}
-        {{ category.name }} — купить в LIL STORE
+        {{ category.name }} — купить в АЙКОС СТОР
     {% else %}
-        Каталог IQOS и TEREA — LIL STORE
+        Каталог IQOS и TEREA — АЙКОС СТОР
     {% endif %}
 {% endblock %}
 {% block meta_description %}
@@ -217,41 +217,7 @@ index, follow
 /* Переключатель вида */
 .view-switcher .btn.active { background: #0d6efd; color: #fff !important; border-color: #0d6efd; }
 .view-switcher .btn { padding: 0 0.6rem; }
-/* Вид списком */
-.catalog-list .product-card {
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    padding: 16px;
-}
-.catalog-list .product-card .product-card-link {
-    display: grid;
-    grid-template-columns: 120px 1fr;
-    grid-template-rows: auto auto;
-    gap: 0 20px;
-    align-items: center;
-    flex: 1;
-    min-width: 0;
-}
-.catalog-list .product-card-img-wrap {
-    width: 120px;
-    min-width: 120px;
-    height: 120px;
-    aspect-ratio: unset;
-    margin-bottom: 0;
-    margin-right: 0;
-    grid-row: 1 / -1;
-}
-.catalog-list .product-card .product-title { margin: 0 0 4px 0; font-size: 1.1rem; grid-column: 2; }
-.catalog-list .product-card .product-price { margin: 0; grid-column: 2; }
-.catalog-list .product-card .d-grid {
-    display: flex;
-    flex-direction: row;
-    flex-wrap: wrap;
-    gap: 8px;
-    align-items: center;
-    margin-left: 16px;
-}
+/* Вид списком — основные стили в luxury-pages.css */
 .catalog-list .col-md-4 { flex: 0 0 100%; max-width: 100%; }
 /* Поля цены: без стрелочек, текст по центру */
 .price-filter input[type="number"] {
@@ -487,30 +453,34 @@ index, follow
         {% endif %}
         
         {% if products %}
-        <div class="row {% if filters.view == 'list' %}catalog-list{% endif %}">
+        <div class="row catalog-product-grid {% if filters.view == 'list' %}catalog-list{% endif %}">
             {% for product in products %}
-            <div class="col-md-4 mb-4">
-                <div class="product-card position-relative">
-                    {% if product.is_hit %}<span class="badge bg-danger position-absolute top-0 start-0 m-2 product-badge-hit">Хит</span>{% endif %}
+            <div class="col-md-4 mb-4 catalog-product-col">
+                <div class="product-card product-card--catalog position-relative h-100">
+                    {% if product.is_hit %}<span class="lux-product-badge lux-product-badge--hit">Хит</span>{% endif %}
                     {% include 'includes/compare_btn.html' %}
                     {% include 'includes/favorite_btn.html' %}
-                    <a href="{{ product|product_url }}" class="product-card-link text-decoration-none text-dark">
+                    <a href="{{ product|product_url }}" class="product-card-link product-card-link--media text-decoration-none" tabindex="-1" aria-hidden="true">
                         <div class="product-card-img-wrap">
                             {% set eager = loop.index <= 8 %}
                             {% include 'includes/product_card_image.html' %}
                         </div>
-                        <h5 class="product-title">{{ product.name }}</h5>
-                        {% if product.model %}<div class="product-model small text-muted mb-1">{{ product.model }}</div>{% endif %}
-                        <div class="product-price">
-                            {{ product.price }} ₽
-                            {% if product.old_price %}
-                            <span class="old-price">{{ product.old_price }} ₽</span>
-                            {% endif %}
-                        </div>
                     </a>
-                    <div class="d-grid gap-2">
-                        <a href="{{ product|product_url }}" class="btn btn-primary">Подробнее</a>
-                        {% include 'includes/add_to_cart_widget.html' %}
+                    <div class="product-card-body">
+                        <a href="{{ product|product_url }}" class="product-card-meta text-decoration-none">
+                            <h5 class="product-title">{{ product.name }}</h5>
+                            {% if product.model %}<div class="product-model">{{ product.model }}</div>{% endif %}
+                            <div class="product-price">
+                                {{ product.price|format_price }} ₽
+                                {% if product.old_price %}
+                                <span class="old-price">{{ product.old_price|format_price }} ₽</span>
+                                {% endif %}
+                            </div>
+                        </a>
+                        <div class="product-card-actions d-grid gap-2">
+                            <a href="{{ product|product_url }}" class="btn btn-outline-primary btn-sm">Подробнее</a>
+                            {% include 'includes/add_to_cart_widget.html' %}
+                        </div>
                     </div>
                 </div>
             </div>

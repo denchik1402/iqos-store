@@ -1,0 +1,25 @@
+{# Карточка статьи для главной (luxury, overlay). Ожидает: post #}
+<article class="lux-blog-card">
+    <a href="{{ url_for('blog_post', slug=post.slug) }}" class="lux-blog-card-link text-decoration-none">
+        <div class="lux-blog-card-media{% if not post.cover_image %} lux-blog-card-media--icon{% endif %}">
+            {% if post.cover_image %}
+            <img src="{{ post.cover_image|blog_cover_url }}" alt="{{ post.title }}" loading="lazy" decoding="async">
+            {% else %}
+            <span class="lux-blog-card-icon" aria-hidden="true"><i class="fas {{ post.cover_icon or 'fa-book-open' }}"></i></span>
+            {% endif %}
+        </div>
+        <div class="lux-blog-card-shade" aria-hidden="true"></div>
+        <span class="lux-blog-card-time"><i class="far fa-clock" aria-hidden="true"></i>{{ post.reading_minutes or 5 }} мин</span>
+        <div class="lux-blog-card-glass">
+            <h3 class="lux-blog-card-title">{{ post.title }}</h3>
+            <div class="lux-blog-card-details">
+                <div class="lux-blog-card-details-inner">
+                    {% if post.excerpt %}
+                    <p class="lux-blog-card-excerpt">{{ post.excerpt }}</p>
+                    {% endif %}
+                    <span class="lux-blog-card-cta">Читать статью <i class="fas fa-arrow-right" aria-hidden="true"></i></span>
+                </div>
+            </div>
+        </div>
+    </a>
+</article>

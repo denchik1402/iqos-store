@@ -1,12 +1,12 @@
 {% extends "base.html" %}
 
-{% block title %}{{ product.name }} — {{ product.price|format_price }} ₽ | LIL STORE{% endblock %}
+{% block title %}{{ product.name }} — {{ product.price|format_price }} ₽ | АЙКОС СТОР{% endblock %}
 {% block meta_description %}{% if product.meta_description %}{{ product.meta_description }}{% else %}{{ product.name }} — {{ product.price|format_price }} ₽. {{ (product.get_intro_text() or product.description or product.name)|striptags|truncate(120) }}{% endif %}{% endblock %}
 {% block meta_keywords %}{% if product.meta_keywords %}{{ product.meta_keywords }}{% else %}{{ product.name }}, IQOS, TEREA, {{ product.category.name if product.category else '' }}, купить{% endif %}{% endblock %}
 {% block canonical_url %}{{ request.url_root.rstrip('/') }}{{ product|product_url }}{% endblock %}
-{% block og_title %}{{ product.name }} — LIL STORE{% endblock %}
+{% block og_title %}{{ product.name }} — АЙКОС СТОР{% endblock %}
 {% block og_description %}{{ product.name }} — {{ product.price|format_price }} ₽. Оригинальная продукция.{% endblock %}
-{% block twitter_title %}{{ product.name }} — LIL STORE{% endblock %}
+{% block twitter_title %}{{ product.name }} — АЙКОС СТОР{% endblock %}
 {% block twitter_description %}{{ product.name }} — {{ product.price|format_price }} ₽. Оригинальная продукция.{% endblock %}
 {% block twitter_image %}{% set _img = product.all_images[0] if product.all_images else product.image %}{% if _img %}{{ request.url_root.rstrip('/') }}{{ url_for('static', filename='images/products/' + _img) }}{% else %}{{ request.url_root.rstrip('/') }}{{ url_for('static', filename='LOGO3.png') }}{% endif %}{% endblock %}
 {% block og_type %}product{% endblock %}
@@ -119,7 +119,7 @@
     </div>
     
     <!-- Информация о товаре -->
-    <div class="col-md-6">
+    <div class="col-md-6 product-info-panel">
         <h1>{{ product.name }}</h1>
         {% if product.model %}<p class="text-muted mb-2">{{ product.model }}</p>{% endif %}
         

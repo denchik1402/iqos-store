@@ -1,6 +1,6 @@
-{% extends "base.html" %}
+﻿{% extends "base.html" %}
 
-{% block title %}{{ post.title }} — LIL STORE{% endblock %}
+{% block title %}{{ post.title }} — АЙКОС СТОР{% endblock %}
 {% block meta_description %}{{ post.meta_description or post.excerpt }}{% endblock %}
 {% block meta_keywords %}{{ post.meta_keywords or '' }}{% endblock %}
 {% block canonical_url %}{{ request.url_root.rstrip('/') }}{{ url_for('blog_post', slug=post.slug) }}{% endblock %}
@@ -18,8 +18,8 @@
   "description": {{ (post.meta_description or post.excerpt or '')|tojson }},
   "datePublished": "{{ post.created_at.strftime('%Y-%m-%d') if post.created_at else '' }}",
   "dateModified": "{{ post.updated_at.strftime('%Y-%m-%d') if post.updated_at else '' }}",
-  "author": {"@type": "Organization", "name": "LIL STORE"},
-  "publisher": {"@type": "Organization", "name": "LIL STORE", "url": "{{ request.url_root.rstrip('/') }}"},
+  "author": {"@type": "Organization", "name": "АЙКОС СТОР"},
+  "publisher": {"@type": "Organization", "name": "АЙКОС СТОР", "url": "{{ request.url_root.rstrip('/') }}"},
   "mainEntityOfPage": "{{ request.url_root.rstrip('/') }}{{ url_for('blog_post', slug=post.slug) }}"
   {% if post.cover_image %},"image": "{{ request.url_root.rstrip('/') }}{{ post.cover_image|blog_cover_url }}"{% endif %}
 }
@@ -63,7 +63,7 @@
     </div>
 
     <div class="article-cta">
-        <h2 class="h5 mb-2">Заказать в LIL STORE</h2>
+        <h2 class="h5 mb-2">Заказать в АЙКОС СТОР</h2>
         <p class="text-muted mb-3">Оригинальные IQOS ILUMA и стики TEREA. Бронь на сайте, доставка 1–2 дня.</p>
         <a href="{{ url_for('catalog') }}" class="btn btn-primary me-2 mb-2">Каталог</a>
         <a href="{{ url_for('catalog', category_slug='terea-sticks') }}" class="btn btn-outline-primary me-2 mb-2">TEREA</a>

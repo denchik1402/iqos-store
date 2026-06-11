@@ -83,6 +83,9 @@ class Product(db.Model):
     color = db.Column(db.String(50))  # Black, Blue, Green и т.д.
     is_exclusive = db.Column(db.Boolean, default=False)
     is_hit = db.Column(db.Boolean, default=False)
+    is_season = db.Column(db.Boolean, default=False)  # закреплён в блоке «Коллекция Season»
+    season_sort_order = db.Column(db.Integer, default=0)
+    season_excluded = db.Column(db.Boolean, default=False)  # скрыть из авто-подбора Season
     meta_description = db.Column(db.String(300))  # SEO: meta description для страницы товара
     meta_keywords = db.Column(db.String(300))     # SEO: meta keywords
     created_at = db.Column(db.DateTime, default=datetime.utcnow)

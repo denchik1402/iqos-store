@@ -1,0 +1,545 @@
+/* ═══════════════════════════════════════════════════════════════
+   IQOS STORE — Cyber-Luxury Global Theme
+   ═══════════════════════════════════════════════════════════════ */
+
+@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400&family=Syne:wght@400;500;600;700;800&display=swap');
+
+:root {
+    --lux-font-display: 'Syne', system-ui, sans-serif;
+    --lux-font-serif: 'Cormorant Garamond', Georgia, serif;
+    --lux-ease: cubic-bezier(0.22, 1, 0.36, 1);
+    --lux-radius: 18px;
+}
+
+[data-theme="dark"] {
+    --lux-black: #050506;
+    --lux-charcoal: #0c0c0f;
+    --lux-surface: #111116;
+    --lux-gold: #c9a962;
+    --lux-gold-dim: rgba(201, 169, 98, 0.35);
+    --lux-lime: #c8ff4a;
+    --lux-lime-dim: rgba(200, 255, 74, 0.15);
+    --lux-glass: rgba(255, 255, 255, 0.05);
+    --lux-glass-border: rgba(255, 255, 255, 0.1);
+    --lux-text: #f4f2ee;
+    --lux-muted: rgba(244, 242, 238, 0.55);
+    --lux-on-accent: #050506;
+    --lux-image-bg: #0a0a0c;
+    --lux-overlay-strong: rgba(5, 5, 6, 0.95);
+    --lux-overlay-mid: rgba(5, 5, 6, 0.85);
+    --lux-overlay-soft: rgba(5, 5, 6, 0.35);
+    --lux-hero-gradient: linear-gradient(to bottom, rgba(5, 5, 6, 0.3) 0%, rgba(5, 5, 6, 0.75) 55%, var(--lux-black) 100%);
+    --lux-section-gradient: linear-gradient(180deg, var(--lux-black) 0%, var(--lux-charcoal) 50%, var(--lux-black) 100%);
+    --lux-tile-shade: linear-gradient(to top, rgba(5, 5, 6, 0.88) 0%, rgba(5, 5, 6, 0.25) 50%, rgba(5, 5, 6, 0.08) 100%);
+    --lux-tile-glass: linear-gradient(to top, rgba(5, 5, 6, 0.85) 0%, rgba(5, 5, 6, 0.4) 70%, transparent 100%);
+    --lux-card-info-bg: linear-gradient(to top, rgba(5, 5, 6, 0.95), transparent);
+    --lux-shadow-card: 0 20px 50px rgba(0, 0, 0, 0.45);
+    --lux-shadow-soft: 0 16px 48px rgba(0, 0, 0, 0.35);
+    --lux-cookie-bg: rgba(5, 5, 6, 0.92);
+    --lux-favorite-bg: rgba(5, 5, 6, 0.6);
+
+    --bg-body: var(--lux-black);
+    --bg-nav: rgba(5, 5, 6, 0.82);
+    --bg-card: var(--lux-surface);
+    --bg-input: rgba(255, 255, 255, 0.04);
+    --text: var(--lux-text);
+    --text-muted: var(--lux-muted);
+    --border: var(--lux-glass-border);
+    --shadow: rgba(0, 0, 0, 0.45);
+    --shadow-hover: rgba(200, 255, 74, 0.12);
+    --premium-block-bg: var(--lux-charcoal);
+}
+
+[data-theme="light"] {
+    --lux-black: #f6f4ef;
+    --lux-charcoal: #eceae3;
+    --lux-surface: #ffffff;
+    --lux-gold: #9a7728;
+    --lux-gold-dim: rgba(154, 119, 40, 0.18);
+    --lux-lime: #7fa800;
+    --lux-lime-dim: rgba(127, 168, 0, 0.14);
+    --lux-glass: rgba(255, 255, 255, 0.72);
+    --lux-glass-border: rgba(22, 22, 20, 0.1);
+    --lux-text: #161614;
+    --lux-muted: rgba(22, 22, 20, 0.58);
+    --lux-on-accent: #161614;
+    --lux-image-bg: #f0ede6;
+    --lux-overlay-strong: rgba(246, 244, 239, 0.97);
+    --lux-overlay-mid: rgba(246, 244, 239, 0.9);
+    --lux-overlay-soft: rgba(246, 244, 239, 0.55);
+    --lux-hero-gradient: linear-gradient(to bottom, rgba(246, 244, 239, 0.15) 0%, rgba(246, 244, 239, 0.72) 55%, var(--lux-black) 100%);
+    --lux-section-gradient: linear-gradient(180deg, var(--lux-charcoal) 0%, var(--lux-black) 45%, var(--lux-charcoal) 100%);
+    --lux-tile-shade: linear-gradient(to top, rgba(246, 244, 239, 0.96) 0%, rgba(246, 244, 239, 0.55) 50%, rgba(246, 244, 239, 0.12) 100%);
+    --lux-tile-glass: linear-gradient(to top, rgba(255, 255, 255, 0.94) 0%, rgba(255, 255, 255, 0.72) 70%, transparent 100%);
+    --lux-card-info-bg: linear-gradient(to top, rgba(255, 255, 255, 0.97), rgba(255, 255, 255, 0.55));
+    --lux-shadow-card: 0 18px 40px rgba(22, 22, 20, 0.08);
+    --lux-shadow-soft: 0 12px 32px rgba(22, 22, 20, 0.07);
+    --lux-cookie-bg: rgba(255, 255, 255, 0.94);
+    --lux-favorite-bg: rgba(255, 255, 255, 0.82);
+
+    --bg-body: var(--lux-black);
+    --bg-nav: rgba(246, 244, 239, 0.88);
+    --bg-card: var(--lux-surface);
+    --bg-input: #ffffff;
+    --text: var(--lux-text);
+    --text-muted: var(--lux-muted);
+    --border: var(--lux-glass-border);
+    --shadow: rgba(22, 22, 20, 0.08);
+    --shadow-hover: rgba(127, 168, 0, 0.12);
+    --premium-block-bg: var(--lux-charcoal);
+}
+
+html {
+    scroll-behavior: smooth;
+}
+
+body.luxury-store {
+    font-family: var(--lux-font-display);
+    background: var(--lux-black);
+    color: var(--lux-text);
+    transition: background 0.35s ease, color 0.35s ease;
+}
+
+body.luxury-store.cursor-ready {
+    cursor: none;
+}
+
+@media (pointer: coarse) {
+    body.luxury-store { cursor: auto; }
+    body.luxury-store.cursor-ready { cursor: auto; }
+    .lux-cursor, .lux-cursor-ring { display: none !important; }
+}
+
+/* Custom laser cursor */
+.lux-cursor,
+.lux-cursor-ring {
+    position: fixed;
+    top: 0;
+    left: 0;
+    pointer-events: none;
+    z-index: 200001;
+    opacity: 0;
+    will-change: left, top;
+    transform: translate(-50%, -50%);
+}
+
+.lux-cursor {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: var(--lux-lime);
+    box-shadow: 0 0 10px var(--lux-lime), 0 0 22px rgba(200, 255, 74, 0.45);
+}
+
+.lux-cursor-ring {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    border: 1px solid rgba(200, 255, 74, 0.65);
+    transition: width 0.35s var(--lux-ease), height 0.35s var(--lux-ease), border-color 0.25s;
+}
+
+body.luxury-store.cursor-hover .lux-cursor-ring {
+    width: 52px;
+    height: 52px;
+    border-color: var(--lux-gold);
+}
+
+body.luxury-store.cursor-click .lux-cursor {
+    width: 4px;
+    height: 4px;
+    box-shadow: 0 0 16px var(--lux-lime);
+}
+
+/* Navbar */
+body.luxury-store .navbar {
+    backdrop-filter: blur(20px) saturate(160%);
+    -webkit-backdrop-filter: blur(20px) saturate(160%);
+    background: var(--bg-nav) !important;
+    border-bottom: 1px solid var(--lux-glass-border);
+    box-shadow: none;
+    padding-top: 0.65rem;
+    padding-bottom: 0.65rem;
+}
+
+body.luxury-store .navbar .navbar-brand,
+body.luxury-store .navbar .nav-link,
+body.luxury-store .navbar .form-control,
+body.luxury-store .navbar .btn,
+body.luxury-store .navbar .nav-icon-btn {
+    color: var(--lux-text) !important;
+}
+
+body.luxury-store .navbar .nav-link {
+    font-size: 0.72rem;
+    font-weight: 600;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    opacity: 0.75;
+    transition: opacity 0.3s, color 0.3s;
+}
+
+body.luxury-store .navbar .nav-link:hover {
+    opacity: 1;
+    color: var(--lux-lime) !important;
+}
+
+body.luxury-store .navbar .form-control {
+    background: var(--lux-glass) !important;
+    border: 1px solid var(--lux-glass-border) !important;
+    border-radius: 999px !important;
+    color: var(--lux-text) !important;
+    font-size: 0.85rem;
+}
+
+body.luxury-store .navbar .btn-outline-success {
+    border-color: var(--lux-gold-dim) !important;
+    color: var(--lux-gold) !important;
+    border-radius: 999px;
+}
+
+body.luxury-store .navbar .btn-outline-success:hover {
+    background: var(--lux-gold-dim) !important;
+    color: var(--lux-text) !important;
+}
+
+body.luxury-store .nav-icon-btn {
+    border: 1px solid var(--lux-glass-border);
+    background: var(--lux-glass);
+    border-radius: 50%;
+    transition: border-color 0.3s, box-shadow 0.3s;
+}
+
+body.luxury-store .nav-icon-btn:hover {
+    border-color: var(--lux-lime);
+    box-shadow: 0 0 20px var(--lux-lime-dim);
+}
+
+body.luxury-store .cart-counter {
+    background: var(--lux-lime) !important;
+    color: var(--lux-on-accent) !important;
+    font-weight: 700;
+}
+
+/* Main */
+body.luxury-store .lux-main {
+    width: 100%;
+    max-width: none;
+    padding: 0;
+    margin: 0;
+}
+
+/* Product cards — luxury glass tiles */
+body.luxury-store .product-card {
+    background: linear-gradient(145deg, rgba(255,255,255,0.06) 0%, rgba(255,255,255,0.02) 100%);
+    border: 1px solid var(--lux-glass-border);
+    border-radius: var(--lux-radius);
+    backdrop-filter: blur(12px);
+    padding: 0;
+    overflow: hidden;
+    transition: transform 0.55s var(--lux-ease), box-shadow 0.55s var(--lux-ease), border-color 0.4s;
+}
+
+body.luxury-store .product-card:hover {
+    transform: translateY(-6px);
+    border-color: rgba(200, 255, 74, 0.35);
+    box-shadow: 0 24px 60px rgba(0, 0, 0, 0.5), 0 0 40px var(--lux-lime-dim);
+}
+
+body.luxury-store .product-card-img-wrap {
+    border-radius: 0;
+    margin-bottom: 0;
+    aspect-ratio: 1;
+    background: var(--lux-image-bg);
+}
+
+body.luxury-store .product-card-img-wrap::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(to top, var(--lux-overlay-mid) 0%, transparent 55%);
+    pointer-events: none;
+    z-index: 1;
+    opacity: 0.7;
+    transition: opacity 0.4s;
+}
+
+body.luxury-store .product-card:hover .product-card-img-wrap::after {
+    opacity: 0.95;
+}
+
+body.luxury-store .product-card-img-wrap img,
+body.luxury-store .product-card-img-wrap picture img {
+    filter: saturate(0.95) contrast(1.05) brightness(0.95);
+    transition: transform 0.7s var(--lux-ease), filter 0.5s;
+}
+
+body.luxury-store .product-card:hover .product-card-img-wrap img,
+body.luxury-store .product-card:hover .product-card-img-wrap picture img {
+    transform: scale(1.06);
+    filter: saturate(1.05) contrast(1.08) brightness(1);
+}
+
+body.luxury-store .product-title {
+    font-family: var(--lux-font-display);
+    font-size: 0.9rem;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    line-height: 1.35;
+}
+
+body.luxury-store .product-price {
+    font-size: 1.05rem;
+    font-weight: 700;
+    color: var(--lux-gold);
+}
+
+body.luxury-store .product-price .old-price {
+    color: var(--lux-muted);
+    font-weight: 400;
+    font-size: 0.85rem;
+}
+
+/* Cart widget luxury */
+body.luxury-store .cart-widget-add,
+body.luxury-store .btn-success.cart-widget-add {
+    background: linear-gradient(135deg, var(--lux-lime) 0%, color-mix(in srgb, var(--lux-lime) 78%, #000) 100%) !important;
+    border: none !important;
+    color: var(--lux-on-accent) !important;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    font-size: 0.72rem;
+    border-radius: 999px !important;
+    transition: box-shadow 0.35s, transform 0.25s;
+}
+
+body.luxury-store .cart-widget-add:hover {
+    box-shadow: 0 0 28px var(--lux-lime-dim);
+    transform: translateY(-1px);
+}
+
+body.luxury-store .cart-widget-active .btn-cart-link {
+    background: var(--lux-gold) !important;
+    color: var(--lux-on-accent) !important;
+    border-radius: 999px;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    font-size: 0.72rem;
+}
+
+body.luxury-store .cart-widget-qty-block {
+    background: var(--lux-glass);
+    border: 1px solid var(--lux-glass-border);
+    border-radius: 999px;
+}
+
+body.luxury-store .favorite-btn {
+    background: var(--lux-favorite-bg);
+    backdrop-filter: blur(8px);
+    border: 1px solid var(--lux-glass-border);
+    z-index: 5;
+}
+
+body.luxury-store .favorite-btn.active,
+body.luxury-store .favorite-btn:hover {
+    border-color: var(--lux-gold);
+    color: var(--lux-gold);
+}
+
+/* Footer */
+body.luxury-store .footer {
+    background: var(--lux-charcoal);
+    border-top: 1px solid var(--lux-glass-border);
+    padding-top: 3rem;
+}
+
+body.luxury-store .footer h5 {
+    font-family: var(--lux-font-display);
+    font-size: 0.72rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--lux-gold);
+}
+
+body.luxury-store .footer a {
+    color: var(--lux-muted);
+    transition: color 0.25s;
+}
+
+body.luxury-store .footer a:hover {
+    color: var(--lux-lime);
+}
+
+body.luxury-store .footer-info-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    column-gap: 1.75rem;
+    row-gap: 0.55rem;
+}
+
+body.luxury-store .footer-info-grid a {
+    display: inline-block;
+    font-size: 0.88rem;
+    line-height: 1.45;
+}
+
+@media (max-width: 575px) {
+    body.luxury-store .footer-info-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+body.luxury-store .lux-footer-integration {
+    margin-top: 1.5rem;
+    padding: 1rem 1.5rem;
+    border: 1px solid var(--lux-glass-border);
+    border-radius: var(--lux-radius);
+    background: var(--lux-glass);
+    font-size: 0.78rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--lux-muted);
+}
+
+body.luxury-store .lux-footer-integration span {
+    color: var(--lux-lime);
+}
+
+/* Floating buttons */
+body.luxury-store .telegram-float-btn {
+    background: linear-gradient(135deg, #0088cc, #229ED9);
+    box-shadow: 0 8px 32px rgba(0, 136, 204, 0.35);
+}
+
+body.luxury-store .cart-float-btn {
+    background: var(--lux-lime);
+    color: var(--lux-on-accent);
+    box-shadow: 0 8px 32px var(--lux-lime-dim);
+}
+
+body.luxury-store .back-to-top-btn {
+    background: var(--lux-glass);
+    border: 1px solid var(--lux-glass-border);
+    color: var(--lux-text);
+}
+
+body.luxury-store .back-to-top-btn:hover {
+    border-color: var(--lux-lime);
+    color: var(--lux-lime);
+}
+
+/* Age modal & cookie */
+body.luxury-store .age-modal {
+    background: var(--lux-surface);
+    border: 1px solid var(--lux-glass-border);
+}
+
+body.luxury-store .cookie-banner {
+    background: var(--lux-cookie-bg);
+    backdrop-filter: blur(16px);
+    border-top: 1px solid var(--lux-glass-border);
+    color: var(--lux-text);
+}
+
+body.luxury-store .cart-sidebar {
+    background: var(--lux-charcoal);
+    border-left: 1px solid var(--lux-glass-border);
+}
+
+body.luxury-store .cart-sidebar .btn-primary {
+    background: var(--lux-lime) !important;
+    border-color: var(--lux-lime) !important;
+    color: var(--lux-on-accent) !important;
+    font-weight: 700;
+}
+
+[data-theme="light"] body.luxury-store .product-card {
+    background: linear-gradient(145deg, #ffffff 0%, #faf8f4 100%);
+    box-shadow: var(--lux-shadow-soft);
+}
+
+[data-theme="light"] body.luxury-store .product-card:hover {
+    box-shadow: var(--lux-shadow-card), 0 0 24px var(--lux-lime-dim);
+}
+
+[data-theme="light"] body.luxury-store .lux-marquee-wrap,
+[data-theme="light"] body.luxury-store .lux-trust-item,
+[data-theme="light"] body.luxury-store .review-card {
+    background: var(--lux-surface);
+    box-shadow: var(--lux-shadow-soft);
+}
+
+/* Section headings global */
+body.luxury-store .lux-section-label {
+    display: block;
+    font-size: 0.68rem;
+    font-weight: 600;
+    letter-spacing: 0.28em;
+    text-transform: uppercase;
+    color: var(--lux-gold);
+    margin-bottom: 0.75rem;
+}
+
+body.luxury-store .lux-section-title {
+    font-family: var(--lux-font-display);
+    font-size: clamp(1.75rem, 4vw, 3rem);
+    font-weight: 800;
+    letter-spacing: -0.02em;
+    line-height: 1.05;
+    margin: 0;
+}
+
+body.luxury-store .lux-section-title em {
+    font-family: var(--lux-font-serif);
+    font-style: italic;
+    font-weight: 400;
+    color: var(--lux-gold);
+}
+
+body.luxury-store .btn-lux-primary {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.65rem;
+    padding: 0.95rem 2rem;
+    background: var(--lux-lime);
+    color: var(--lux-on-accent);
+    font-weight: 700;
+    font-size: 0.75rem;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    text-decoration: none;
+    border: none;
+    border-radius: 999px;
+    cursor: none;
+    transition: box-shadow 0.4s, transform 0.3s var(--lux-ease);
+}
+
+body.luxury-store .btn-lux-primary:hover {
+    color: var(--lux-on-accent);
+    box-shadow: 0 0 40px var(--lux-lime-dim);
+    transform: translateY(-2px);
+}
+
+body.luxury-store .btn-lux-ghost {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.95rem 2rem;
+    background: transparent;
+    color: var(--lux-text);
+    font-weight: 600;
+    font-size: 0.75rem;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    text-decoration: none;
+    border: 1px solid var(--lux-glass-border);
+    border-radius: 999px;
+    transition: border-color 0.3s, color 0.3s;
+}
+
+body.luxury-store .btn-lux-ghost:hover {
+    border-color: var(--lux-gold);
+    color: var(--lux-gold);
+}

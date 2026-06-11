@@ -2,8 +2,11 @@
 # Шаблон конфигурации. При первом запуске app.py создаётся config.py из этого файла.
 # config.example.py — шаблон (можно хранить в git). config.py — ваши настройки (токены, ключи).
 
-# Токен бота от @BotFather (для уведомлений о заказах и бота управления)
+# Токен бота от @BotFather (тот же, что у my_shop — только для уведомлений о заказах)
 TELEGRAM_BOT_TOKEN = ''
+
+# False на проде: polling только на сервере my_shop. Не запускайте lilstore-bot здесь.
+TELEGRAM_RUN_POLLING = False
 
 # Username бота без @ (для плавающей кнопки на сайте, например: iluma_prime_bot)
 TELEGRAM_BOT_USERNAME = ''
@@ -39,7 +42,7 @@ ILUMA_XLSX_PATH = r'c:\Users\Dubko\Desktop\iluma.xlsx'
 
 # URL сайта для ссылок из бота (админка, маршруты)
 # Для кнопки "Запустить приложение" (Web App) нужен HTTPS (например ngrok или хостинг)
-SITE_URL = 'http://127.0.0.1:5000'
+SITE_URL = 'https://iqos-store.ru'
 
 # Контакты на сайте (телефон, адрес для Яндекса/Google и страницы «Контакты»)
 SITE_PHONE = '+7 (993) 596-82-25'

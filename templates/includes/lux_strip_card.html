@@ -1,0 +1,11 @@
+<article class="lux-strip-item lux-strip-card">
+    <a href="{{ product|product_url }}" class="lux-strip-card-link text-decoration-none" tabindex="-1" aria-hidden="true">
+        {% set img_class = 'lux-cover-img' %}
+        {% include 'includes/product_card_image.html' %}
+    </a>
+    <div class="lux-strip-card-info">
+        <h4 class="lux-strip-card-name">{{ product.name }}</h4>
+        <p class="lux-strip-card-price">{{ product.price|format_price }} ₽</p>
+        {% include 'includes/add_to_cart_widget.html' %}
+    </div>
+</article>
