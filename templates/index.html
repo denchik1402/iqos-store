@@ -48,7 +48,7 @@
 {% endblock %}
 
 {% block extra_css %}
-<link rel="stylesheet" href="{{ url_for('static', filename='css/index.css') }}?v=16">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/index.css') }}?v=15">
 {% endblock %}
 
 {% block content %}
@@ -127,12 +127,43 @@
         <a href="{{ url_for('catalog') }}" class="btn-lux-ghost">Весь каталог →</a>
     </header>
 
-    <div class="lux-product-grid lux-product-grid--season lux-reveal">
+    <div class="lux-product-grid lux-reveal">
         {% for product in season_products %}
         {% set season_badge = product|season_badge %}
-        {% set featured = loop.first %}
-        {% set eager = loop.first %}
-        {% include 'includes/lux_season_card.html' %}
+        <article class="lux-tile lux-tile--season{% if loop.first %} lux-tile--featured{% endif %}">
+            {% if season_badge == 'limited' %}
+            <span class="lux-tile-badge lux-tile-badge--gold">Limited</span>
+            {% elif season_badge == 'new' %}
+            <span class="lux-tile-badge">New</span>
+            {% elif season_badge == 'hit' %}
+            <span class="lux-tile-badge lux-tile-badge--gold">Hit</span>
+            {% elif loop.first %}
+            <span class="lux-tile-badge">Featured</span>
+            {% endif %}
+
+            {% include 'includes/favorite_btn.html' %}
+
+            <div class="lux-tile-media">
+                {% set img_class = 'lux-cover-img' %}
+                {% set eager = loop.first %}
+                {% include 'includes/product_card_image.html' %}
+            </div>
+            <div class="lux-tile-shade" aria-hidden="true"></div>
+
+            <div class="lux-tile-glass">
+                <a href="{{ product|product_url }}" class="lux-tile-name">{{ product.name }}</a>
+                <div class="lux-tile-price">
+                    {{ product.price|format_price }} ₽
+                    {% if product.old_price and product.old_price > product.price %}
+                    <span class="old-price">{{ product.old_price|format_price }} ₽</span>
+                    {% endif %}
+                </div>
+                <div class="lux-tile-actions">
+                    <a href="{{ product|product_url }}" class="lux-tile-link-detail">Подробнее →</a>
+                    {% include 'includes/add_to_cart_widget.html' %}
+                </div>
+            </div>
+        </article>
         {% endfor %}
     </div>
 </section>

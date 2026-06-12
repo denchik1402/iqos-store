@@ -416,38 +416,211 @@
     color: var(--lux-lime);
 }
 
-/* Season grid — карточки как в каруселях (lux-strip-card), сетка 3×3 */
-.lux-product-grid--season .lux-season-card {
-    width: 100%;
-    min-height: 0;
+/* Season — фото целиком по высоте, текст+blur только при hover */
+.lux-tile--season .lux-tile-media {
+    background: var(--lux-image-bg);
 }
 
-.lux-product-grid--season .lux-season-card .lux-tile-badge,
-.lux-product-grid--season .lux-season-card .favorite-btn {
-    z-index: 3;
+.lux-tile--season .lux-tile-media img,
+.lux-tile--season .lux-tile-media picture img,
+.lux-tile--season .lux-tile-media .lux-cover-img {
+    object-fit: contain;
+    object-position: center center;
+    padding: clamp(0.5rem, 1.8vw, 0.85rem);
 }
 
-.lux-product-grid--season .lux-season-card--featured {
-    grid-column: 1 / 3;
-    grid-row: 1 / 3;
-    aspect-ratio: auto;
-    min-height: 100%;
+.lux-tile--season:hover .lux-tile-media img,
+.lux-tile--season:hover .lux-tile-media picture img {
+    transform: scale(1.03);
 }
 
-.lux-product-grid--season .lux-season-card--featured .lux-strip-card-name {
-    font-size: clamp(1rem, 2.2vw, 1.15rem);
+.lux-tile--season .lux-tile-shade {
+    opacity: 0;
+    background: linear-gradient(
+        to top,
+        rgba(5, 5, 6, 0.5) 0%,
+        rgba(5, 5, 6, 0.1) 36%,
+        transparent 62%
+    );
+    transition: opacity 0.45s var(--lux-ease);
 }
 
-.lux-product-grid--season .lux-season-card--featured .lux-strip-card-price {
-    font-size: clamp(1rem, 2.5vw, 1.15rem);
+[data-theme="light"] .lux-tile--season .lux-tile-shade {
+    background: linear-gradient(
+        to top,
+        rgba(246, 244, 239, 0.58) 0%,
+        rgba(246, 244, 239, 0.14) 36%,
+        transparent 62%
+    );
 }
 
-.lux-season-old-price {
-    font-size: 0.85em;
-    color: var(--lux-muted);
-    font-weight: 400;
-    text-decoration: line-through;
-    margin-left: 0.35rem;
+.lux-tile--season .lux-tile-glass {
+    left: clamp(0.65rem, 2vw, 1rem);
+    right: clamp(0.65rem, 2vw, 1rem);
+    bottom: clamp(0.65rem, 2vw, 1rem);
+    width: auto;
+    border-radius: calc(var(--lux-radius) - 2px);
+    padding: clamp(0.85rem, 2.2vw, 1.35rem);
+    background: rgba(5, 5, 6, 0.42);
+    backdrop-filter: blur(16px) saturate(1.15);
+    -webkit-backdrop-filter: blur(16px) saturate(1.15);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    box-shadow: 0 10px 36px rgba(0, 0, 0, 0.28);
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+    transform: translateY(14px);
+    transition:
+        opacity 0.45s var(--lux-ease),
+        transform 0.45s var(--lux-ease),
+        visibility 0.45s;
+}
+
+[data-theme="light"] .lux-tile--season .lux-tile-glass {
+    background: rgba(255, 255, 255, 0.68);
+    border-color: rgba(22, 22, 20, 0.08);
+    box-shadow: 0 10px 32px rgba(22, 22, 20, 0.12);
+}
+
+.lux-tile--season:hover .lux-tile-shade,
+.lux-tile--season:focus-within .lux-tile-shade {
+    opacity: 1;
+}
+
+.lux-tile--season:hover .lux-tile-glass,
+.lux-tile--season:focus-within .lux-tile-glass {
+    opacity: 1;
+    visibility: visible;
+    pointer-events: auto;
+    transform: translateY(0);
+}
+
+.lux-tile--season.lux-tile--featured .lux-tile-glass {
+    left: clamp(1rem, 3vw, 1.5rem);
+    right: clamp(1rem, 3vw, 1.5rem);
+    bottom: clamp(1rem, 3vw, 1.5rem);
+    padding: clamp(1rem, 3vw, 1.75rem);
+}
+
+/* Season на планшете/телефоне: фото сверху, текст снизу (не перекрывает изображение) */
+@media (max-width: 992px) {
+    .lux-tile--season {
+        display: flex;
+        flex-direction: column;
+        min-height: unset;
+    }
+
+    .lux-tile--season.lux-tile--featured {
+        min-height: unset;
+    }
+
+    .lux-tile--season .lux-tile-media {
+        position: relative;
+        inset: unset;
+        flex: 0 0 auto;
+        width: 100%;
+        aspect-ratio: 1 / 1;
+    }
+
+    .lux-tile--season.lux-tile--featured .lux-tile-media {
+        aspect-ratio: 4 / 5;
+    }
+
+    .lux-tile--season .lux-tile-shade {
+        display: none;
+    }
+
+    .lux-tile--season .lux-tile-glass {
+        position: relative;
+        inset: unset;
+        left: auto;
+        right: auto;
+        bottom: auto;
+        width: 100%;
+        flex: 1 1 auto;
+        margin: 0;
+        border-radius: 0;
+        border-top: 1px solid var(--lux-glass-border);
+        background: var(--lux-surface);
+        backdrop-filter: none;
+        -webkit-backdrop-filter: none;
+        box-shadow: none;
+        opacity: 1;
+        visibility: visible;
+        pointer-events: auto;
+        transform: none;
+        padding: clamp(0.85rem, 3vw, 1.15rem) clamp(0.9rem, 3vw, 1.2rem) clamp(1rem, 3vw, 1.25rem);
+    }
+
+    [data-theme="light"] .lux-tile--season .lux-tile-glass {
+        background: var(--lux-surface);
+        border-color: var(--lux-glass-border);
+        box-shadow: none;
+    }
+
+    .lux-tile--season.lux-tile--featured .lux-tile-glass {
+        left: auto;
+        right: auto;
+        bottom: auto;
+        padding: clamp(1rem, 3.5vw, 1.35rem) clamp(1rem, 3.5vw, 1.35rem) clamp(1.1rem, 3.5vw, 1.4rem);
+    }
+
+    .lux-tile--season .lux-tile-media img,
+    .lux-tile--season .lux-tile-media picture img,
+    .lux-tile--season .lux-tile-media .lux-cover-img {
+        padding: clamp(0.65rem, 2.5vw, 1rem);
+    }
+
+    .lux-tile--season .lux-tile-actions {
+        flex-direction: row;
+        flex-wrap: wrap;
+        align-items: center;
+        gap: 0.65rem;
+    }
+
+    .lux-tile--season .lux-tile-link-detail {
+        flex: 1 1 auto;
+    }
+
+    .lux-tile--season .lux-tile-actions .add-to-cart-widget {
+        flex: 1 1 100%;
+        margin-top: 0.15rem;
+    }
+}
+
+@media (max-width: 576px) {
+    .lux-tile--season .lux-tile-media {
+        aspect-ratio: 5 / 6;
+    }
+
+    .lux-tile--season.lux-tile--featured .lux-tile-media {
+        aspect-ratio: 3 / 4;
+    }
+
+    .lux-tile--season .lux-tile-name {
+        font-size: 0.95rem;
+        line-height: 1.35;
+    }
+
+    .lux-tile--season.lux-tile--featured .lux-tile-name {
+        font-size: clamp(1.05rem, 4.5vw, 1.35rem);
+    }
+
+    .lux-tile--season .lux-tile-price {
+        font-size: 1rem;
+        margin-bottom: 0.65rem;
+    }
+
+    .lux-tile--season.lux-tile--featured .lux-tile-price {
+        font-size: 1.2rem;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .lux-tile--season .lux-tile-glass,
+    .lux-tile--season .lux-tile-shade {
+        transition: none;
+    }
 }
 
 /* ── EXCLUSIVE ACCESSORIES ── */
@@ -1115,12 +1288,6 @@
         min-height: 420px;
     }
 
-    .lux-product-grid--season .lux-season-card--featured {
-        grid-column: 1 / 3;
-        grid-row: 1 / 3;
-        min-height: 100%;
-    }
-
     .lux-vip-inner {
         grid-template-columns: 1fr;
     }
@@ -1139,13 +1306,6 @@
         grid-column: 1 / -1;
         grid-row: auto;
         min-height: 380px;
-    }
-
-    .lux-product-grid--season .lux-season-card--featured {
-        grid-column: 1 / -1;
-        grid-row: auto;
-        aspect-ratio: 3 / 4;
-        min-height: 0;
     }
 
     .lux-hero-title {
