@@ -218,6 +218,59 @@
     transform: translateY(0);
 }
 
+/* ── PRODUCT GRID: 3 cols, featured 2×2, 9 products total ── */
+.lux-product-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    grid-auto-rows: minmax(260px, auto);
+    gap: clamp(0.75rem, 2vw, 1.25rem);
+}
+
+.lux-tile {
+    position: relative;
+    border-radius: var(--lux-radius);
+    overflow: hidden;
+    min-height: 260px;
+    background: var(--lux-surface);
+    border: 1px solid var(--lux-glass-border);
+    transition: border-color 0.45s, box-shadow 0.45s;
+}
+
+.lux-tile:hover {
+    border-color: rgba(200, 255, 74, 0.4);
+    box-shadow: var(--lux-shadow-card), 0 0 30px var(--lux-lime-dim);
+}
+
+.lux-tile--featured {
+    grid-column: 1 / 3;
+    grid-row: 1 / 3;
+    min-height: 540px;
+}
+
+.lux-tile-media {
+    position: absolute;
+    inset: 0;
+    overflow: hidden;
+    z-index: 0;
+}
+
+.lux-tile-media picture {
+    position: absolute;
+    inset: 0;
+    display: block;
+    width: 100%;
+    height: 100%;
+}
+
+.lux-tile-media picture,
+.lux-tile-media img,
+.lux-tile-media .lux-cover-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+}
+
 .lux-strip-card picture {
     position: absolute;
     inset: 0;
@@ -242,12 +295,49 @@
     display: block;
 }
 
-/* Badges + избранное на карточках Season (карусель) */
+.lux-tile-media img,
+.lux-tile-media picture img {
+    filter: saturate(0.92) contrast(1.05) brightness(0.88);
+    transition: transform 0.8s var(--lux-ease), filter 0.5s;
+}
+
+.lux-tile:hover .lux-tile-media img,
+.lux-tile:hover .lux-tile-media picture img {
+    transform: scale(1.06);
+    filter: saturate(1.05) contrast(1.08) brightness(0.98);
+}
+
+.lux-tile-shade {
+    position: absolute;
+    inset: 0;
+    background: var(--lux-tile-shade);
+    z-index: 1;
+    pointer-events: none;
+}
+
+.lux-tile-glass {
+    position: absolute;
+    inset: auto 0 0 0;
+    z-index: 2;
+    padding: clamp(1rem, 3vw, 1.75rem);
+    background: var(--lux-tile-glass);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    transform: translateY(12px);
+    opacity: 0.92;
+    transition: transform 0.5s var(--lux-ease), opacity 0.4s;
+}
+
+.lux-tile:hover .lux-tile-glass {
+    transform: translateY(0);
+    opacity: 1;
+}
+
 .lux-tile-badge {
     position: absolute;
     top: 1rem;
     left: 1rem;
-    z-index: 4;
+    z-index: 3;
     padding: 0.35rem 0.85rem;
     font-size: 0.62rem;
     font-weight: 700;
@@ -256,34 +346,108 @@
     border-radius: 999px;
     background: var(--lux-lime);
     color: var(--lux-on-accent);
-    pointer-events: none;
 }
 
 .lux-tile-badge--gold {
     background: var(--lux-gold);
 }
 
-.lux-strip-card--season .favorite-btn {
-    z-index: 4;
+.lux-tile .favorite-btn {
+    position: absolute;
+    top: 1rem;
+    right: 1rem;
+    z-index: 3;
 }
 
-.lux-strip-card-old-price {
+.lux-tile-name {
+    font-size: clamp(0.95rem, 2vw, 1.15rem);
+    font-weight: 700;
+    letter-spacing: 0.02em;
+    margin: 0 0 0.35rem;
+    color: var(--lux-text);
+    text-decoration: none;
+    display: block;
+}
+
+.lux-tile--featured .lux-tile-name {
+    font-size: clamp(1.25rem, 3vw, 2rem);
+}
+
+.lux-tile-price {
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: var(--lux-gold);
+    margin-bottom: 0.85rem;
+}
+
+.lux-tile--featured .lux-tile-price {
+    font-size: 1.5rem;
+}
+
+.lux-tile-price .old-price {
+    font-size: 0.85em;
+    color: var(--lux-muted);
+    font-weight: 400;
+    text-decoration: line-through;
+    margin-left: 0.5rem;
+}
+
+.lux-tile-actions {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.lux-tile-actions .add-to-cart-widget {
+    margin-top: 0.25rem;
+}
+
+.lux-tile-link-detail {
+    font-size: 0.68rem;
+    font-weight: 600;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--lux-muted);
+    text-decoration: none;
+    transition: color 0.25s;
+}
+
+.lux-tile-link-detail:hover {
+    color: var(--lux-lime);
+}
+
+/* Season grid — карточки как в каруселях (lux-strip-card), сетка 3×3 */
+.lux-product-grid--season .lux-season-card {
+    width: 100%;
+    min-height: 0;
+}
+
+.lux-product-grid--season .lux-season-card .lux-tile-badge,
+.lux-product-grid--season .lux-season-card .favorite-btn {
+    z-index: 3;
+}
+
+.lux-product-grid--season .lux-season-card--featured {
+    grid-column: 1 / 3;
+    grid-row: 1 / 3;
+    aspect-ratio: auto;
+    min-height: 100%;
+}
+
+.lux-product-grid--season .lux-season-card--featured .lux-strip-card-name {
+    font-size: clamp(1rem, 2.2vw, 1.15rem);
+}
+
+.lux-product-grid--season .lux-season-card--featured .lux-strip-card-price {
+    font-size: clamp(1rem, 2.5vw, 1.15rem);
+}
+
+.lux-season-old-price {
     font-size: 0.85em;
     color: var(--lux-muted);
     font-weight: 400;
     text-decoration: line-through;
     margin-left: 0.35rem;
-}
-
-.lux-section--season.lux-accessories {
-    padding-block: clamp(4rem, 10vw, 7rem);
-}
-
-.lux-section--season .lux-section-header {
-    max-width: 1400px;
-    margin-inline: auto;
-    padding-inline: clamp(1.25rem, 4vw, 3rem);
-    margin-bottom: 2rem;
 }
 
 /* ── EXCLUSIVE ACCESSORIES ── */
@@ -540,11 +704,6 @@
     color: var(--lux-text);
 }
 
-.lux-strip-card-name a {
-    color: inherit;
-    text-decoration: none;
-}
-
 .lux-strip-card-price {
     font-size: 0.95rem;
     color: var(--lux-gold);
@@ -555,13 +714,6 @@
 .lux-strip-card-info .add-to-cart-widget .cart-widget-add {
     padding: 0.5rem 1rem;
     font-size: 0.65rem;
-}
-
-@media (hover: none) {
-    .lux-strip-card:focus-within .lux-strip-card-info {
-        transform: translateY(0);
-        pointer-events: auto;
-    }
 }
 
 /* ── REVIEWS ── */
@@ -952,6 +1104,23 @@
 
 /* ── RESPONSIVE ── */
 @media (max-width: 992px) {
+    .lux-product-grid {
+        grid-template-columns: repeat(2, 1fr);
+        grid-template-rows: auto;
+    }
+
+    .lux-tile--featured {
+        grid-column: 1 / 3;
+        grid-row: 1 / 3;
+        min-height: 420px;
+    }
+
+    .lux-product-grid--season .lux-season-card--featured {
+        grid-column: 1 / 3;
+        grid-row: 1 / 3;
+        min-height: 100%;
+    }
+
     .lux-vip-inner {
         grid-template-columns: 1fr;
     }
@@ -962,6 +1131,23 @@
 }
 
 @media (max-width: 576px) {
+    .lux-product-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .lux-tile--featured {
+        grid-column: 1 / -1;
+        grid-row: auto;
+        min-height: 380px;
+    }
+
+    .lux-product-grid--season .lux-season-card--featured {
+        grid-column: 1 / -1;
+        grid-row: auto;
+        aspect-ratio: 3 / 4;
+        min-height: 0;
+    }
+
     .lux-hero-title {
         font-size: clamp(2.5rem, 12vw, 3.5rem);
     }
@@ -994,6 +1180,10 @@
     background:
         radial-gradient(ellipse 80% 60% at 50% 100%, rgba(127, 168, 0, 0.1) 0%, transparent 60%),
         var(--lux-hero-gradient);
+}
+
+[data-theme="light"] .lux-tile {
+    box-shadow: var(--lux-shadow-soft);
 }
 
 [data-theme="light"] .lux-strip-card {

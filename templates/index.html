@@ -116,9 +116,9 @@
     </div>
 </section>
 
-<!-- ═══ SEASON COLLECTION STRIP ═══ -->
+<!-- ═══ SEASON COLLECTION GRID ═══ -->
 {% if season_products %}
-<section class="lux-accessories lux-section--season" aria-label="Коллекция Season">
+<section class="lux-section lux-section--season" aria-label="Коллекция Season">
     <header class="lux-section-header lux-reveal">
         <div>
             <span class="lux-section-label">Curated Selection</span>
@@ -127,18 +127,13 @@
         <a href="{{ url_for('catalog') }}" class="btn-lux-ghost">Весь каталог →</a>
     </header>
 
-    <div class="lux-strip lux-reveal">
-        <div class="lux-strip-viewport" id="seasonStrip">
-            {% for product in season_products %}
-            {% set season_badge = product|season_badge %}
-            {% set season_featured = loop.first and not season_badge %}
-            {% set eager = loop.index <= 4 %}
-            {% include 'includes/lux_strip_card_season.html' %}
-            {% endfor %}
-        </div>
-        {% with nav_label='Коллекция Season' %}
-        {% include 'includes/lux_strip_nav.html' %}
-        {% endwith %}
+    <div class="lux-product-grid lux-product-grid--season lux-reveal">
+        {% for product in season_products %}
+        {% set season_badge = product|season_badge %}
+        {% set featured = loop.first %}
+        {% set eager = loop.first %}
+        {% include 'includes/lux_season_card.html' %}
+        {% endfor %}
     </div>
 </section>
 {% endif %}
