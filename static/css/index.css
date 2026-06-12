@@ -503,15 +503,60 @@
 }
 
 @media (hover: none) {
+    /* Season на телефоне: фото сверху, текст снизу (без оверлея поверх картинки) */
+    .lux-tile--season {
+        display: flex;
+        flex-direction: column;
+        min-height: 0;
+    }
+
+    .lux-tile--season.lux-tile--featured {
+        min-height: 0;
+    }
+
+    .lux-tile--season .lux-tile-media {
+        position: relative;
+        inset: auto;
+        flex: 0 0 auto;
+        aspect-ratio: 1;
+        width: 100%;
+        min-height: 0;
+    }
+
     .lux-tile--season .lux-tile-shade {
-        opacity: 1;
+        display: none;
     }
 
     .lux-tile--season .lux-tile-glass {
+        position: static;
+        left: auto;
+        right: auto;
+        bottom: auto;
+        width: 100%;
+        flex: 0 0 auto;
         opacity: 1;
         visibility: visible;
         pointer-events: auto;
         transform: none;
+        border-radius: 0;
+        border-top: 1px solid rgba(255, 255, 255, 0.1);
+        background: var(--lux-surface);
+        backdrop-filter: none;
+        -webkit-backdrop-filter: none;
+        box-shadow: none;
+    }
+
+    [data-theme="light"] .lux-tile--season .lux-tile-glass {
+        background: var(--lux-surface);
+        border-color: rgba(22, 22, 20, 0.08);
+        box-shadow: none;
+    }
+
+    .lux-tile--season.lux-tile--featured .lux-tile-glass {
+        left: auto;
+        right: auto;
+        bottom: auto;
+        padding: clamp(0.85rem, 2.2vw, 1.35rem);
     }
 }
 
