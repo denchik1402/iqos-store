@@ -218,59 +218,6 @@
     transform: translateY(0);
 }
 
-/* ── PRODUCT GRID: 3 cols, featured 2×2, 9 products total ── */
-.lux-product-grid {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    grid-auto-rows: minmax(260px, auto);
-    gap: clamp(0.75rem, 2vw, 1.25rem);
-}
-
-.lux-tile {
-    position: relative;
-    border-radius: var(--lux-radius);
-    overflow: hidden;
-    min-height: 260px;
-    background: var(--lux-surface);
-    border: 1px solid var(--lux-glass-border);
-    transition: border-color 0.45s, box-shadow 0.45s;
-}
-
-.lux-tile:hover {
-    border-color: rgba(200, 255, 74, 0.4);
-    box-shadow: var(--lux-shadow-card), 0 0 30px var(--lux-lime-dim);
-}
-
-.lux-tile--featured {
-    grid-column: 1 / 3;
-    grid-row: 1 / 3;
-    min-height: 540px;
-}
-
-.lux-tile-media {
-    position: absolute;
-    inset: 0;
-    overflow: hidden;
-    z-index: 0;
-}
-
-.lux-tile-media picture {
-    position: absolute;
-    inset: 0;
-    display: block;
-    width: 100%;
-    height: 100%;
-}
-
-.lux-tile-media picture,
-.lux-tile-media img,
-.lux-tile-media .lux-cover-img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    display: block;
-}
-
 .lux-strip-card picture {
     position: absolute;
     inset: 0;
@@ -295,49 +242,12 @@
     display: block;
 }
 
-.lux-tile-media img,
-.lux-tile-media picture img {
-    filter: saturate(0.92) contrast(1.05) brightness(0.88);
-    transition: transform 0.8s var(--lux-ease), filter 0.5s;
-}
-
-.lux-tile:hover .lux-tile-media img,
-.lux-tile:hover .lux-tile-media picture img {
-    transform: scale(1.06);
-    filter: saturate(1.05) contrast(1.08) brightness(0.98);
-}
-
-.lux-tile-shade {
-    position: absolute;
-    inset: 0;
-    background: var(--lux-tile-shade);
-    z-index: 1;
-    pointer-events: none;
-}
-
-.lux-tile-glass {
-    position: absolute;
-    inset: auto 0 0 0;
-    z-index: 2;
-    padding: clamp(1rem, 3vw, 1.75rem);
-    background: var(--lux-tile-glass);
-    backdrop-filter: blur(16px);
-    -webkit-backdrop-filter: blur(16px);
-    transform: translateY(12px);
-    opacity: 0.92;
-    transition: transform 0.5s var(--lux-ease), opacity 0.4s;
-}
-
-.lux-tile:hover .lux-tile-glass {
-    transform: translateY(0);
-    opacity: 1;
-}
-
+/* Badges + избранное на карточках Season (карусель) */
 .lux-tile-badge {
     position: absolute;
     top: 1rem;
     left: 1rem;
-    z-index: 3;
+    z-index: 4;
     padding: 0.35rem 0.85rem;
     font-size: 0.62rem;
     font-weight: 700;
@@ -346,225 +256,34 @@
     border-radius: 999px;
     background: var(--lux-lime);
     color: var(--lux-on-accent);
+    pointer-events: none;
 }
 
 .lux-tile-badge--gold {
     background: var(--lux-gold);
 }
 
-.lux-tile .favorite-btn {
-    position: absolute;
-    top: 1rem;
-    right: 1rem;
-    z-index: 3;
+.lux-strip-card--season .favorite-btn {
+    z-index: 4;
 }
 
-.lux-tile-name {
-    font-size: clamp(0.95rem, 2vw, 1.15rem);
-    font-weight: 700;
-    letter-spacing: 0.02em;
-    margin: 0 0 0.35rem;
-    color: var(--lux-text);
-    text-decoration: none;
-    display: block;
-}
-
-.lux-tile--featured .lux-tile-name {
-    font-size: clamp(1.25rem, 3vw, 2rem);
-}
-
-.lux-tile-price {
-    font-size: 1.1rem;
-    font-weight: 700;
-    color: var(--lux-gold);
-    margin-bottom: 0.85rem;
-}
-
-.lux-tile--featured .lux-tile-price {
-    font-size: 1.5rem;
-}
-
-.lux-tile-price .old-price {
+.lux-strip-card-old-price {
     font-size: 0.85em;
     color: var(--lux-muted);
     font-weight: 400;
     text-decoration: line-through;
-    margin-left: 0.5rem;
+    margin-left: 0.35rem;
 }
 
-.lux-tile-actions {
-    display: flex;
-    flex-direction: column;
-    gap: 0.5rem;
+.lux-section--season.lux-accessories {
+    padding-block: clamp(4rem, 10vw, 7rem);
 }
 
-.lux-tile-actions .add-to-cart-widget {
-    margin-top: 0.25rem;
-}
-
-.lux-tile-link-detail {
-    font-size: 0.68rem;
-    font-weight: 600;
-    letter-spacing: 0.14em;
-    text-transform: uppercase;
-    color: var(--lux-muted);
-    text-decoration: none;
-    transition: color 0.25s;
-}
-
-.lux-tile-link-detail:hover {
-    color: var(--lux-lime);
-}
-
-/* Season — фото целиком по высоте, текст+blur только при hover */
-.lux-tile--season .lux-tile-media {
-    background: var(--lux-image-bg);
-}
-
-.lux-tile--season .lux-tile-media img,
-.lux-tile--season .lux-tile-media picture img,
-.lux-tile--season .lux-tile-media .lux-cover-img {
-    object-fit: contain;
-    object-position: center center;
-    padding: clamp(0.5rem, 1.8vw, 0.85rem);
-}
-
-.lux-tile--season:hover .lux-tile-media img,
-.lux-tile--season:hover .lux-tile-media picture img {
-    transform: scale(1.03);
-}
-
-.lux-tile--season .lux-tile-shade {
-    opacity: 0;
-    background: linear-gradient(
-        to top,
-        rgba(5, 5, 6, 0.5) 0%,
-        rgba(5, 5, 6, 0.1) 36%,
-        transparent 62%
-    );
-    transition: opacity 0.45s var(--lux-ease);
-}
-
-[data-theme="light"] .lux-tile--season .lux-tile-shade {
-    background: linear-gradient(
-        to top,
-        rgba(246, 244, 239, 0.58) 0%,
-        rgba(246, 244, 239, 0.14) 36%,
-        transparent 62%
-    );
-}
-
-.lux-tile--season .lux-tile-glass {
-    left: clamp(0.65rem, 2vw, 1rem);
-    right: clamp(0.65rem, 2vw, 1rem);
-    bottom: clamp(0.65rem, 2vw, 1rem);
-    width: auto;
-    border-radius: calc(var(--lux-radius) - 2px);
-    padding: clamp(0.85rem, 2.2vw, 1.35rem);
-    background: rgba(5, 5, 6, 0.42);
-    backdrop-filter: blur(16px) saturate(1.15);
-    -webkit-backdrop-filter: blur(16px) saturate(1.15);
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    box-shadow: 0 10px 36px rgba(0, 0, 0, 0.28);
-    opacity: 0;
-    visibility: hidden;
-    pointer-events: none;
-    transform: translateY(14px);
-    transition:
-        opacity 0.45s var(--lux-ease),
-        transform 0.45s var(--lux-ease),
-        visibility 0.45s;
-}
-
-[data-theme="light"] .lux-tile--season .lux-tile-glass {
-    background: rgba(255, 255, 255, 0.68);
-    border-color: rgba(22, 22, 20, 0.08);
-    box-shadow: 0 10px 32px rgba(22, 22, 20, 0.12);
-}
-
-.lux-tile--season:hover .lux-tile-shade,
-.lux-tile--season:focus-within .lux-tile-shade {
-    opacity: 1;
-}
-
-.lux-tile--season:hover .lux-tile-glass,
-.lux-tile--season:focus-within .lux-tile-glass {
-    opacity: 1;
-    visibility: visible;
-    pointer-events: auto;
-    transform: translateY(0);
-}
-
-.lux-tile--season.lux-tile--featured .lux-tile-glass {
-    left: clamp(1rem, 3vw, 1.5rem);
-    right: clamp(1rem, 3vw, 1.5rem);
-    bottom: clamp(1rem, 3vw, 1.5rem);
-    padding: clamp(1rem, 3vw, 1.75rem);
-}
-
-@media (hover: none) {
-    /* Season на телефоне: фото сверху, текст снизу (без оверлея поверх картинки) */
-    .lux-tile--season {
-        display: flex;
-        flex-direction: column;
-        min-height: 0;
-    }
-
-    .lux-tile--season.lux-tile--featured {
-        min-height: 0;
-    }
-
-    .lux-tile--season .lux-tile-media {
-        position: relative;
-        inset: auto;
-        flex: 0 0 auto;
-        aspect-ratio: 1;
-        width: 100%;
-        min-height: 0;
-    }
-
-    .lux-tile--season .lux-tile-shade {
-        display: none;
-    }
-
-    .lux-tile--season .lux-tile-glass {
-        position: static;
-        left: auto;
-        right: auto;
-        bottom: auto;
-        width: 100%;
-        flex: 0 0 auto;
-        opacity: 1;
-        visibility: visible;
-        pointer-events: auto;
-        transform: none;
-        border-radius: 0;
-        border-top: 1px solid rgba(255, 255, 255, 0.1);
-        background: var(--lux-surface);
-        backdrop-filter: none;
-        -webkit-backdrop-filter: none;
-        box-shadow: none;
-    }
-
-    [data-theme="light"] .lux-tile--season .lux-tile-glass {
-        background: var(--lux-surface);
-        border-color: rgba(22, 22, 20, 0.08);
-        box-shadow: none;
-    }
-
-    .lux-tile--season.lux-tile--featured .lux-tile-glass {
-        left: auto;
-        right: auto;
-        bottom: auto;
-        padding: clamp(0.85rem, 2.2vw, 1.35rem);
-    }
-}
-
-@media (prefers-reduced-motion: reduce) {
-    .lux-tile--season .lux-tile-glass,
-    .lux-tile--season .lux-tile-shade {
-        transition: none;
-    }
+.lux-section--season .lux-section-header {
+    max-width: 1400px;
+    margin-inline: auto;
+    padding-inline: clamp(1.25rem, 4vw, 3rem);
+    margin-bottom: 2rem;
 }
 
 /* ── EXCLUSIVE ACCESSORIES ── */
@@ -821,6 +540,11 @@
     color: var(--lux-text);
 }
 
+.lux-strip-card-name a {
+    color: inherit;
+    text-decoration: none;
+}
+
 .lux-strip-card-price {
     font-size: 0.95rem;
     color: var(--lux-gold);
@@ -831,6 +555,13 @@
 .lux-strip-card-info .add-to-cart-widget .cart-widget-add {
     padding: 0.5rem 1rem;
     font-size: 0.65rem;
+}
+
+@media (hover: none) {
+    .lux-strip-card:focus-within .lux-strip-card-info {
+        transform: translateY(0);
+        pointer-events: auto;
+    }
 }
 
 /* ── REVIEWS ── */
@@ -1221,17 +952,6 @@
 
 /* ── RESPONSIVE ── */
 @media (max-width: 992px) {
-    .lux-product-grid {
-        grid-template-columns: repeat(2, 1fr);
-        grid-template-rows: auto;
-    }
-
-    .lux-tile--featured {
-        grid-column: 1 / 3;
-        grid-row: 1 / 3;
-        min-height: 420px;
-    }
-
     .lux-vip-inner {
         grid-template-columns: 1fr;
     }
@@ -1242,16 +962,6 @@
 }
 
 @media (max-width: 576px) {
-    .lux-product-grid {
-        grid-template-columns: 1fr;
-    }
-
-    .lux-tile--featured {
-        grid-column: 1 / -1;
-        grid-row: auto;
-        min-height: 380px;
-    }
-
     .lux-hero-title {
         font-size: clamp(2.5rem, 12vw, 3.5rem);
     }
@@ -1284,10 +994,6 @@
     background:
         radial-gradient(ellipse 80% 60% at 50% 100%, rgba(127, 168, 0, 0.1) 0%, transparent 60%),
         var(--lux-hero-gradient);
-}
-
-[data-theme="light"] .lux-tile {
-    box-shadow: var(--lux-shadow-soft);
 }
 
 [data-theme="light"] .lux-strip-card {

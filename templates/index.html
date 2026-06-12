@@ -48,7 +48,7 @@
 {% endblock %}
 
 {% block extra_css %}
-<link rel="stylesheet" href="{{ url_for('static', filename='css/index.css') }}?v=15">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/index.css') }}?v=16">
 {% endblock %}
 
 {% block content %}
@@ -116,9 +116,9 @@
     </div>
 </section>
 
-<!-- ═══ SEASON COLLECTION GRID ═══ -->
+<!-- ═══ SEASON COLLECTION STRIP ═══ -->
 {% if season_products %}
-<section class="lux-section lux-section--season" aria-label="Коллекция Season">
+<section class="lux-accessories lux-section--season" aria-label="Коллекция Season">
     <header class="lux-section-header lux-reveal">
         <div>
             <span class="lux-section-label">Curated Selection</span>
@@ -127,44 +127,18 @@
         <a href="{{ url_for('catalog') }}" class="btn-lux-ghost">Весь каталог →</a>
     </header>
 
-    <div class="lux-product-grid lux-reveal">
-        {% for product in season_products %}
-        {% set season_badge = product|season_badge %}
-        <article class="lux-tile lux-tile--season{% if loop.first %} lux-tile--featured{% endif %}">
-            {% if season_badge == 'limited' %}
-            <span class="lux-tile-badge lux-tile-badge--gold">Limited</span>
-            {% elif season_badge == 'new' %}
-            <span class="lux-tile-badge">New</span>
-            {% elif season_badge == 'hit' %}
-            <span class="lux-tile-badge lux-tile-badge--gold">Hit</span>
-            {% elif loop.first %}
-            <span class="lux-tile-badge">Featured</span>
-            {% endif %}
-
-            {% include 'includes/favorite_btn.html' %}
-
-            <div class="lux-tile-media">
-                {% set img_class = 'lux-cover-img' %}
-                {% set eager = loop.first %}
-                {% include 'includes/product_card_image.html' %}
-            </div>
-            <div class="lux-tile-shade" aria-hidden="true"></div>
-
-            <div class="lux-tile-glass">
-                <a href="{{ product|product_url }}" class="lux-tile-name">{{ product.name }}</a>
-                <div class="lux-tile-price">
-                    {{ product.price|format_price }} ₽
-                    {% if product.old_price and product.old_price > product.price %}
-                    <span class="old-price">{{ product.old_price|format_price }} ₽</span>
-                    {% endif %}
-                </div>
-                <div class="lux-tile-actions">
-                    <a href="{{ product|product_url }}" class="lux-tile-link-detail">Подробнее →</a>
-                    {% include 'includes/add_to_cart_widget.html' %}
-                </div>
-            </div>
-        </article>
-        {% endfor %}
+    <div class="lux-strip lux-reveal">
+        <div class="lux-strip-viewport" id="seasonStrip">
+            {% for product in season_products %}
+            {% set season_badge = product|season_badge %}
+            {% set season_featured = loop.first and not season_badge %}
+            {% set eager = loop.index <= 4 %}
+            {% include 'includes/lux_strip_card_season.html' %}
+            {% endfor %}
+        </div>
+        {% with nav_label='Коллекция Season' %}
+        {% include 'includes/lux_strip_nav.html' %}
+        {% endwith %}
     </div>
 </section>
 {% endif %}
