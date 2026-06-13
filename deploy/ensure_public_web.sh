@@ -53,8 +53,13 @@ fi
 
 echo "--- локальные проверки ---"
 curl -sf --max-time 10 "http://127.0.0.1:8000/health" >/dev/null && echo "OK gunicorn /health"
-curl -sf --max-time 10 -H "Host: ${DOMAIN}" "http://127.0.0.1/robots.txt" | head -3
-curl -sf --max-time 10 -H "Host: ${DOMAIN}" "http://127.0.0.1/" -o /dev/null && echo "OK nginx -> app"
+if [[ -f /etc/letsencrypt/live/${DOMAIN}/fullchain.pem ]]; then
+  curl -sf --max-time 10 "https://127.0.0.1/robots.txt" -H "Host: ${DOMAIN}" -k | head -3
+  curl -sf --max-time 10 "https://127.0.0.1/" -H "Host: ${DOMAIN}" -k -o /dev/null && echo "OK nginx HTTPS -> app"
+else
+  curl -sf --max-time 10 -H "Host: ${DOMAIN}" "http://127.0.0.1/robots.txt" | head -3
+  curl -sf --max-time 10 -H "Host: ${DOMAIN}" "http://127.0.0.1/" -o /dev/null && echo "OK nginx -> app"
+fi
 
 if [[ -x /usr/local/bin/healthcheck-iqos-store.sh ]]; then
   /usr/local/bin/healthcheck-iqos-store.sh || true
