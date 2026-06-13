@@ -73,4 +73,9 @@ jobs:
 
             echo "=== 8. restart site (NO telegram bot on this server) ==="
             systemctl restart "$SERVICE"
+
+            echo "=== 9. public web (firewall, SITE_URL, SSL, healthcheck) ==="
+            chmod +x "$APP_DIR/deploy/ensure_public_web.sh"
+            APP_DIR="$APP_DIR" SERVICE="$SERVICE" DOMAIN=iqos-store.ru bash "$APP_DIR/deploy/ensure_public_web.sh"
+
             echo "=== Deploy iqos-store completed ==="

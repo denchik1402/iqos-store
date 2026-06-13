@@ -25,7 +25,14 @@ if ! id "$APP_USER" &>/dev/null; then
 fi
 
 apt-get update
-apt-get install -y git python3 python3-pip python3-venv nginx certbot python3-certbot-nginx curl
+apt-get install -y git python3 python3-pip python3-venv nginx certbot python3-certbot-nginx curl ufw
+
+if command -v ufw >/dev/null 2>&1; then
+  ufw allow 22/tcp || true
+  ufw allow 80/tcp || true
+  ufw allow 443/tcp || true
+  ufw --force enable || true
+fi
 
 mkdir -p "$APP_DIR"
 chown "$APP_USER:$APP_USER" "$APP_DIR"
