@@ -1,0 +1,5 @@
+User-agent: *
+Allow: /
+Disallow: /admin
+Disallow: /banner-click
+Sitemap: https://iqos-store.ru/sitemap.xml
