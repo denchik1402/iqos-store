@@ -78,4 +78,8 @@ jobs:
             chmod +x "$APP_DIR/deploy/ensure_public_web.sh"
             APP_DIR="$APP_DIR" SERVICE="$SERVICE" DOMAIN=iqos-store.ru bash "$APP_DIR/deploy/ensure_public_web.sh"
 
+            echo "=== 10. audit (DB + images + SEO files) ==="
+            sudo -u lilstore bash -c "cd $APP_DIR && source venv/bin/activate && python3 audit_site.py" || true
+            sudo -u lilstore bash -c "cd $APP_DIR && source venv/bin/activate && python3 audit_live.py" || true
+
             echo "=== Deploy iqos-store completed ==="
