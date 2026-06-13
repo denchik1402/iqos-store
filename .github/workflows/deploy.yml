@@ -47,6 +47,7 @@ jobs:
             sudo -u lilstore bash -c "cd $APP_DIR && source venv/bin/activate && python3 fill_seo_meta.py --refresh-keywords" 2>/dev/null || true
             sudo -u lilstore bash -c "cd $APP_DIR && source venv/bin/activate && python3 normalize_product_names.py" 2>/dev/null || true
             sudo -u lilstore bash -c "cd $APP_DIR && source venv/bin/activate && python3 seed_seo_blog.py" 2>/dev/null || true
+            sudo -u lilstore bash -c "cd $APP_DIR && source venv/bin/activate && python3 repair_missing_images.py" 2>/dev/null || true
 
             echo "=== 6. static permissions ==="
             chown -R www-data:www-data "$APP_DIR/static"
@@ -56,6 +57,8 @@ jobs:
               mkdir -p "$APP_DIR/static/images/$d"
               chown -R lilstore:lilstore "$APP_DIR/static/images/$d"
             done
+            mkdir -p "$APP_DIR/static/images/blog/covers"
+            chown -R lilstore:lilstore "$APP_DIR/static/images/blog"
 
             echo "=== 7. nginx + systemd ==="
             if [[ -f /etc/letsencrypt/live/iqos-store.ru/fullchain.pem ]]; then

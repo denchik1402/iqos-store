@@ -328,7 +328,7 @@ DEVICES = [
         'image': 'iqos_iluma_i_standart_midnight_black.jpg'
     },
     {
-        'name': 'IQOS ILUMA i Standart Digital violet',
+        'name': 'IQOS ILUMA i Standart Digital Violet',
         'description': '''<b>IQOS ILUMA i Standart</b> в цвете Digital Violet — устройство без лезвия в фиолетовом исполнении. Удобный формат и стабильная работа. Яркий цвет для индивидуального стиля.
 
 <b>Характеристики:</b>
@@ -339,7 +339,7 @@ DEVICES = [
 • <b>Цвет:</b> Digital Violet''',
         'price': 14000,
         'category': 'IQOS ILUMA',
-        'image': 'iqos_iluma_i_standart_digital_violet.jpg'
+        'image': 'Devices/IQOS Iluma i Standart Digital violet/iqos_iluma_i_digital_violet.webp'
     },
     {
         'name': 'IQOS ILUMA i Standart Leaf Green',
