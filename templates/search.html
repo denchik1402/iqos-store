@@ -22,11 +22,14 @@
 <div class="mb-4">
     <p class="text-muted small mb-2">Часто ищут:</p>
     <div class="d-flex flex-wrap gap-2">
+        <a href="{{ url_for('search', q='Илюма') }}" class="btn btn-outline-secondary btn-sm">Илюма</a>
+        <a href="{{ url_for('search', q='Ильюма') }}" class="btn btn-outline-secondary btn-sm">Ильюма</a>
         <a href="{{ url_for('search', q='IQOS Iluma') }}" class="btn btn-outline-secondary btn-sm">IQOS Iluma</a>
+        <a href="{{ url_for('search', q='айкос') }}" class="btn btn-outline-secondary btn-sm">Айкос</a>
         <a href="{{ url_for('search', q='TEREA') }}" class="btn btn-outline-secondary btn-sm">TEREA</a>
         <a href="{{ url_for('search', q='стики') }}" class="btn btn-outline-secondary btn-sm">Стики</a>
-        <a href="{{ url_for('search', q='IQOS Iluma Prime') }}" class="btn btn-outline-secondary btn-sm">IQOS Iluma Prime</a>
-        <a href="{{ url_for('search', q='lil SOLID') }}" class="btn btn-outline-secondary btn-sm">lil SOLID</a>
+        <a href="{{ url_for('search', q='IQOS Iluma Prime') }}" class="btn btn-outline-secondary btn-sm">Iluma Prime</a>
+        <a href="{{ url_for('search', q='LIL SOLID') }}" class="btn btn-outline-secondary btn-sm">LIL SOLID</a>
     </div>
 </div>
 

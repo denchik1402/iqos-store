@@ -14,6 +14,23 @@ CITY_RU = 'Москва'
 CITY_EN = 'Moscow'
 DELIVERY = 'доставка 1–2 дня'
 
+# Кириллические и разговорные варианты для meta keywords (Яндекс / Google)
+CYRILLIC_BRAND_KEYWORDS = {
+    'iqos': ['айкос', 'ай qos', 'купить айкос', 'икос'],
+    'iluma': ['илюма', 'ильюма', 'илума', 'купить илюма', 'айкос илюма', 'iluma'],
+    'terea': ['тереа', 'тerea', 'стики tereа', 'стики для илюма', 'стики айкос', 'стики'],
+    'lil': ['лил', 'лил солид', 'лилсолид', 'lil solid'],
+    'heets': ['хитс', 'стики heets'],
+    'fit': ['фит', 'стики fit'],
+}
+
+
+def _cyrillic_kw(*keys: str) -> list[str]:
+    out: list[str] = []
+    for key in keys:
+        out.extend(CYRILLIC_BRAND_KEYWORDS.get(key, []))
+    return out
+
 
 def make_url_slug(text: str, max_len: int = 100) -> str:
     """ЧПУ-slug из названия (категория, модель, статья)."""
@@ -98,7 +115,8 @@ CATEGORY_SEO = {
         'meta_keywords': (
             'IQOS ILUMA, IQOS Iluma i, Iluma i One, Iluma i Prime, Iluma i Standard, '
             'купить IQOS ILUMA, buy IQOS ILUMA, нагреватель IQOS, IQOS без лезвия, '
-            'SMARTCORE, АЙКОС СТОР, Москва, original IQOS'
+            'SMARTCORE, АЙКОС СТОР, Москва, original IQOS, '
+            'илюма, ильюма, айкос илюма, купить илюма, купить айкос'
         ),
         'seo_text': (
             '<p><strong>IQOS ILUMA</strong> — линейка нагревателей нового поколения без лезвия и без необходимости '
@@ -115,12 +133,13 @@ CATEGORY_SEO = {
         'meta_description': (
             'Купить стики TEREA для IQOS ILUMA в АЙКОС СТОР, Москва. '
             'Оригинальные Terea KZ: Purple Wave, Amber, Pearl, Blue и другие вкусы. '
-            '20 стиков в блоке, доставка 1–2 дня, бронь на lilstore.ru.'
+            '20 стиков в блоке, доставка 1–2 дня, бронь на сайте.'
         ),
         'meta_keywords': (
             'TEREA, стики TEREA, TEREA sticks, стики для IQOS ILUMA, Terea KZ, '
             'купить TEREA, buy TEREA sticks, Terea Purple Wave, Terea Amber, '
-            'Terea Pearl, IQOS ILUMA sticks, АЙКОС СТОР, Москва, original TEREA'
+            'Terea Pearl, IQOS ILUMA sticks, АЙКОС СТОР, Москва, original TEREA, '
+            'тереа, стики тереа, стики для илюма, стики айкос, купить стики'
         ),
         'seo_text': (
             '<p><strong>TEREA</strong> — стики, разработанные специально для IQOS ILUMA. В отличие от HEETS, '
@@ -142,7 +161,7 @@ CATEGORY_SEO = {
         'meta_keywords': (
             'LIL SOLID, LIL SOLID DUAL, LIL SOLID 3.0, LIL SOLID 4.0, LIL device, '
             'купить LIL SOLID, buy LIL SOLID, нагреватель LIL, LIL tobacco heating, '
-            'АЙКОС СТОР, Москва, original LIL'
+            'АЙКОС СТОР, Москва, original LIL, лил солид, лилсолид, купить лил'
         ),
         'seo_text': (
             '<p><strong>LIL SOLID</strong> — доступная линейка нагревателей табака от PMI. '
@@ -496,6 +515,7 @@ def _generate_terea_seo(product, name: str, price: str, specs: dict) -> dict[str
     taste = specs.get('Вкус')
     if taste:
         kw.append(f'TEREA {taste}')
+    kw.extend(_cyrillic_kw('terea', 'iqos', 'iluma'))
 
     meta_keywords = _truncate(_dedupe_keywords(kw), 300)
 
@@ -535,6 +555,7 @@ def _generate_iqos_seo(product, name: str, price: str) -> dict[str, str]:
         kw.extend(['Iluma i Standard', 'IQOS i Standard'])
     elif 'prime' in name.lower():
         kw.extend(['Iluma i Prime', 'IQOS i Prime premium'])
+    kw.extend(_cyrillic_kw('iqos', 'iluma'))
 
     meta_keywords = _truncate(_dedupe_keywords(kw), 300)
     image_alt = _truncate(
@@ -569,6 +590,7 @@ def _generate_exclusive_seo(product, name: str, price: str) -> dict[str, str]:
         kw.extend(['Seletti IQOS', 'IQOS x Seletti', 'Iluma Seletti limited'])
     if 'anniversary' in name.lower():
         kw.extend(['IQOS Anniversary', 'Iluma Anniversary Model'])
+    kw.extend(_cyrillic_kw('iqos', 'iluma'))
 
     meta_keywords = _truncate(_dedupe_keywords(kw), 300)
     image_alt = _truncate(
@@ -609,6 +631,7 @@ def _generate_lil_seo(product, name: str, price: str) -> dict[str, str]:
         kw.extend(['LIL SOLID 3.0', 'LIL 3.0'])
     if color_en:
         kw.append(f'LIL SOLID {color_en}')
+    kw.extend(_cyrillic_kw('lil', 'iqos'))
 
     meta_keywords = _truncate(_dedupe_keywords(kw), 300)
     color_part = f', цвет {color_en}' if color_en else ''
