@@ -11,8 +11,12 @@ TELEGRAM_RUN_POLLING = False
 # Username бота без @ (для плавающей кнопки на сайте, например: iluma_prime_bot)
 TELEGRAM_BOT_USERNAME = ''
 
-# ID чата для уведомлений (запасной вариант)
-# По умолчанию: добавьте бота в группу и напишите /start или /set_notify — чат сохранится автоматически
+# Токен бота от @BotFather (тот же, что у my_shop — только для уведомлений о заказах)
+TELEGRAM_BOT_TOKEN = ''
+
+# ID чата для уведомлений о заказах (группа менеджеров).
+# На iqos-store/lilsolid бот не запущен — укажите тот же chat_id, что в my_shop config.py
+# или ID группы, куда добавлен @iluma_prime_bot (узнать: /set_notify в группе на my_shop).
 TELEGRAM_CHAT_ID = ''
 
 # ID пользователей Telegram с доступом к меню Boss/Admin (через запятую)
