@@ -60,7 +60,9 @@ def main() -> int:
             ok_lines.append(f'SITE_URL OK: {site_url}')
 
         if not yandex_id or not str(yandex_id).isdigit():
-            warnings.append('YANDEX_METRIKA_ID не задан или не число — Метрика не работает')
+            warnings.append('YANDEX_METRIKA_ID не задан — создайте счётчик в metrika.yandex.ru для этого домена')
+        elif site_url == 'https://iqos-store.ru' and str(yandex_id) == '109480691':
+            errors.append('YANDEX_METRIKA_ID=109480691 — это счётчик lilstore.ru, нужен отдельный для iqos-store.ru')
         else:
             ok_lines.append(f'YANDEX_METRIKA_ID: {yandex_id}')
 
@@ -110,7 +112,7 @@ def main() -> int:
             if cat.image:
                 rel = f'images/categories/{cat.image}' if '/' not in cat.image else cat.image
                 if not os.path.isfile(os.path.join(STATIC, rel.replace('/', os.sep))):
-                errors.append(f'Битая картинка категории: {cat.name} -> {cat.image}')
+                    errors.append(f'Битая картинка категории: {cat.name} -> {cat.image}')
 
         for dm in DeviceModel.query.all():
             if not (dm.meta_description or '').strip():

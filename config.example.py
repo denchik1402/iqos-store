@@ -49,6 +49,8 @@ SITE_PHONE = '+7 (993) 596-82-25'
 SITE_ADDRESS = 'Москва, Ленинградское шоссе, 16А'
 SITE_CITY = 'Москва'
 
-# Яндекс.Метрика: номер счётчика (только цифры) из https://metrika.yandex.ru
-YANDEX_METRIKA_ID = '109480691'
+# Яндекс.Метрика — ОТДЕЛЬНЫЙ счётчик только для https://iqos-store.ru
+# Создайте в https://metrika.yandex.ru → «Добавить счётчик» → домен iqos-store.ru
+# Не используйте ID от lilstore.ru или lilsolid.ru
+YANDEX_METRIKA_ID = ''
 
