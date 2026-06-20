@@ -29,7 +29,7 @@ index, follow
     {% if device_model_filter and device_model_filter.meta_description %}
         {{ device_model_filter.meta_description }}
     {% elif category %}
-        {% if category.meta_description %}{{ category.meta_description }}{% else %}{{ category.name }}. {{ category.description or 'Оригинальная продукция.' }} Бронь на сайте, доставка 1–2 дня.{% endif %}
+        {% if category.meta_description %}{{ category.meta_description }}{% else %}{{ category.name }}. {{ category.description or 'Оригинальная продукция.' }} Бронь на сайте, доставка по Москве 0–2 дня.{% endif %}
     {% else %}
         Каталог устройств IQOS и стиков TEREA. Оригинальная продукция, доставка по России.
     {% endif %}

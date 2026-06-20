@@ -12,7 +12,7 @@ from typing import Optional
 SITE = 'АЙКОС СТОР'
 CITY_RU = 'Москва'
 CITY_EN = 'Moscow'
-DELIVERY = 'доставка 1–2 дня'
+DELIVERY = 'доставка по Москве 0–2 дня'
 
 # Кириллические и разговорные варианты для meta keywords (Яндекс / Google)
 CYRILLIC_BRAND_KEYWORDS = {
@@ -110,7 +110,7 @@ CATEGORY_SEO = {
         'meta_description': (
             'Купить IQOS ILUMA и IQOS Iluma i в АЙКОС СТОР, Москва. '
             'Оригинальные устройства i One, i Standard и i Prime без лезвия, SMARTCORE. '
-            'Бронь на сайте, доставка 1–2 дня по России.'
+            'Бронь на сайте, доставка по Москве 0–2 дня; в регионы — по срокам службы доставки.'
         ),
         'meta_keywords': (
             'IQOS ILUMA, IQOS Iluma i, Iluma i One, Iluma i Prime, Iluma i Standard, '
@@ -125,7 +125,7 @@ CATEGORY_SEO = {
             '<p>В АЙКОС СТОР представлены три форм-фактора: компактный <strong>Iluma i One</strong>, сбалансированный '
             '<strong>Iluma i Standart</strong> и премиальный <strong>Iluma i Prime</strong> с увеличенной автономностью. '
             'Все устройства — оригинальная продукция с гарантией производителя.</p>'
-            '<p>Оформите бронь на сайте — менеджер свяжется для подтверждения. Доставка по Москве и России 1–2 дня, '
+            '<p>Оформите бронь на сайте — менеджер свяжется для подтверждения. Доставка по Москве 0–2 дня; в регионы — по срокам службы доставки, уточняет менеджер, '
             'оплата при получении. Актуальные цвета и наличие — в каталоге ниже.</p>'
         ),
     },
@@ -133,7 +133,7 @@ CATEGORY_SEO = {
         'meta_description': (
             'Купить стики TEREA для IQOS ILUMA в АЙКОС СТОР, Москва. '
             'Оригинальные Terea KZ: Purple Wave, Amber, Pearl, Blue и другие вкусы. '
-            '20 стиков в блоке, доставка 1–2 дня, бронь на сайте.'
+            '20 стиков в блоке, доставка по Москве 0–2 дня, бронь на сайте.'
         ),
         'meta_keywords': (
             'TEREA, стики TEREA, TEREA sticks, стики для IQOS ILUMA, Terea KZ, '
@@ -148,7 +148,7 @@ CATEGORY_SEO = {
             '<p>В ассортименте АЙКОС СТОР — классические табачные вкусы (Amber, Silver, Yellow), '
             'освежающие ментоловые (Blue, Turquoise, Zing Wave) и линейка Pearl с капсулами '
             '(Purple Wave, Sun Pearl, Twilight Pearl и др.). Все позиции — оригинал Terea KZ.</p>'
-            '<p>Выберите вкус в каталоге и оформите бронь. Доставка 1–2 дня по России. '
+            '<p>Выберите вкус в каталоге и оформите бронь. Москва 0–2 дня; регионы — уточняет менеджер по России. '
             'Не уверены, какой вкус подойдёт? Напишите в Telegram @iluma_prime_bot — подскажем.</p>'
         ),
     },
@@ -156,7 +156,7 @@ CATEGORY_SEO = {
         'meta_description': (
             'Купить LIL SOLID, LIL SOLID DUAL и LIL SOLID 4.0 в АЙКОС СТОР, Москва. '
             'Оригинальные устройства LIL для нагревания табака. '
-            'Все модели и цвета в наличии. Доставка 1–2 дня.'
+            'Все модели и цвета в наличии. Москва 0–2 дня; регионы — уточняет менеджер.'
         ),
         'meta_keywords': (
             'LIL SOLID, LIL SOLID DUAL, LIL SOLID 3.0, LIL SOLID 4.0, LIL device, '
@@ -170,14 +170,14 @@ CATEGORY_SEO = {
             '<p>В каталоге — <strong>LIL SOLID 3.0</strong> (компактный корпус, два режима нагрева), '
             '<strong>LIL SOLID DUAL</strong> (с зарядным кейсом) и новинка <strong>LIL SOLID 4.0</strong> '
             'с обновлённым дизайном. Все цвета в наличии — чёрный, синий, зелёный, золотой и лимитированные.</p>'
-            '<p>Бронь на сайте, доставка 1–2 дня, оплата при получении. Оригинальная продукция, работаем с 2020 года.</p>'
+            '<p>Бронь на сайте, доставка по Москве 0–2 дня, оплата при получении. Оригинальная продукция, работаем с 2020 года.</p>'
         ),
     },
     'exclusive': {
         'meta_description': (
             'Эксклюзивные и лимитированные IQOS ILUMA в АЙКОС СТОР, Москва. '
             'Seletti Limited Edition, Anniversary Model и редкие серии. '
-            'Оригинальная продукция, бронь на сайте, доставка 1–2 дня.'
+            'Оригинальная продукция, бронь на сайте, доставка по Москве 0–2 дня.'
         ),
         'meta_keywords': (
             'IQOS limited edition, IQOS Seletti, Iluma Seletti, эксклюзивный IQOS, '
@@ -221,7 +221,7 @@ DEVICE_MODEL_SEO = {
     'IQOS Iluma i One': {
         'meta_description': (
             'Купить IQOS Iluma i One в АЙКОС СТОР, Москва. Компактное устройство IQOS ILUMA '
-            'без лезвия, технология SMARTCORE. Оригинал, все цвета. Бронь на сайте, доставка 1–2 дня.'
+            'без лезвия, технология SMARTCORE. Оригинал, все цвета. Бронь на сайте, доставка по Москве 0–2 дня.'
         ),
         'meta_keywords': (
             'IQOS Iluma i One, купить Iluma i One, buy IQOS i One, IQOS ILUMA compact, '
@@ -232,7 +232,7 @@ DEVICE_MODEL_SEO = {
     'IQOS Iluma i Standart': {
         'meta_description': (
             'Купить IQOS Iluma i Standart в АЙКОС СТОР, Москва. Сбалансированная модель IQOS ILUMA '
-            'без лезвия, SMARTCORE, увеличенная батарея. Оригинал, бронь на сайте, доставка 1–2 дня.'
+            'без лезвия, SMARTCORE, увеличенная батарея. Оригинал, бронь на сайте, доставка по Москве 0–2 дня.'
         ),
         'meta_keywords': (
             'IQOS Iluma i Standart, IQOS Iluma i Standard, купить Iluma i Standart, '
@@ -243,7 +243,7 @@ DEVICE_MODEL_SEO = {
     'IQOS Iluma i Prime': {
         'meta_description': (
             'Купить IQOS Iluma i Prime в АЙКОС СТОР, Москва. Премиальное устройство IQOS ILUMA '
-            'без лезвия, SMARTCORE, максимальная автономность. Оригинал, доставка 1–2 дня.'
+            'без лезвия, SMARTCORE, максимальная автономность. Оригинал, доставка по Москве 0–2 дня.'
         ),
         'meta_keywords': (
             'IQOS Iluma i Prime, купить Iluma i Prime, buy IQOS i Prime, IQOS ILUMA premium, '
@@ -254,7 +254,7 @@ DEVICE_MODEL_SEO = {
     'LIL SOLID DUAL': {
         'meta_description': (
             'Купить LIL SOLID DUAL в АЙКОС СТОР, Москва. Устройство LIL с зарядным кейсом, '
-            'два режима нагрева, совместимость с HEETS и FIT. Оригинал, доставка 1–2 дня.'
+            'два режима нагрева, совместимость с HEETS и FIT. Оригинал, доставка по Москве 0–2 дня.'
         ),
         'meta_keywords': (
             'LIL SOLID DUAL, купить LIL SOLID DUAL, buy LIL SOLID DUAL, LIL dual mode, '
@@ -265,7 +265,7 @@ DEVICE_MODEL_SEO = {
     'LIL SOLID 3.0': {
         'meta_description': (
             'Купить LIL SOLID 3.0 в АЙКОС СТОР, Москва. Компактное устройство LIL с двумя режимами '
-            'интенсивности и съёмным нагревателем. Оригинал, бронь на сайте, доставка 1–2 дня.'
+            'интенсивности и съёмным нагревателем. Оригинал, бронь на сайте, доставка по Москве 0–2 дня.'
         ),
         'meta_keywords': (
             'LIL SOLID 3.0, купить LIL SOLID 3.0, buy LIL SOLID 3.0, LIL 3.0, '
@@ -276,7 +276,7 @@ DEVICE_MODEL_SEO = {
     'LIL SOLID 4.0': {
         'meta_description': (
             'Купить LIL SOLID 4.0 в АЙКОС СТОР, Москва. Новое поколение LIL SOLID — '
-            'улучшенный нагреватель, стильный дизайн. Оригинальная продукция LIL, доставка 1–2 дня.'
+            'улучшенный нагреватель, стильный дизайн. Оригинальная продукция LIL, доставка по Москве 0–2 дня.'
         ),
         'meta_keywords': (
             'LIL SOLID 4.0, купить LIL SOLID 4.0, buy LIL SOLID 4.0, LIL SOLID new, '
