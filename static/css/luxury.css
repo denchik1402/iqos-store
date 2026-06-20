@@ -158,8 +158,35 @@ body.luxury-store .navbar {
     background: var(--bg-nav) !important;
     border-bottom: 1px solid var(--lux-glass-border);
     box-shadow: none;
-    padding-top: 0.65rem;
-    padding-bottom: 0.65rem;
+    padding-top: 0.55rem;
+    padding-bottom: 0.55rem;
+}
+
+body.luxury-store .navbar > .container {
+    align-items: center;
+    gap: 0.75rem;
+}
+
+@media (min-width: 992px) {
+    body.luxury-store .navbar-collapse {
+        display: flex !important;
+        flex-wrap: nowrap;
+        align-items: center;
+        justify-content: flex-end;
+        gap: 0.5rem;
+    }
+}
+
+body.luxury-store .navbar-nav {
+    align-items: center;
+    flex-wrap: nowrap;
+    gap: 0.1rem;
+}
+
+body.luxury-store .navbar .nav-item {
+    display: flex;
+    align-items: center;
+    flex-shrink: 0;
 }
 
 body.luxury-store .navbar .navbar-brand,
@@ -171,17 +198,89 @@ body.luxury-store .navbar .nav-icon-btn {
 }
 
 body.luxury-store .navbar .nav-link {
-    font-size: 0.72rem;
+    font-size: 0.68rem;
     font-weight: 600;
-    letter-spacing: 0.18em;
+    letter-spacing: 0.12em;
     text-transform: uppercase;
     opacity: 0.75;
+    white-space: nowrap;
+    line-height: 1;
+    padding: 0.72rem 0.45rem;
+    display: inline-flex;
+    align-items: center;
     transition: opacity 0.3s, color 0.3s;
+}
+
+body.luxury-store .navbar .catalog-categories-toggle {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    align-self: center;
+    height: 2.5rem;
+    min-height: 2.5rem;
+    padding: 0 0.15rem;
+    margin-left: 0.15rem;
+    line-height: 1;
+    opacity: 0.75;
+}
+
+body.luxury-store .navbar .catalog-categories-toggle::after {
+    vertical-align: middle;
 }
 
 body.luxury-store .navbar .nav-link:hover {
     opacity: 1;
     color: var(--lux-lime) !important;
+}
+
+body.luxury-store .navbar #headerSearchForm {
+    align-items: center;
+    flex-shrink: 0;
+}
+
+body.luxury-store .navbar #headerSearchForm .form-control,
+body.luxury-store .navbar #headerSearchForm .btn {
+    height: 40px;
+    min-height: 40px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+}
+
+body.luxury-store .navbar #headerSearchForm .btn {
+    width: 40px;
+    padding: 0;
+}
+
+body.luxury-store .navbar .d-flex.align-items-center.gap-1 {
+    align-items: center !important;
+    flex-shrink: 0;
+}
+
+body.luxury-store .navbar .nav-icon-btn {
+    width: 40px;
+    height: 40px;
+    min-width: 40px;
+    min-height: 40px;
+    flex-shrink: 0;
+}
+
+body.luxury-store .navbar .position-relative {
+    display: inline-flex;
+    align-items: center;
+}
+
+@media (min-width: 992px) and (max-width: 1199px) {
+    body.luxury-store .navbar .nav-link {
+        font-size: 0.62rem;
+        letter-spacing: 0.08em;
+        padding-left: 0.35rem;
+        padding-right: 0.35rem;
+    }
+
+    body.luxury-store .navbar #headerSearchForm input[type="search"] {
+        width: 150px !important;
+    }
 }
 
 body.luxury-store .navbar .form-control {
