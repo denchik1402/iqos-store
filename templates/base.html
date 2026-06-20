@@ -55,6 +55,7 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='css/site.css') }}?v=2">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/luxury.css') }}?v=5">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/luxury-pages.css') }}?v=8">
+    <style>{% include 'includes/store_logo.css.inc' %}</style>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" media="print" onload="this.media='all'">
     <noscript><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"></noscript>
     {% block extra_css %}{% endblock %}
@@ -86,10 +87,7 @@
     <!-- Шапка -->
     <nav class="navbar navbar-expand-lg navbar-light bg-white">
         <div class="container">
-            <a class="navbar-brand d-flex align-items-center" href="{{ url_for('index') }}">
-                <img src="{{ url_for('static', filename='LOGO3.png') }}" alt="АЙКОС СТОР" class="navbar-logo logo-light" height="40">
-                <img src="{{ url_for('static', filename='LOGO4.png') }}" alt="АЙКОС СТОР" class="navbar-logo logo-dark" height="40">
-            </a>
+            {% include 'includes/site_logo.html' %}
             
             <div class="d-flex align-items-center gap-2">
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarMain">
@@ -191,10 +189,9 @@
         <div class="container">
             <div class="row align-items-start mb-4">
                 <div class="col-md-4 mb-4 mb-md-0">
-                    <a href="{{ url_for('index') }}" class="d-inline-block mb-3">
-                        <img src="{{ url_for('static', filename='LOGO3.png') }}" alt="АЙКОС СТОР" class="footer-logo logo-light">
-                        <img src="{{ url_for('static', filename='LOGO4.png') }}" alt="АЙКОС СТОР" class="footer-logo logo-dark">
-                    </a>
+                    {% with extra_class='store-logo store-logo--footer d-inline-flex mb-3' %}
+                    {% include 'includes/site_logo.html' %}
+                    {% endwith %}
                     <p class="mb-0 small">Оригинальная продукция IQOS ILUMA, LIL SOLID и стики TEREA. Бронь на сайте, доставка по Москве 0–2 дня. Работаем с 2020 года.</p>
                 </div>
                 <div class="col-md-4 mb-4 mb-md-0">
