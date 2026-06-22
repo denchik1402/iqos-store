@@ -1,5 +1,6 @@
 {% extends "base.html" %}
 
+{% block meta_robots %}{% if request.args %}noindex, follow{% else %}index, follow{% endif %}{% endblock %}
 {% block title %}АЙКОС СТОР — Премиальная коллекция IQOS & TEREA{% endblock %}
 {% block meta_description %}АЙКОС СТОР — эксклюзивная коллекция оригинальных устройств IQOS и стиков TEREA. Премиальный сервис, бронь на сайте, доставка по Москве 0–2 дня.{% endblock %}
 {% block meta_keywords %}IQOS, TEREA, ILUMA, премиум IQOS, купить IQOS, устройства и стики{% endblock %}
