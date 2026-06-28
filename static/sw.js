@@ -1,7 +1,11 @@
-/* Service Worker для PWA — кэширование для офлайн-доступа */
-const CACHE_NAME = 'lilstore-v2';
+/* Service Worker — iqos-store.ru (не кэшируем favicon) */
+const CACHE_NAME = 'iqos-store-v3';
 
-self.addEventListener('install', (e) => {
+function isFaviconRequest(url) {
+  return /^\/favicon\.(ico|png|svg)$/.test(url.pathname);
+}
+
+self.addEventListener('install', () => {
   self.skipWaiting();
 });
 
@@ -17,13 +21,18 @@ self.addEventListener('fetch', (e) => {
   if (e.request.method !== 'GET') return;
   const url = new URL(e.request.url);
   if (url.origin !== self.location.origin) return;
-  /* HTML-страницы — всегда с сервера (без кэша), чтобы обновления применялись */
+
+  if (isFaviconRequest(url)) {
+    e.respondWith(fetch(e.request, { cache: 'reload' }));
+    return;
+  }
+
   const isNav = e.request.mode === 'navigate' || e.request.destination === 'document';
   const fetchOpts = isNav ? { cache: 'reload' } : {};
   e.respondWith(
     fetch(e.request, fetchOpts).then((res) => {
       const clone = res.clone();
-      if (res.ok && !url.pathname.startsWith('/admin') && !isNav) {
+      if (res.ok && !url.pathname.startsWith('/admin') && !isNav && !isFaviconRequest(url)) {
         caches.open(CACHE_NAME).then((cache) => cache.put(e.request, clone));
       }
       return res;

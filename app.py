@@ -242,6 +242,7 @@ def inject_nav_categories():
 SITE_PHONE_DEFAULT = '+7 (993) 596-82-25'
 SITE_ADDRESS_DEFAULT = 'Москва, Ленинградское шоссе, 16А'
 SITE_CITY_DEFAULT = 'Москва'
+FAVICON_VERSION = '2'
 
 
 def _get_site_setting(name, default=''):
@@ -309,13 +310,15 @@ def inject_seo_defaults():
         base = request.url_root.rstrip('/')
     path = request.path if request.path.startswith('/') else '/' + request.path
     clean_url = (base + path).rstrip('/') if path != '/' else base + '/'
+    favicon_q = f'?v={FAVICON_VERSION}'
     return {
         'seo_site_url': base,
         'seo_canonical_url': clean_url,
         'seo_og_url': clean_url,
-        'seo_favicon_url': base + '/favicon.svg',
-        'seo_favicon_png_url': base + '/favicon.png',
-        'seo_favicon_ico_url': base + '/favicon.ico',
+        'seo_favicon_url': base + '/favicon.svg' + favicon_q,
+        'seo_favicon_png_url': base + '/favicon.png' + favicon_q,
+        'seo_favicon_ico_url': base + '/favicon.ico' + favicon_q,
+        'favicon_version': FAVICON_VERSION,
     }
 
 @app.context_processor
@@ -2644,16 +2647,19 @@ def service_worker():
 def manifest():
     """PWA manifest — установка как приложение"""
     base = request.url_root.rstrip('/')
+    favicon_q = f'?v={FAVICON_VERSION}'
+    favicon_png = base + '/favicon.png' + favicon_q
     return jsonify({
         'name': 'АЙКОС СТОР',
         'short_name': 'АЙКОС СТОР',
         'description': 'IQOS и стики TEREA. Оригинальная продукция, доставка по Москве 0–2 дня.',
         'start_url': base + '/',
         'display': 'standalone',
-        'background_color': '#f8f9fa',
-        'theme_color': '#0d6efd',
+        'background_color': '#050506',
+        'theme_color': '#050506',
         'orientation': 'portrait-primary',
         'icons': [
+            {'src': favicon_png, 'sizes': '120x120', 'type': 'image/png', 'purpose': 'any'},
             {'src': base + url_for('static', filename='LOGO3.png'), 'sizes': '192x192', 'type': 'image/png', 'purpose': 'any'},
             {'src': base + url_for('static', filename='LOGO3.png'), 'sizes': '512x512', 'type': 'image/png', 'purpose': 'any'},
         ],
