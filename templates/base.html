@@ -59,7 +59,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" media="print" onload="this.media='all'">
     <noscript><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"></noscript>
     {% block extra_css %}{% endblock %}
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/store-enhancements.css') }}?v=1">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/store-enhancements.css') }}?v=2">
     <script>
         (function(){var t=localStorage.getItem('theme')||'dark';document.documentElement.setAttribute('data-theme',t);})();
     </script>
@@ -286,7 +286,7 @@
     <script defer src="{{ url_for('static', filename='js/wishlist.js') }}"></script>
     <script defer src="{{ url_for('static', filename='js/compare.js') }}"></script>
     <script defer src="{{ url_for('static', filename='js/search_suggestions.js') }}"></script>
-    <script defer src="{{ url_for('static', filename='js/store-enhancements.js') }}?v=1"></script>
+    <script defer src="{{ url_for('static', filename='js/store-enhancements.js') }}?v=2"></script>
 
     <script>
         (function loadTelegramSdk() {
