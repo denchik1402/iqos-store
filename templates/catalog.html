@@ -464,7 +464,7 @@ index, follow
                 <div class="product-card product-card--catalog position-relative h-100">
                     {% if product.is_hit %}<span class="lux-product-badge lux-product-badge--hit">Хит</span>{% endif %}
                     {% include 'includes/discount_badge.html' %}
-                    <button type="button" class="btn btn-sm btn-light quick-view-btn" data-product-id="{{ product.id }}" title="Быстрый просмотр" aria-label="Быстрый просмотр"><i class="fas fa-eye"></i></button>
+                    <button type="button" class="quick-view-btn" data-product-id="{{ product.id }}" title="Быстрый просмотр" aria-label="Быстрый просмотр"><i class="fas fa-eye"></i></button>
                     {% include 'includes/compare_btn.html' %}
                     {% include 'includes/favorite_btn.html' %}
                     <a href="{{ product|product_url }}" class="product-card-link product-card-link--media text-decoration-none" tabindex="-1" aria-hidden="true">
