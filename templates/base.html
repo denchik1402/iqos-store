@@ -16,7 +16,7 @@
     <meta property="og:url" content="{% block og_url %}{{ seo_og_url }}{% endblock %}">
     <meta property="og:image" content="{% block og_image %}{{ request.url_root.rstrip('/') }}{{ url_for('static', filename='LOGO3.png') }}{% endblock %}">
     <meta property="og:locale" content="ru_RU">
-    <meta property="og:site_name" content="АЙКОС СТОР">
+    <meta property="og:site_name" content="{{ site_brand_name|default('АЙКОС СТОР') }}">
     <!-- Twitter Card (по умолчанию = og; страницы вроде product переопределяют twitter_* для синхронизации) -->
     <meta name="twitter:card" content="{% block twitter_card %}summary_large_image{% endblock %}">
     <meta name="twitter:title" content="{% block twitter_title %}АЙКОС СТОР — IQOS и TEREA{% endblock %}">
@@ -25,13 +25,13 @@
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <meta name="theme-color" content="#050506">
     <link rel="manifest" href="{{ url_for('manifest') }}">
-    <title>{% block title %}АЙКОС СТОР{% endblock %}</title>
+    <title>{% block title %}{{ site_brand_name|default('АЙКОС СТОР') }}{% endblock %}</title>
     {% block extra_head %}{% endblock %}
     <script type="application/ld+json">
     {
       "@context": "https://schema.org",
       "@type": "WebSite",
-      "name": "АЙКОС СТОР",
+      "name": {{ site_brand_name|default('АЙКОС СТОР')|tojson }},
       "url": "{{ request.url_root.rstrip('/') }}",
       "potentialAction": {
         "@type": "SearchAction",
@@ -59,6 +59,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" media="print" onload="this.media='all'">
     <noscript><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"></noscript>
     {% block extra_css %}{% endblock %}
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/store-enhancements.css') }}?v=1">
     <script>
         (function(){var t=localStorage.getItem('theme')||'dark';document.documentElement.setAttribute('data-theme',t);})();
     </script>
@@ -268,16 +269,25 @@
         <div class="cart-sidebar-footer" id="cartSidebarFooter" style="display: none;">
             <div class="cart-sidebar-total">Итоговая стоимость: <span id="cartSidebarTotal">0</span> ₽</div>
             <a href="{{ url_for('checkout') }}" class="btn btn-primary w-100 mb-2">Перейти к оформлению</a>
-            <a href="{{ url_for('catalog') }}" class="btn btn-outline-secondary w-100" data-bs-dismiss="offcanvas">Продолжить покупки</a>
+            <div class="cart-messenger-btns">
+                {% if telegram_bot_url %}<a href="{{ telegram_bot_url }}" target="_blank" rel="noopener" class="btn btn-outline-primary btn-sm"><i class="fab fa-telegram"></i> Telegram</a>{% endif %}
+                {% if site_whatsapp_url %}<a href="{{ site_whatsapp_url }}" target="_blank" rel="noopener" class="btn btn-outline-success btn-sm"><i class="fab fa-whatsapp"></i> WhatsApp</a>{% endif %}
+                {% if site_max_url %}<a href="{{ site_max_url }}" target="_blank" rel="noopener" class="btn btn-outline-secondary btn-sm">MAX</a>{% endif %}
+            </div>
+            <a href="{{ url_for('catalog') }}" class="btn btn-outline-secondary w-100 mt-2" data-bs-dismiss="offcanvas">Продолжить покупки</a>
         </div>
     </div>
+
+    {% include 'includes/quick_view_modal.html' %}
+    {% include 'includes/one_click_modal.html' %}
 
     <script src="{{ url_for('static', filename='vendor/jquery/jquery-3.6.0.min.js') }}"></script>
     <script src="{{ url_for('static', filename='vendor/bootstrap/bootstrap.bundle.min.js') }}"></script>
     <script defer src="{{ url_for('static', filename='js/wishlist.js') }}"></script>
     <script defer src="{{ url_for('static', filename='js/compare.js') }}"></script>
     <script defer src="{{ url_for('static', filename='js/search_suggestions.js') }}"></script>
-    
+    <script defer src="{{ url_for('static', filename='js/store-enhancements.js') }}?v=1"></script>
+
     <script>
         (function loadTelegramSdk() {
             if (/tgWebApp|TelegramWebview/i.test(navigator.userAgent + location.search)) {

@@ -33,7 +33,7 @@
 {
   "@context": "https://schema.org",
   "@type": "Organization",
-  "name": "АЙКОС СТОР",
+  "name": {{ site_brand_name|tojson }},
   "url": "{{ request.url_root.rstrip('/') }}",
   "description": "Премиальный магазин оригинальных устройств IQOS и стиков TEREA.",
   "telephone": "{{ site_phone }}",
@@ -83,6 +83,10 @@
         <div class="lux-hero-scroll-line"></div>
     </div>
 </section>
+
+<h1 class="visually-hidden">Интернет-магазин IQOS в {{ site_city }} — купить оригинальный Айкос с доставкой день в день | {{ site_brand_name }}</h1>
+
+{% include 'includes/home_model_tiles.html' %}
 
 <!-- ═══ MARQUEE ═══ -->
 <div class="lux-marquee-wrap" aria-hidden="true">
@@ -317,6 +321,9 @@
     </div>
 </section>
 {% endif %}
+
+{% include 'includes/home_seo_section.html' %}
+{% include 'includes/home_faq_section.html' %}
 {% endblock %}
 
 {% block extra_js %}

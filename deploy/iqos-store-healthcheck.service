@@ -1,0 +1,10 @@
+[Unit]
+Description=iqos-store.ru healthcheck and auto-restart
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=oneshot
+ExecStart=/usr/local/bin/healthcheck-iqos-store.sh
+User=root
+Group=root

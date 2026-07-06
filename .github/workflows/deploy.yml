@@ -76,7 +76,10 @@ jobs:
             cp "$APP_DIR/deploy/iqos-store.service" "/etc/systemd/system/${SERVICE}.service"
             cp "$APP_DIR/deploy/healthcheck.sh" /usr/local/bin/healthcheck-iqos-store.sh
             chmod +x /usr/local/bin/healthcheck-iqos-store.sh
+            cp "$APP_DIR/deploy/iqos-store-healthcheck.service" /etc/systemd/system/iqos-store-healthcheck.service
+            cp "$APP_DIR/deploy/iqos-store-healthcheck.timer" /etc/systemd/system/iqos-store-healthcheck.timer
             systemctl daemon-reload
+            systemctl enable --now iqos-store-healthcheck.timer
             nginx -t
             systemctl reload nginx
 
