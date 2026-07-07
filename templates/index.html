@@ -1,11 +1,10 @@
 {% extends "base.html" %}
 
 {% block meta_robots %}{% if request.args %}noindex, follow{% else %}index, follow{% endif %}{% endblock %}
-{% block title %}АЙКОС СТОР — Премиальная коллекция IQOS & TEREA{% endblock %}
-{% block meta_description %}АЙКОС СТОР — эксклюзивная коллекция оригинальных устройств IQOS и стиков TEREA. Премиальный сервис, бронь на сайте, доставка по Москве 0–2 дня.{% endblock %}
-{% block meta_keywords %}IQOS, TEREA, ILUMA, премиум IQOS, купить IQOS, устройства и стики{% endblock %}
-{% block og_title %}АЙКОС СТОР — Премиальная коллекция{% endblock %}
-{% block og_description %}Эксклюзивные устройства IQOS и стики TEREA. Премиальный опыт покупки.{% endblock %}
+{% block title %}Купить IQOS, стики TEREA и HEETS | Доставка день в день | АЙКОС СТОР{% endblock %}
+{% block meta_description %}Купить IQOS, стики TEREA и HEETS в {{ site_city_in }}. АЙКОС СТОР — премиальная коллекция оригинальных устройств ILUMA и LIL SOLID, доставка день в день.{% endblock %}
+{% block og_title %}Купить IQOS, стики TEREA и HEETS | АЙКОС СТОР{% endblock %}
+{% block og_description %}Премиальная коллекция оригинальных IQOS ILUMA, LIL SOLID и стиков TEREA. Доставка день в день по {{ site_city_in }}.{% endblock %}
 
 {% block body_class %}{% endblock %}
 {% block main_class %}lux-main{% endblock %}
@@ -46,6 +45,49 @@
   }
 }
 </script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "LocalBusiness",
+  "name": {{ site_brand_name|tojson }},
+  "image": "{{ request.url_root.rstrip('/') }}{{ url_for('static', filename='LOGO3.png') }}",
+  "telephone": "{{ site_phone }}",
+  "url": "{{ request.url_root.rstrip('/') }}",
+  "address": {
+    "@type": "PostalAddress",
+    "addressCountry": "RU",
+    "addressLocality": "{{ site_city }}",
+    "streetAddress": "Ленинградское шоссе, 16А"
+  },
+  "areaServed": {"@type": "City", "name": "{{ site_city }}"},
+  "priceRange": "$$",
+  "openingHoursSpecification": [
+    {"@type": "OpeningHoursSpecification", "dayOfWeek": ["Monday","Tuesday","Wednesday","Thursday","Friday"], "opens": "09:00", "closes": "21:00"},
+    {"@type": "OpeningHoursSpecification", "dayOfWeek": ["Saturday","Sunday"], "opens": "10:00", "closes": "20:00"}
+  ]
+}
+</script>
+{% if nav_categories %}
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "ItemList",
+  "name": "Каталог по категориям {{ site_brand_name }}",
+  "itemListElement": [
+    {% for cat in nav_categories %}
+    {% set home = cat.slug|category_home %}
+    {
+      "@type": "ListItem",
+      "position": {{ loop.index }},
+      "name": {{ cat.name|tojson }},
+      "description": {{ (cat.meta_description or home.get('teaser') or cat.name)|tojson }},
+      "url": "{{ request.url_root.rstrip('/') }}{{ url_for('catalog', category_slug=cat.slug) }}"
+    }{% if not loop.last %},{% endif %}
+    {% endfor %}
+  ]
+}
+</script>
+{% endif %}
 {% endblock %}
 
 {% block extra_css %}
