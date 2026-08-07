@@ -200,22 +200,7 @@ def home_faq_items(brand: str, city: str = 'Москва') -> list[dict[str, str
 
 
 def home_seo_html(brand: str, city: str = 'Москва', domain: str = '') -> str:
-    from seo_utils import city_prepositional
-    dom = domain or 'iqos-store.ru'
-    city_in = city_prepositional(city)
-    return (
-        f'<p><strong>{brand}</strong> — премиальная витрина оригинальных <strong>IQOS ILUMA</strong> в {city_in}. '
-        f'Акцент на статусные цвета, флагман Iluma i Prime и лимитированные серии.</p>'
-        f'<h2>Премиум-каталог IQOS ILUMA</h2>'
-        f'<p>На {dom} — Iluma i One, Standart и Prime, эксклюзивы Seletti/Anniversary и стики TEREA блоками. '
-        f'Подбор комплектации под ежедневный премиум-сценарий.</p>'
-        f'<h2>Почему {brand}</h2>'
-        f'<ul>'
-        f'<li><strong>Оригинал PMI</strong> — без серых партий</li>'
-        f'<li><strong>Фокус на ILUMA</strong> — консультация по моделям и цветам</li>'
-        f'<li><strong>Бронь на сайте</strong> — оплата при получении</li>'
-        f'<li><strong>Доставка по России</strong></li>'
-        f'</ul>'
-        f'<p>Оформите заказ в {brand}: премиальный IQOS ILUMA с прозрачными условиями.</p>'
-    )
+    from seo_role_presets import home_seo_html_for_role
+    return home_seo_html_for_role('premium', brand, city, domain)
+
 

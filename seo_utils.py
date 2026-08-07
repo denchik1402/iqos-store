@@ -9,7 +9,7 @@ import os
 import re
 from typing import Optional
 
-from seo_role_presets import build_category_seo, build_device_model_seo
+from seo_role_presets import build_category_seo, build_device_model_seo, product_keyword_boost
 
 SITE = 'АЙКОС СТОР'
 try:
@@ -398,8 +398,8 @@ def _generate_terea_seo(product, name: str, price: str, specs: dict) -> dict[str
     has_capsule = 'капсула' in (product.description or '').lower() or 'Pearl' in name
 
     meta_description = _truncate(
-        f'Стики {name} для IQOS ILUMA — {flavor}. '
-        f'Оригинал TEREA {meta_city_site_phrase()}. {price} ₽, 20 стиков в блоке. '
+        f'Купить стики {name} (TEREA / тереа) для IQOS ILUMA — {flavor}. '
+        f'Оригинал {meta_city_site_phrase()}. {price} ₽, 20 стиков в блоке. '
         f'Бронь на сайте, {DELIVERY}.',
         300,
     )
@@ -419,6 +419,7 @@ def _generate_terea_seo(product, name: str, price: str, specs: dict) -> dict[str
         kw.append(f'TEREA {taste}')
     kw.extend(_cyrillic_kw('terea', 'iqos', 'iluma'))
 
+    kw.extend(product_keyword_boost())
     meta_keywords = _truncate(_dedupe_keywords(kw), 300)
 
     image_alt = _truncate(
@@ -438,8 +439,8 @@ def _generate_iqos_seo(product, name: str, price: str) -> dict[str, str]:
     color_part = f', цвет {color_en}' if color_en else ''
 
     meta_description = _truncate(
-        f'{name} — оригинальное устройство {line} без лезвия, SMARTCORE{color_part}. '
-        f'{meta_city_site_phrase()}. {price} ₽. Бронь на сайте, {DELIVERY}.',
+        f'Купить {name} {meta_city_site_phrase()}. Оригинальное устройство {line} без лезвия, SMARTCORE{color_part}. '
+        f'{price} ₽. Бронь на сайте, {DELIVERY}.',
         300,
     )
 
@@ -459,6 +460,7 @@ def _generate_iqos_seo(product, name: str, price: str) -> dict[str, str]:
         kw.extend(['Iluma i Prime', 'IQOS i Prime premium'])
     kw.extend(_cyrillic_kw('iqos', 'iluma'))
 
+    kw.extend(product_keyword_boost())
     meta_keywords = _truncate(_dedupe_keywords(kw), 300)
     image_alt = _truncate(
         f'Устройство {name}{color_part} — фото IQOS ILUMA, оригинал, {SITE}',
@@ -476,9 +478,8 @@ def _generate_exclusive_seo(product, name: str, price: str) -> dict[str, str]:
     limited_hint = 'лимитированная серия' if 'limited' in name.lower() or 'seletti' in name.lower() else 'эксклюзивная модель'
 
     meta_description = _truncate(
-        f'{name} — {limited_hint}, оригинальный {line}. '
-        f'Эксклюзив {meta_city_site_phrase()}. {price} ₽. '
-        f'Бронь на сайте, {DELIVERY}.',
+        f'Купить {name} {meta_city_site_phrase()}. {limited_hint}, оригинальный {line}. '
+        f'{price} ₽. Бронь на сайте, {DELIVERY}.',
         300,
     )
 
@@ -494,6 +495,7 @@ def _generate_exclusive_seo(product, name: str, price: str) -> dict[str, str]:
         kw.extend(['IQOS Anniversary', 'Iluma Anniversary Model'])
     kw.extend(_cyrillic_kw('iqos', 'iluma'))
 
+    kw.extend(product_keyword_boost())
     meta_keywords = _truncate(_dedupe_keywords(kw), 300)
     image_alt = _truncate(
         f'{name} — эксклюзивное устройство IQOS ILUMA, фото {SITE}',
@@ -513,8 +515,8 @@ def _generate_lil_seo(product, name: str, price: str) -> dict[str, str]:
     mode = 'два режима нагрева' if dual else 'компактное устройство нагревания табака'
 
     meta_description = _truncate(
-        f'{name} — {line}, {mode}. '
-        f'Оригинал LIL {meta_city_site_phrase()}. {price} ₽. '
+        f'Купить {name} {meta_city_site_phrase()}. {line}, {mode}. '
+        f'Оригинал LIL. {price} ₽. '
         f'Бронь на сайте, {DELIVERY}.',
         300,
     )
@@ -535,6 +537,7 @@ def _generate_lil_seo(product, name: str, price: str) -> dict[str, str]:
         kw.append(f'LIL SOLID {color_en}')
     kw.extend(_cyrillic_kw('lil', 'iqos'))
 
+    kw.extend(product_keyword_boost())
     meta_keywords = _truncate(_dedupe_keywords(kw), 300)
     color_part = f', цвет {color_en}' if color_en else ''
     image_alt = _truncate(
