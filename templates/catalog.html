@@ -457,6 +457,8 @@ index, follow
         {% elif device_model_filter and device_model_filter.seo_text %}
         <div class="catalog-seo-intro text-muted mb-4">{{ device_model_filter.seo_text|safe }}</div>
         {% endif %}
+
+        {% include 'includes/device_wholesale_banner.html' %}
         
         {% if products %}
         <div class="row catalog-product-grid {% if filters.view == 'list' %}catalog-list{% endif %}">
@@ -484,6 +486,7 @@ index, follow
                                 <span class="old-price">{{ product.old_price|format_price }} ₽</span>
                                 {% endif %}
                             </div>
+                            {% include 'includes/terea_pack_note.html' %}
                         </a>
                         <div class="product-card-actions d-grid gap-2">
                             <a href="{{ product|product_url }}" class="btn btn-outline-primary btn-sm">Подробнее</a>

@@ -1,4 +1,4 @@
-name: Deploy iqos-store.ru
+﻿name: Deploy iqos-store.ru
 
 on:
   push:
@@ -53,6 +53,8 @@ jobs:
             sudo -u lilstore bash -c "cd $APP_DIR && source venv/bin/activate && python3 sync_device_models.py" 2>/dev/null || true
             sudo -u lilstore bash -c "cd $APP_DIR && source venv/bin/activate && python3 import_lil40_products.py" 2>/dev/null || true
             sudo -u lilstore bash -c "cd $APP_DIR && source venv/bin/activate && python3 normalize_product_names.py" 2>/dev/null || true
+            echo "=== 5c4. align_prices_vs_tabachka ==="
+            sudo -u lilstore bash -c "cd $APP_DIR && source venv/bin/activate && python3 align_prices_vs_tabachka.py" 2>/dev/null || true
             sudo -u lilstore bash -c "cd $APP_DIR && source venv/bin/activate && python3 seed_seo_blog.py" 2>/dev/null || true
             sudo -u lilstore bash -c "cd $APP_DIR && source venv/bin/activate && python3 repair_missing_images.py" 2>/dev/null || true
 
@@ -96,3 +98,4 @@ jobs:
             sudo -u lilstore bash -c "cd $APP_DIR && source venv/bin/activate && python3 audit_live.py" || true
 
             echo "=== Deploy iqos-store completed ==="
+
