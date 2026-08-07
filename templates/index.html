@@ -1,8 +1,8 @@
 {% extends "base.html" %}
 
 {% block meta_robots %}{% if request.args %}noindex, follow{% else %}index, follow{% endif %}{% endblock %}
-{% block title %}Купить IQOS, стики TEREA и HEETS | Доставка день в день | АЙКОС СТОР{% endblock %}
-{% block meta_description %}Купить IQOS, стики TEREA и HEETS в {{ site_city_in }}. АЙКОС СТОР — премиальная коллекция оригинальных устройств ILUMA и LIL SOLID, доставка день в день.{% endblock %}
+{% block title %}Купить IQOS ILUMA премиум | Айкос Стор — оригинальные устройства{% endblock %}
+{% block meta_description %}АЙКОС СТОР — премиальная витрина оригинальных IQOS ILUMA и стиков TEREA в {{ site_city_in }}. Бронь на сайте, доставка от 0 ₽.{% endblock %}
 {% block og_title %}Купить IQOS, стики TEREA и HEETS | АЙКОС СТОР{% endblock %}
 {% block og_description %}Премиальная коллекция оригинальных IQOS ILUMA, LIL SOLID и стиков TEREA. Доставка день в день по {{ site_city_in }}.{% endblock %}
 
@@ -108,10 +108,10 @@
     <div class="lux-hero-content">
         <p class="lux-hero-eyebrow">Айкос Стор · Exclusive</p>
         <h1 class="lux-hero-title">
-            <span>IQOS</span>
-            <span class="lux-serif">Beyond Ordinary</span>
+            <span>IQOS ILUMA</span>
+            <span class="lux-serif">Премиум оригинал</span>
         </h1>
-        <p class="lux-hero-desc">Премиальная коллекция оригинальных устройств и стиков. Тактильный люкс, без компромиссов — только подлинная продукция с доставкой по Москве 0–2 дня.</p>
+        <p class="lux-hero-desc">Премиальная коллекция оригинальных устройств и стиков. Тактильный люкс, без компромиссов — только подлинная продукция с доставкой от 0 ₽.</p>
         <div class="lux-hero-actions">
             <a href="{{ url_for('catalog') }}" class="btn-lux-primary">Открыть коллекцию</a>
             {% if telegram_bot_url %}
@@ -126,8 +126,8 @@
     </div>
 </section>
 
-<h1 class="visually-hidden">Интернет-магазин IQOS в {{ site_city_in }} — купить оригинальный Айкос с доставкой день в день | {{ site_brand_name }}</h1>
 
+{% include 'includes/tg_promo_banner.html' %}
 {% include 'includes/home_model_tiles.html' %}
 
 <!-- ═══ MARQUEE ═══ -->

@@ -973,6 +973,8 @@ def product(product_slug):
     prev_product, next_product = get_product_siblings(product, Product, db)
     stick_upsell_products = get_stick_upsell_products(product, Product, db)
     pdp_seo_html = get_product_pdp_seo(product)
+    from pricing_tiers import wholesale_tiers_view
+    wholesale_tiers = wholesale_tiers_view(product)
     city = _get_site_setting('SITE_CITY', SITE_CITY_DEFAULT)
 
     return render_template('product.html',
@@ -984,17 +986,19 @@ def product(product_slug):
                          next_product=next_product,
                          stick_upsell_products=stick_upsell_products,
                          pdp_seo_html=pdp_seo_html,
-                         pdp_seo_city=city_prepositional(city))
+                         pdp_seo_city=city_prepositional(city),
+                         wholesale_tiers=wholesale_tiers)
 
 def _get_cart_products(session_cart):
-    """Один запрос вместо N — загрузка всех товаров корзины."""
+    """Один запрос вместо N — загрузка всех товаров корзины (с оптом на стиках)."""
+    from pricing_tiers import apply_cart_pricing
     if not session_cart:
         return [], 0
     ids = [int(k) for k in session_cart.keys() if str(k).isdigit()]
     if not ids:
         return [], 0
     products_map = {p.id: p for p in Product.query.filter(Product.id.in_(ids)).all()}
-    items, total = [], 0
+    raw = []
     for item_id, quantity in session_cart.items():
         try:
             pid = int(item_id)
@@ -1002,10 +1006,8 @@ def _get_cart_products(session_cart):
             continue
         product = products_map.get(pid)
         if product:
-            subtotal = product.price * quantity
-            total += subtotal
-            items.append({'product': product, 'quantity': quantity, 'subtotal': subtotal})
-    return items, total
+            raw.append({'product': product, 'quantity': quantity})
+    return apply_cart_pricing(raw)
 
 
 @app.route('/cart')
@@ -1073,7 +1075,7 @@ def update_cart(product_id):
         total = 0
         for item in _get_cart_products(session.get('cart', {}))[0]:
             p, qty, st = item['product'], item['quantity'], item['subtotal']
-            items_data.append({'product_id': p.id, 'quantity': qty, 'subtotal': st, 'price': p.price})
+            items_data.append({'product_id': p.id, 'quantity': qty, 'subtotal': st, 'price': item.get('unit_price', p.price)})
             total += st
         return jsonify({
             'success': True,
@@ -1141,12 +1143,14 @@ def checkout():
                     continue
                 product = db.session.get(Product, pid)
                 if product and quantity > 0:
-                    db.session.add(OrderItem(
-                        order_id=order.id,
-                        product_id=product.id,
-                        quantity=min(int(quantity), 99),
-                        price=product.price
-                    ))
+                    qty = min(int(quantity), 99)
+            from pricing_tiers import unit_price as _tier_unit_price
+            db.session.add(OrderItem(
+                order_id=order.id,
+                product_id=product.id,
+                quantity=qty,
+                price=_tier_unit_price(product, qty),
+            ))
 
             try:
                 db.session.commit()
@@ -2802,7 +2806,7 @@ def manifest():
     return jsonify({
         'name': 'АЙКОС СТОР',
         'short_name': 'АЙКОС СТОР',
-        'description': 'IQOS и стики TEREA. Оригинальная продукция, доставка по Москве 0–2 дня.',
+        'description': 'IQOS и стики TEREA. Оригинальная продукция, доставка от 0 ₽ (стоимость зависит от адреса).',
         'start_url': base + '/',
         'display': 'standalone',
         'background_color': '#050506',
