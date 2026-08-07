@@ -2806,7 +2806,7 @@ def manifest():
     return jsonify({
         'name': 'АЙКОС СТОР',
         'short_name': 'АЙКОС СТОР',
-        'description': 'IQOS и стики TEREA. Оригинальная продукция, доставка от 0 ₽ (стоимость зависит от адреса).',
+        'description': 'IQOS и стики TEREA. Оригинальная продукция, быстрая доставка по всей России.',
         'start_url': base + '/',
         'display': 'standalone',
         'background_color': '#050506',

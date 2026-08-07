@@ -2,7 +2,7 @@
 
 {% block meta_robots %}{% if request.args %}noindex, follow{% else %}index, follow{% endif %}{% endblock %}
 {% block title %}Купить IQOS ILUMA премиум | Айкос Стор — оригинальные устройства{% endblock %}
-{% block meta_description %}АЙКОС СТОР — премиальная витрина оригинальных IQOS ILUMA и стиков TEREA в {{ site_city_in }}. Бронь на сайте, доставка от 0 ₽.{% endblock %}
+{% block meta_description %}АЙКОС СТОР — премиальная витрина оригинальных IQOS ILUMA и стиков TEREA в {{ site_city_in }}. Бронь на сайте, быстрая доставка по всей России.{% endblock %}
 {% block og_title %}Купить IQOS, стики TEREA и HEETS | АЙКОС СТОР{% endblock %}
 {% block og_description %}Премиальная коллекция оригинальных IQOS ILUMA, LIL SOLID и стиков TEREA. Доставка день в день по {{ site_city_in }}.{% endblock %}
 
@@ -111,7 +111,7 @@
             <span>IQOS ILUMA</span>
             <span class="lux-serif">Премиум оригинал</span>
         </h1>
-        <p class="lux-hero-desc">Премиальная коллекция оригинальных устройств и стиков. Тактильный люкс, без компромиссов — только подлинная продукция с доставкой от 0 ₽.</p>
+        <p class="lux-hero-desc">Премиальная коллекция оригинальных устройств и стиков. Тактильный люкс, без компромиссов — только подлинная продукция. Быстрая доставка по всей России.</p>
         <div class="lux-hero-actions">
             <a href="{{ url_for('catalog') }}" class="btn-lux-primary">Открыть коллекцию</a>
             {% if telegram_bot_url %}

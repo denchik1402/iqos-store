@@ -17,7 +17,7 @@ except ImportError:
     pass
 CITY_RU = 'Москва'
 CITY_EN = 'Moscow'
-DELIVERY = 'доставка от 0 ₽ (зависит от адреса)'
+DELIVERY = 'быстрая доставка по всей России'
 
 _CITY_PREP: dict[str, str] = {
     'москва': 'Москве',
@@ -154,7 +154,7 @@ CATEGORY_SEO = {
         'meta_description': (
             'Купить IQOS ILUMA и IQOS Iluma i в АЙКОС СТОР, Москва. '
             'Оригинальные устройства i One, i Standard и i Prime без лезвия, SMARTCORE. '
-            'Бронь на сайте, доставка от 0 ₽ (стоимость зависит от адреса); в регионы — по срокам службы доставки.'
+            'Бронь на сайте, быстрая доставка по всей России; в регионы — по срокам службы доставки.'
         ),
         'meta_keywords': (
             'IQOS ILUMA, IQOS Iluma i, Iluma i One, Iluma i Prime, Iluma i Standard, '
@@ -169,7 +169,7 @@ CATEGORY_SEO = {
             '<p>В АЙКОС СТОР представлены три форм-фактора: компактный <strong>Iluma i One</strong>, сбалансированный '
             '<strong>Iluma i Standart</strong> и премиальный <strong>Iluma i Prime</strong> с увеличенной автономностью. '
             'Все устройства — оригинальная продукция с гарантией производителя.</p>'
-            '<p>Оформите бронь на сайте — менеджер свяжется для подтверждения. Доставка от 0 ₽ (стоимость зависит от адреса); в регионы — по срокам службы доставки, уточняет менеджер, '
+            '<p>Оформите бронь на сайте — менеджер свяжется для подтверждения. Быстрая доставка по всей России; в регионы — по срокам службы доставки, уточняет менеджер, '
             'оплата при получении. Актуальные цвета и наличие — в каталоге ниже.</p>'
         ),
     },
@@ -177,7 +177,7 @@ CATEGORY_SEO = {
         'meta_description': (
             'Купить стики TEREA для IQOS ILUMA в АЙКОС СТОР, Москва. '
             'Оригинальные Terea KZ: Purple Wave, Amber, Pearl, Blue и другие вкусы. '
-            '20 стиков в блоке, доставка от 0 ₽ (стоимость зависит от адреса), бронь на сайте.'
+            '20 стиков в блоке, быстрая доставка по всей России, бронь на сайте.'
         ),
         'meta_keywords': (
             'TEREA, стики TEREA, TEREA sticks, стики для IQOS ILUMA, Terea KZ, '
@@ -214,14 +214,14 @@ CATEGORY_SEO = {
             '<p>В каталоге — <strong>LIL SOLID 3.0</strong> (компактный корпус, два режима нагрева), '
             '<strong>LIL SOLID DUAL</strong> (с зарядным кейсом) и новинка <strong>LIL SOLID 4.0</strong> '
             'с обновлённым дизайном. Все цвета в наличии — чёрный, синий, зелёный, золотой и лимитированные.</p>'
-            '<p>Бронь на сайте, доставка от 0 ₽ (стоимость зависит от адреса), оплата при получении. Оригинальная продукция, работаем с 2020 года.</p>'
+            '<p>Бронь на сайте, быстрая доставка по всей России, оплата при получении. Оригинальная продукция, работаем с 2020 года.</p>'
         ),
     },
     'exclusive': {
         'meta_description': (
             'Эксклюзивные и лимитированные IQOS ILUMA в АЙКОС СТОР, Москва. '
             'Seletti Limited Edition, Anniversary Model и редкие серии. '
-            'Оригинальная продукция, бронь на сайте, доставка от 0 ₽ (стоимость зависит от адреса).'
+            'Оригинальная продукция, бронь на сайте, быстрая доставка по всей России.'
         ),
         'meta_keywords': (
             'IQOS limited edition, IQOS Seletti, Iluma Seletti, эксклюзивный IQOS, '
@@ -265,7 +265,7 @@ DEVICE_MODEL_SEO = {
     'IQOS ILUMA I ONE': {
         'meta_description': (
             'Купить IQOS ILUMA I ONE в АЙКОС СТОР, Москва. Компактное устройство IQOS ILUMA i '
-            'без лезвия, технология SMARTCORE. Оригинал, все цвета. Бронь на сайте, доставка от 0 ₽ (стоимость зависит от адреса).'
+            'без лезвия, технология SMARTCORE. Оригинал, все цвета. Бронь на сайте, быстрая доставка по всей России.'
         ),
         'meta_keywords': (
             'IQOS ILUMA I ONE, Iluma i One, купить Iluma i One, buy IQOS i One, IQOS ILUMA compact, '
@@ -276,7 +276,7 @@ DEVICE_MODEL_SEO = {
     'IQOS ILUMA I': {
         'meta_description': (
             'Купить IQOS ILUMA I в АЙКОС СТОР, Москва. Сбалансированная модель IQOS ILUMA i '
-            'без лезвия, SMARTCORE, увеличенная батарея. Оригинал, бронь на сайте, доставка от 0 ₽ (стоимость зависит от адреса).'
+            'без лезвия, SMARTCORE, увеличенная батарея. Оригинал, бронь на сайте, быстрая доставка по всей России.'
         ),
         'meta_keywords': (
             'IQOS ILUMA I, IQOS Iluma i Standart, купить Iluma i, buy IQOS i Standard, '
@@ -287,7 +287,7 @@ DEVICE_MODEL_SEO = {
     'IQOS ILUMA I PRIME': {
         'meta_description': (
             'Купить IQOS ILUMA I PRIME в АЙКОС СТОР, Москва. Премиальное устройство IQOS ILUMA i '
-            'без лезвия, SMARTCORE, максимальная автономность. Оригинал, доставка от 0 ₽ (стоимость зависит от адреса).'
+            'без лезвия, SMARTCORE, максимальная автономность. Оригинал, быстрая доставка по всей России.'
         ),
         'meta_keywords': (
             'IQOS ILUMA I PRIME, Iluma i Prime, купить Iluma i Prime, buy IQOS i Prime, '
@@ -298,7 +298,7 @@ DEVICE_MODEL_SEO = {
     'IQOS ILUMA ONE': {
         'meta_description': (
             'Купить IQOS ILUMA ONE в АЙКОС СТОР, Москва. Компактное устройство первого поколения ILUMA '
-            'без лезвия. Оригинал, бронь на сайте, доставка от 0 ₽ (стоимость зависит от адреса).'
+            'без лезвия. Оригинал, бронь на сайте, быстрая доставка по всей России.'
         ),
         'meta_keywords': (
             'IQOS ILUMA ONE, купить ILUMA ONE, buy IQOS ILUMA ONE, IQOS ILUMA, original IQOS, LIL STORE, Москва'
@@ -308,7 +308,7 @@ DEVICE_MODEL_SEO = {
     'IQOS ILUMA PRIME': {
         'meta_description': (
             'Купить IQOS ILUMA PRIME в АЙКОС СТОР, Москва. Премиальное устройство IQOS ILUMA '
-            'первого поколения без лезвия. Оригинал, доставка от 0 ₽ (стоимость зависит от адреса).'
+            'первого поколения без лезвия. Оригинал, быстрая доставка по всей России.'
         ),
         'meta_keywords': (
             'IQOS ILUMA PRIME, купить ILUMA PRIME, buy IQOS ILUMA PRIME, IQOS ILUMA premium, LIL STORE, Москва'
@@ -318,7 +318,7 @@ DEVICE_MODEL_SEO = {
     'IQOS ILUMA STANDART': {
         'meta_description': (
             'Купить IQOS ILUMA STANDART в АЙКОС СТОР, Москва. Классическое устройство IQOS ILUMA '
-            'без лезвия, SMARTCORE. Оригинал, бронь на сайте, доставка от 0 ₽ (стоимость зависит от адреса).'
+            'без лезвия, SMARTCORE. Оригинал, бронь на сайте, быстрая доставка по всей России.'
         ),
         'meta_keywords': (
             'IQOS ILUMA STANDART, IQOS ILUMA Standard, купить ILUMA, buy IQOS ILUMA, SMARTCORE, LIL STORE, Москва'
@@ -328,7 +328,7 @@ DEVICE_MODEL_SEO = {
     'LIL SOLID DUAL': {
         'meta_description': (
             'Купить LIL SOLID DUAL в АЙКОС СТОР, Москва. Устройство LIL с зарядным кейсом, '
-            'два режима нагрева, совместимость с HEETS и FIT. Оригинал, доставка от 0 ₽ (стоимость зависит от адреса).'
+            'два режима нагрева, совместимость с HEETS и FIT. Оригинал, быстрая доставка по всей России.'
         ),
         'meta_keywords': (
             'LIL SOLID DUAL, купить LIL SOLID DUAL, buy LIL SOLID DUAL, LIL dual mode, '
@@ -339,7 +339,7 @@ DEVICE_MODEL_SEO = {
     'LIL SOLID 3.0': {
         'meta_description': (
             'Купить LIL SOLID 3.0 в АЙКОС СТОР, Москва. Компактное устройство LIL с двумя режимами '
-            'интенсивности и съёмным нагревателем. Оригинал, бронь на сайте, доставка от 0 ₽ (стоимость зависит от адреса).'
+            'интенсивности и съёмным нагревателем. Оригинал, бронь на сайте, быстрая доставка по всей России.'
         ),
         'meta_keywords': (
             'LIL SOLID 3.0, купить LIL SOLID 3.0, buy LIL SOLID 3.0, LIL 3.0, '
@@ -350,7 +350,7 @@ DEVICE_MODEL_SEO = {
     'LIL SOLID 4.0': {
         'meta_description': (
             'Купить LIL SOLID 4.0 в АЙКОС СТОР, Москва. Новое поколение LIL SOLID — '
-            'улучшенный нагреватель, стильный дизайн. Оригинальная продукция LIL, доставка от 0 ₽ (стоимость зависит от адреса).'
+            'улучшенный нагреватель, стильный дизайн. Оригинальная продукция LIL, быстрая доставка по всей России.'
         ),
         'meta_keywords': (
             'LIL SOLID 4.0, купить LIL SOLID 4.0, buy LIL SOLID 4.0, LIL SOLID new, '
