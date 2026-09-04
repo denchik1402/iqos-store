@@ -343,7 +343,10 @@
         </div>
         <form class="lux-vip-form" id="luxVipForm" data-bot-url="{{ telegram_bot_url or 'https://t.me/iluma_prime_bot' }}">
             <input type="email" name="email" placeholder="your@email.com" autocomplete="email" required aria-label="Email для VIP-подписки">
-            <button type="submit" class="btn-lux-primary">Получить доступ</button>
+            {% with input_id='vipPdConsent' %}
+                    {% include 'includes/pd_consent_checkbox.html' %}
+                    {% endwith %}
+                    <button type="submit" class="btn-lux-primary">Получить доступ</button>
         </form>
     </div>
 </section>

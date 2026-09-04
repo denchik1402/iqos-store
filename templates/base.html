@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="ru" data-theme="light" data-build="20240317-mobile">
 <head>
     <meta name="google-site-verification" content="HQ9vRHnnwg-XlbvX0FriKaWhItCfHzWiSpK_rvHqcec" />
@@ -207,6 +207,13 @@
                         <li><a href="{{ url_for('faq') }}">FAQ</a></li>
                         <li><a href="{{ url_for('blog_index') }}">Блог</a></li>
                         <li><a href="{{ url_for('privacy') }}">Политика конфиденциальности</a></li>
+                        <li><a href="{{ url_for('returns') }}">Возврат</a></li>
+                        <li><a href="{{ url_for('oferta') }}">Оферта</a></li>
+
+                    {% with summary='Реквизиты', extra_class='footer-requisites mt-2' %}
+                    {% include 'includes/legal_requisites.html' %}
+                    {% endwith %}
+
                     </ul>
                 </div>
                 <div class="col-md-4">
@@ -243,11 +250,18 @@
         <span class="cart-float-count" id="cartFloatCount">0</span>
     </button>
 
-    <!-- Плашка о cookies -->
-    <div id="cookieBanner" class="cookie-banner" style="display: none;">
-        <p>Мы используем файлы cookie и метаданные для улучшения работы сайта, анализа посещаемости и персонализации контента. Продолжая использовать сайт, вы соглашаетесь с нашей политикой использования cookie и метаданных.</p>
-        <button type="button" class="btn btn-accept" id="btnCookieAccept">Понятно</button>
+        <!-- Плашка о cookies: активное согласие (152-ФЗ) -->
+    <div id="cookieBanner" class="cookie-banner" style="display: none;" role="dialog" aria-labelledby="cookieBannerTitle" aria-live="polite">
+        <div class="cookie-banner-text">
+            <p id="cookieBannerTitle" class="mb-1"><strong>Файлы cookie</strong></p>
+            <p class="mb-0">Мы используем необходимые cookie для работы сайта. Аналитические cookie (Яндекс.Метрика) включаются только с вашего согласия. Подробнее — в <a href="{{ url_for('privacy') }}">Политике конфиденциальности</a>.</p>
+        </div>
+        <div class="cookie-banner-actions">
+            <button type="button" class="btn btn-outline-light btn-sm" id="btnCookieReject">Только необходимые</button>
+            <button type="button" class="btn btn-accept" id="btnCookieAccept">Принять</button>
+        </div>
     </div>
+
 
     <!-- Боковая корзина -->
     <div class="offcanvas offcanvas-end cart-sidebar" tabindex="-1" id="cartSidebar" aria-labelledby="cartSidebarLabel">
@@ -448,10 +462,20 @@
                 window.location.href = '{{ url_for("age_restricted") }}';
             });
             
-            $('#btnCookieAccept').on('click', function() {
-                localStorage.setItem(COOKIE_KEY, 'true');
+                        $('#btnCookieAccept').on('click', function() {
+                localStorage.setItem(COOKIE_KEY, '1');
+                hideCookieBanner();
+                try { window.dispatchEvent(new Event('lilstore-analytics-consent')); } catch (e) {}
+            });
+            $('#btnCookieReject').on('click', function() {
+                localStorage.setItem(COOKIE_KEY, '0');
                 hideCookieBanner();
             });
+            try {
+                if (localStorage.getItem(COOKIE_KEY) === 'true') {
+                    localStorage.removeItem(COOKIE_KEY);
+                }
+            } catch (e) {}
         
         $(document).ready(function() {
                 $('.catalog-categories-toggle').on('keydown', function(e) {

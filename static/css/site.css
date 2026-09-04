@@ -1209,3 +1209,16 @@
         .cart-sidebar-clear {
             margin: 0.5rem 1.25rem 1rem;
         }
+
+        .cookie-banner-text { flex: 1; min-width: 220px; }
+        .cookie-banner-text a { color: #9ec5fe; text-decoration: underline; }
+        .cookie-banner-actions { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+        .legal-requisites { font-size: 0.8rem; color: var(--text-muted, #6c757d); }
+        .legal-requisites summary { cursor: pointer; list-style: none; }
+        .legal-requisites summary::-webkit-details-marker { display: none; }
+        .legal-requisites summary::before { content: '▸ '; }
+        .legal-requisites[open] summary::before { content: '▾ '; }
+        .legal-requisites-body { margin-top: 0.5rem; padding: 0.5rem 0.75rem; border-left: 2px solid rgba(108,117,125,0.35); }
+        .footer-requisites { max-width: 16rem; }
+        .pd-consent-check a { text-decoration: underline; }
+
