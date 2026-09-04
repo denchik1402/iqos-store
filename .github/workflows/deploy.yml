@@ -1,4 +1,4 @@
-﻿name: Deploy iqos-store.ru
+name: Deploy iqos-store.ru
 
 on:
   push:

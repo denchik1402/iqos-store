@@ -535,12 +535,62 @@ body.luxury-store .age-modal {
     border: 1px solid var(--lux-glass-border);
 }
 
-body.luxury-store .cookie-banner {
-    background: var(--lux-cookie-bg);
-    backdrop-filter: blur(16px);
-    border-top: 1px solid var(--lux-glass-border);
+body.luxury-store .cookie-banner-title {
+    font-family: var(--lux-font-display);
+    font-size: 0.78rem;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--lux-gold);
+    font-weight: 600;
+}
+
+body.luxury-store .cookie-banner-desc {
+    font-size: 0.9rem;
+    color: var(--lux-muted);
+}
+
+body.luxury-store .cookie-banner-text a {
+    color: var(--lux-lime);
+}
+
+body.luxury-store .cookie-banner .btn-cookie-accept,
+body.luxury-store .cookie-banner .btn-accept {
+    background: var(--lux-lime);
+    border: none;
+    color: var(--lux-on-accent);
+    border-radius: 999px;
+    font-family: var(--lux-font-display);
+    font-weight: 700;
+}
+
+body.luxury-store .cookie-banner .btn-cookie-reject {
+    border: 1px solid var(--lux-glass-border);
+    color: var(--lux-text);
+    border-radius: 999px;
+    background: transparent;
+}
+
+body.luxury-store .cookie-banner .btn-cookie-reject:hover {
+    border-color: var(--lux-gold);
+    color: var(--lux-gold);
+}
+
+body.luxury-store .footer-req-li .legal-requisites summary,
+body.luxury-store .footer .footer-requisites summary {
     color: var(--lux-text);
 }
+
+body.luxury-store .footer-req-li .legal-requisites summary:hover {
+    color: var(--lux-lime);
+}
+
+body.luxury-store .pd-consent-check {
+    background: var(--lux-glass);
+    border-color: var(--lux-glass-border);
+    border-radius: 14px;
+}
+
+body.luxury-store .pd-consent-check a { color: var(--lux-lime); }
 
 body.luxury-store .cart-sidebar {
     background: var(--lux-charcoal);
@@ -643,15 +693,71 @@ body.luxury-store .btn-lux-ghost:hover {
     color: var(--lux-gold);
 }
 
-        .cookie-banner-text { flex: 1; min-width: 220px; }
-        .cookie-banner-text a { color: #9ec5fe; text-decoration: underline; }
-        .cookie-banner-actions { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
-        .legal-requisites { font-size: 0.8rem; color: var(--text-muted, #6c757d); }
-        .legal-requisites summary { cursor: pointer; list-style: none; }
-        .legal-requisites summary::-webkit-details-marker { display: none; }
-        .legal-requisites summary::before { content: '▸ '; }
-        .legal-requisites[open] summary::before { content: '▾ '; }
-        .legal-requisites-body { margin-top: 0.5rem; padding: 0.5rem 0.75rem; border-left: 2px solid rgba(108,117,125,0.35); }
-        .footer-requisites { max-width: 16rem; }
-        .pd-consent-check a { text-decoration: underline; }
-
+/* Cookie + legal — luxury skin */
+body.luxury-store .cookie-banner {
+    background: var(--lux-cookie-bg);
+    backdrop-filter: blur(16px);
+    border: 1px solid var(--lux-glass-border);
+    border-radius: 18px;
+    bottom: 18px;
+    left: 18px;
+    right: 18px;
+    max-width: 960px;
+    margin: 0 auto;
+    color: var(--lux-text);
+    box-shadow: var(--lux-shadow-soft);
+}
+body.luxury-store .cookie-banner-title {
+    font-family: var(--lux-font-display);
+    font-size: 0.78rem;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--lux-gold);
+    font-weight: 600;
+}
+body.luxury-store .cookie-banner-desc {
+    font-size: 0.9rem;
+    color: var(--lux-muted);
+}
+body.luxury-store .cookie-banner-text a {
+    color: var(--lux-lime);
+}
+body.luxury-store .cookie-banner .btn-cookie-accept,
+body.luxury-store .cookie-banner .btn-accept {
+    background: var(--lux-lime);
+    border: none;
+    color: var(--lux-on-accent);
+    border-radius: 999px;
+    font-family: var(--lux-font-display);
+    font-weight: 700;
+    letter-spacing: 0.04em;
+}
+body.luxury-store .cookie-banner .btn-cookie-accept:hover,
+body.luxury-store .cookie-banner .btn-accept:hover {
+    filter: brightness(1.05);
+    color: var(--lux-on-accent);
+}
+body.luxury-store .cookie-banner .btn-cookie-reject {
+    border: 1px solid var(--lux-glass-border);
+    color: var(--lux-text);
+    border-radius: 999px;
+    background: transparent;
+}
+body.luxury-store .cookie-banner .btn-cookie-reject:hover {
+    border-color: var(--lux-gold);
+    color: var(--lux-gold);
+}
+body.luxury-store .footer-req-li .legal-requisites summary,
+body.luxury-store .footer .footer-requisites summary {
+    color: var(--lux-text);
+}
+body.luxury-store .footer-req-li .legal-requisites summary:hover,
+body.luxury-store .footer .footer-requisites summary:hover {
+    color: var(--lux-lime);
+}
+body.luxury-store .pd-consent-check {
+    background: var(--lux-glass);
+    border-color: var(--lux-glass-border);
+    border-radius: 14px;
+}
+body.luxury-store .pd-consent-check a { color: var(--lux-lime); }

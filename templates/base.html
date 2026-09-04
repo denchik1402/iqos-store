@@ -209,11 +209,11 @@
                         <li><a href="{{ url_for('privacy') }}">Политика конфиденциальности</a></li>
                         <li><a href="{{ url_for('returns') }}">Возврат</a></li>
                         <li><a href="{{ url_for('oferta') }}">Оферта</a></li>
-
-                    {% with summary='Реквизиты', extra_class='footer-requisites mt-2' %}
-                    {% include 'includes/legal_requisites.html' %}
-                    {% endwith %}
-
+                        <li class="footer-req-li">
+                            {% with summary='Реквизиты', extra_class='footer-requisites' %}
+                            {% include 'includes/legal_requisites.html' %}
+                            {% endwith %}
+                        </li>
                     </ul>
                 </div>
                 <div class="col-md-4">
@@ -250,15 +250,15 @@
         <span class="cart-float-count" id="cartFloatCount">0</span>
     </button>
 
-        <!-- Плашка о cookies: активное согласие (152-ФЗ) -->
+    <!-- Плашка о cookies: активное согласие (152-ФЗ) -->
     <div id="cookieBanner" class="cookie-banner" style="display: none;" role="dialog" aria-labelledby="cookieBannerTitle" aria-live="polite">
         <div class="cookie-banner-text">
-            <p id="cookieBannerTitle" class="mb-1"><strong>Файлы cookie</strong></p>
-            <p class="mb-0">Мы используем необходимые cookie для работы сайта. Аналитические cookie (Яндекс.Метрика) включаются только с вашего согласия. Подробнее — в <a href="{{ url_for('privacy') }}">Политике конфиденциальности</a>.</p>
+            <p id="cookieBannerTitle" class="cookie-banner-title">Файлы cookie</p>
+            <p class="cookie-banner-desc mb-0">Мы используем необходимые cookie для работы сайта. Аналитические cookie (Яндекс.Метрика) включаются только с вашего согласия. Подробнее — в <a href="{{ url_for('privacy') }}">Политике конфиденциальности</a>.</p>
         </div>
         <div class="cookie-banner-actions">
-            <button type="button" class="btn btn-outline-light btn-sm" id="btnCookieReject">Только необходимые</button>
-            <button type="button" class="btn btn-accept" id="btnCookieAccept">Принять</button>
+            <button type="button" class="btn btn-cookie-reject" id="btnCookieReject">Только необходимые</button>
+            <button type="button" class="btn btn-cookie-accept" id="btnCookieAccept">Принять</button>
         </div>
     </div>
 

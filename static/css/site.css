@@ -892,45 +892,136 @@
             color: white;
         }
         
-        /* Плашка cookies */
+                /* Плашка cookies — в тон UI сайта */
         .cookie-banner {
             position: fixed;
-            bottom: 0;
-            left: 0;
-            right: 0;
-            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
-            color: white;
-            padding: 20px 30px;
+            bottom: 16px;
+            left: 16px;
+            right: 16px;
+            max-width: 920px;
+            margin: 0 auto;
+            background: var(--bg-card);
+            color: var(--text);
+            padding: 16px 18px;
             z-index: 9997;
-            box-shadow: 0 -5px 30px rgba(0,0,0,0.2);
+            border: 1px solid var(--border);
+            border-radius: 14px;
+            box-shadow: 0 16px 40px var(--shadow);
             display: flex;
             align-items: center;
             justify-content: space-between;
             flex-wrap: wrap;
-            gap: 15px;
+            gap: 14px;
         }
-        .cookie-banner p {
-            margin: 0;
-            flex: 1;
-            min-width: 200px;
+        .cookie-banner-text { flex: 1; min-width: 220px; }
+        .cookie-banner-title {
+            margin: 0 0 4px;
             font-size: 0.95rem;
-            color: rgba(255,255,255,0.9);
-        }
-        .cookie-banner .btn-accept {
-            background: rgba(255,255,255,0.2);
-            border: 1px solid rgba(255,255,255,0.4);
-            color: white;
-            padding: 10px 25px;
-            border-radius: 8px;
             font-weight: 600;
-            transition: all 0.3s;
+            color: var(--text);
         }
+        .cookie-banner-desc {
+            margin: 0;
+            font-size: 0.88rem;
+            line-height: 1.45;
+            color: var(--text-muted);
+        }
+        .cookie-banner-text a {
+            color: #0d6efd;
+            text-decoration: underline;
+        }
+        [data-theme="dark"] .cookie-banner-text a { color: #6ea8fe; }
+        .cookie-banner-actions {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            align-items: center;
+        }
+        .cookie-banner .btn-cookie-accept,
+        .cookie-banner .btn-accept {
+            background: #0d6efd;
+            border: 1px solid #0d6efd;
+            color: #fff;
+            padding: 9px 20px;
+            border-radius: 10px;
+            font-weight: 600;
+            font-size: 0.9rem;
+            transition: background 0.2s, transform 0.2s;
+        }
+        .cookie-banner .btn-cookie-accept:hover,
         .cookie-banner .btn-accept:hover {
-            background: rgba(255,255,255,0.3);
-            color: white;
+            background: #0b5ed7;
+            border-color: #0b5ed7;
+            color: #fff;
         }
-        
-        /* Юридический текст в подвале */
+        .cookie-banner .btn-cookie-reject {
+            background: transparent;
+            border: 1px solid var(--border);
+            color: var(--text);
+            padding: 9px 16px;
+            border-radius: 10px;
+            font-weight: 500;
+            font-size: 0.88rem;
+        }
+        .cookie-banner .btn-cookie-reject:hover {
+            background: var(--bg-input);
+            color: var(--text);
+        }
+        .legal-requisites {
+            font-size: 0.9rem;
+            color: var(--text-muted);
+        }
+        .legal-requisites summary {
+            cursor: pointer;
+            list-style: none;
+            color: inherit;
+            display: inline;
+        }
+        .legal-requisites summary::-webkit-details-marker { display: none; }
+        .legal-requisites summary::before { content: none; }
+        .legal-requisites summary::after {
+            content: ' ᐯ';
+            font-size: 0.75em;
+            opacity: 0.85;
+        }
+        .legal-requisites[open] summary::after { content: ' ᐱ'; }
+        .legal-requisites-body {
+            margin-top: 0.45rem;
+            padding: 0.45rem 0 0.2rem;
+            font-size: 0.82rem;
+            line-height: 1.45;
+            color: var(--text-muted);
+        }
+        .footer-req-li .legal-requisites,
+        .footer-requisites {
+            max-width: none;
+            font-size: inherit;
+            color: inherit;
+            margin: 0;
+        }
+        .footer-req-li .legal-requisites summary,
+        .footer .footer-requisites summary {
+            color: var(--text);
+            opacity: 0.9;
+            font-size: inherit;
+        }
+        .footer-req-li .legal-requisites summary:hover,
+        .footer .footer-requisites summary:hover {
+            color: #0d6efd;
+            text-decoration: underline;
+            opacity: 1;
+        }
+        [data-theme="dark"] .footer-req-li .legal-requisites summary:hover,
+        [data-theme="dark"] .footer .footer-requisites summary:hover { color: #6ea8fe; }
+        .pd-consent-check {
+            padding: 0.7rem 0.85rem;
+            border-radius: 10px;
+            border: 1px solid var(--border);
+            background: var(--bg-input);
+        }
+        .pd-consent-check .form-check-label { color: var(--text); }
+        .pd-consent-check a { text-decoration: underline; }
+/* Юридический текст в подвале */
         .footer-legal {
             font-size: 0.8rem;
             color: var(--text-muted);
@@ -1209,16 +1300,4 @@
         .cart-sidebar-clear {
             margin: 0.5rem 1.25rem 1rem;
         }
-
-        .cookie-banner-text { flex: 1; min-width: 220px; }
-        .cookie-banner-text a { color: #9ec5fe; text-decoration: underline; }
-        .cookie-banner-actions { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
-        .legal-requisites { font-size: 0.8rem; color: var(--text-muted, #6c757d); }
-        .legal-requisites summary { cursor: pointer; list-style: none; }
-        .legal-requisites summary::-webkit-details-marker { display: none; }
-        .legal-requisites summary::before { content: '▸ '; }
-        .legal-requisites[open] summary::before { content: '▾ '; }
-        .legal-requisites-body { margin-top: 0.5rem; padding: 0.5rem 0.75rem; border-left: 2px solid rgba(108,117,125,0.35); }
-        .footer-requisites { max-width: 16rem; }
-        .pd-consent-check a { text-decoration: underline; }
 
