@@ -699,6 +699,7 @@ body.luxury-store .cookie-banner .btn-accept {
     font-size: 0.88rem;
     opacity: 1 !important;
     visibility: visible !important;
+    cursor: pointer !important;
 }
 body.luxury-store .cookie-banner .btn-cookie-accept:hover,
 body.luxury-store .cookie-banner .btn-accept:hover {
@@ -721,6 +722,7 @@ body.luxury-store .cookie-banner .btn-cookie-reject {
     font-weight: 600;
     opacity: 1 !important;
     visibility: visible !important;
+    cursor: pointer !important;
 }
 body.luxury-store .cookie-banner .btn-cookie-reject:hover {
     border-color: #e0c57a !important;
